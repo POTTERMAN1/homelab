@@ -1,0 +1,12 @@
+{
+	"folders": [
+		{
+			"uri": "vscode-remote://ssh-remote+potterman@192.168.2.102/srv/docker/compose"
+		},
+		{
+			"uri": "vscode-remote://ssh-remote+potterman@192.168.2.102/srv/forjego"
+		}
+	],
+	"remoteAuthority": "ssh-remote+potterman@192.168.2.102",
+	"settings": {}
+}

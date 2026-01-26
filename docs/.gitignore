@@ -1,0 +1,30 @@
+# Ansible 
+*.retry
+ansible/inventory/group_vars/all/.vault_pass
+
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.backup
+*.tfvars
+*.tfvars.json
+override.tf
+override.tf.json
+
+# Python / MkDocs
+__pycache__/
+*.py[cod]
+*$py.class
+site/
+.pytest_cache/
+
+# Environment & OS 
+.env
+.env.local
+.DS_Store
+Thumbs.db
+*.log
+
+# VSCodium 
+.vscode/
+.history/
