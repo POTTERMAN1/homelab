@@ -5,17 +5,17 @@
 
 **Root Cause:** The GitHub Personal Access Token (PAT) used for metadata lookups had expired or lacked the `read:packages` scope.
 
-**Resolution:**
+**Fix:**
 1. Generated a new GitHub PAT (classic) with `repo` and `read:packages` scopes.\
 2. Updated the `GITHUB_COM_TOKEN` secret in the Forgejo runner environment.\
 3. Verified fix by re-running the Renovate CI pipeline.
 
 
 
-## Issue: 'GITHUB' in the secret name
+## 
 **Symptom:** Forgejo prevents using `GITHUB` in the name of the secrets.
 
-**Resolution:** Stored the GitHub PAT as `RENOVATE_CHANGELOG` and mapped it to `RENOVATE_GITHUB_COM_TOKEN` within the Action's `env` block.
+**Fix:** Stored the GitHub PAT as `RENOVATE_CHANGELOG` and mapped it to `RENOVATE_GITHUB_COM_TOKEN` within the Action's `env` block.
 
 
 
@@ -24,4 +24,4 @@
 
 **Root Cause:** `actions/checkout@v6` requires a Node 24 runtime environment. The current Forgejo `act_runner` validation schema does not yet support Node 24.
 
-**Resolution:** Downgraded to `actions/checkout@v4`, which utilizes the Node 20 runtime and is fully compatible with the current runner version. 
+**Fix:** Downgraded to `actions/checkout@v4`, which utilizes the Node 20 runtime and is fully compatible with the current runner version. 
