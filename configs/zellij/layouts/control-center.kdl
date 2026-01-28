@@ -1,0 +1,34 @@
+layout {
+    default_tab_template {
+    pane size=1 borderless=true {
+        plugin location="zellij:tab-bar"
+        }
+    children
+    }
+    
+    tab name="PVE" {
+        pane command="ssh" {
+            args "proxmox"
+        }
+    }
+    tab name="Docker" {
+        pane command="ssh" {
+            args "debian-docker"
+        }
+    }
+    tab name="OMV" {
+        pane command="ssh" {
+            args "192.168.2.101"
+        }
+    }
+    tab name="Ansible" {
+        pane command="ssh" {
+            args "ansible"
+        }
+    }
+    tab name="CachyOS" focus=true {
+        pane cwd="home/potterman/homelab" {
+            
+        }
+    }
+}
