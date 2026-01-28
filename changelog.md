@@ -20,7 +20,7 @@
 - Audit: Performed security check using `git log -p | grep -Ei "password|token|secret|api_key"` to find any possible leaks in the `homelab` and `docker-compose` repos. None found.
 
 
-## [Unreleased - 0.0.2]
+## [0.0.2] - 2026-01-28 - Documentation, Workstation and ZFS woes
 ### Added
 - Feat: Zellij Dashboard layout with PVE/Docker/OMV/Ansible/CachyOS tabs. 
 - Feat: Phase 1-6 Roadmap initialization. `./ROADMAP.md`
