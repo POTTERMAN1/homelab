@@ -26,4 +26,9 @@ layout {
             args "ansible"
         }
     }
+    tab name="CachyOS" focus=true {
+        pane cwd="home/potterman/homelab" {
+            
+        }
+    }
 }
