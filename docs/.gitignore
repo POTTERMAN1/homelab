@@ -1,6 +1,6 @@
 # Ansible 
 *.retry
-ansible/inventory/group_vars/all/.vault_pass
+.ansible_vault_pass
 
 # Terraform
 .terraform/
@@ -19,8 +19,8 @@ site/
 .pytest_cache/
 
 # Environment & OS 
-.env
-.env.local
+*.env
+*.env.local
 .DS_Store
 Thumbs.db
 *.log

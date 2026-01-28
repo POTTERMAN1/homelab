@@ -4,47 +4,51 @@ site_author: Daniel Szkarłat
 site_url: https://potterman1.github.io/homelab-ops/
 
 theme:
-    name: material
-    palette:
-        - scheme: slate
-          primary: teal
-          accent: cyan
-    features:
-        - navigation.tabs
-        - navigation.sections
-        - navigation.expand
-        - content.code.copy
-        - content.code.annotate
+      name: material
+      palette:
+            - scheme: slate
+              primary: teal
+              accent: cyan
+      features:
+            - navigation.tabs
+            - navigation.sections
+            - navigation.expand
+            - content.code.copy
+            - content.code.annotate
 
 markdown_extensions:
-    - pymdownx.highlight:
-          anchor_linenums: true
-    - pymdownx.inlinehilite
-    - pymdownx.snippets
-    - pymdownx.superfences:
-          custom_fences:
-              - name: mermaid
-                class: mermaid
-                format: !!python/name:pymdownx.superfences.fence_code_format
-    - admonition
-    - footnotes
+      - pymdownx.highlight:
+              anchor_linenums: true
+              line_spans: __span
+              pygments_lang_class: true
+      - pymdownx.inlinehilite
+      - pymdownx.snippets
+      - pymdownx.superfences:
+              custom_fences:
+                    - name: mermaid
+                      class: mermaid
+                      format: !!python/name:pymdownx.superfences.fence_code_format
+      - admonition
+      - footnotes
 
 nav:
-    - Home: index.md
-    - Architecture:
-          - Overview: architecture/overview.md
-          - Network Map: architecture/network.md
-    - Automation:
-          - Ansible (Config Management): automation/ansible.md
-          - Terraform (Provisioning): automation/terraform.md
-          - Git (Forgejo & Github Mirror): automation/git.md
-    - Disaster Recovery:
-          - The Absolute Zero Guide: recovery/guide.md
-          - Backups & PBS: recovery/backups.md
-    - Windows & VR:
-          - Optimization Scripts: windows/scripts.md
-          - Simracing Setup: windows/simracing.md
-    - Troubleshooting:
-          - Renovate: troubleshooting/renovate.md
-          - Forgejo: troubleshooting/forgejo.md
-          - Hardware: troubleshooting/hardware.md
+      - Home: index.md
+      - Architecture:
+              - Overview: architecture/overview.md
+              - Network Map: architecture/network.md
+      - Automation:
+              - Ansible (Config Management): automation/ansible.md
+              - Terraform (Provisioning): automation/terraform.md
+              - Git (Forgejo & Github Mirror): automation/git.md
+      - Disaster Recovery:
+              - The Absolute Zero Guide: recovery/guide.md
+              - Backups & PBS: recovery/backups.md
+      - Windows & VR:
+              - Optimization Scripts: windows/scripts.md
+              - Simracing Setup: windows/simracing.md
+      - Troubleshooting:
+              - Renovate: troubleshooting/renovate.md
+              - Forgejo: troubleshooting/forgejo.md
+              - Hardware: troubleshooting/hardware.md
+              - Linux/CachyOS: troubleshooting/cachyos.md
+              - Network: troubleshooting/network.md
