@@ -12,10 +12,10 @@
 
 
 
-## 
+## Issue: 'GITHUB' in the secret name
 **Symptom:** Forgejo prevents using `GITHUB` in the name of the secrets.
 
-**Fix:** Stored the GitHub PAT as `RENOVATE_CHANGELOG` and mapped it to `RENOVATE_GITHUB_COM_TOKEN` within the Action's `env` block.
+**Fix:** Stored the GitHub PAT as `RENOVATE_CHANGELOG` and mapped it to `RENOVATE_GITHUB_COM_TOKEN` within the Action's `env` block. Also made sure that the token has `repo` and `read:packages` scopes, to pull in the changelogs.
 
 
 
