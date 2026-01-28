@@ -9,10 +9,12 @@
 - [ ] **VSCodium Refinement:** Install Ansible/Terraform/YAML extensions + Nerd Fonts.
 - [x] **Roadmap as Code:** Move the roadmap into `ROADMAP.md` in the root of the `homelab` repo.
 	- [x] Implement `CHANGELOG.md`
-	- [ ] Forgejo Issues/Milestones: Use native "Mielstones" to group tasks by Phase
-- [ ] **Secrets Management:** Set up **Ansible Vault** for sensitive YAML variables.
+	- [x] Forgejo Issues/Milestones: Use native "Mielstones" to group tasks by Phase
+- [ ] **Secrets Management:**
+    - [x] Perform Security Audit to check git logs for any leaked sensitive data.
+    - [ ] Setup Ansible Vault for secret migration in Phase 2.
 - [x] **Documentation Start:** Initialize **Material for MkDocs**.
-    - [ ] Build the `docs/architecture.md` using **Mermaid.js** to visualize the flow from CachyOS → Ansible Hub → Managed Nodes.
+    - [x] Build the `docs/architecture.md` using **Mermaid.js** to visualize the flow from CachyOS → Ansible Hub → Managed Nodes.
 
 ## Phase 2: Ansible Migration, SSO & Logic
 
@@ -33,6 +35,7 @@
 - [ ] **Data Mobility:**
     - [ ] Setup **Rclone** (connected to your new MinIO/S3) for offsite backup staging.
     - [ ] Daily `rsync` for heavy volume data to OMV NAS.
+
 ## Phase 3: Monitoring, Health & Notifications
 - [ ] **Unified Notifications:** Deploy **ntfy.sh** connected to PVE and Ansible.
 - [ ] **Host Monitoring:** Deploy **Beszel** for S.M.A.R.T. and RAM alerts.
