@@ -30,7 +30,6 @@
     - [ ] Add `staging` branch and logic to `docker-compose` repository
       - [ ] Add new runner to `staging` repository.
       - [ ] Remove redundant Komodo from the stack
-      - [ ] 
     - [ ] K3s over Ansible: Provision a 3-node lightweight Kubernetes cluster on Proxmox.
     - [ ] Terraform-to-Cloud: Use the OCI (Oracle) or AWS provider to spawn one "Always Free" instance.    
 - [ ] **Identity & SSO:** - [ ] Deploy **Authentik**.

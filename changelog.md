@@ -1,6 +1,19 @@
 # Changelog - Homelab Project
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
 ## [0.1.0] - 2026-01-28 - GitOps Foundation & Workspace Optimization
 ### Added
 - Feat: Initialized Ansible inventory.yaml with 4 hosts.
