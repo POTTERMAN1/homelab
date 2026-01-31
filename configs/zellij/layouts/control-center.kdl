@@ -8,7 +8,7 @@ layout {
     
     tab name="PVE" {
         pane command="ssh" {
-            args "proxmox"
+            args "pve"
         }
     }
     tab name="Docker" {
@@ -18,16 +18,16 @@ layout {
     }
     tab name="OMV" {
         pane command="ssh" {
-            args "192.168.2.101"
+            args "omv"
         }
     }
     tab name="Ansible" {
         pane command="ssh" {
-            args "ansible"
+            args "ansible-main"
         }
     }
     tab name="CachyOS" focus=true {
-        pane cwd="home/potterman/homelab" {
+        pane cwd="/home/potterman/homelab" {
             
         }
     }
