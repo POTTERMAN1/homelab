@@ -1,0 +1,72 @@
+- name: Deploy Caddy with Cloudflare DNS on PVE host
+  hosts: pve
+  become: yes
+  tasks:
+  - name: Stop Caddy (if running)
+    systemd:
+      name: caddy
+      state: stopped
+    ignore_errors: yes # This is in case Caddy is not installed yet
+
+  - name: Download Caddy binary with Cloudflare plugin
+    get_url:
+      url: "https://caddyserver.com/api/download?os=linux&arch=amd64&p=github.com%2Fcaddy-dns%2Fcloudflare"
+      dest: /usr/bin/caddy
+      mode: "0755" # Owner can execute
+    notify: 
+      - Restart Caddy
+
+  - name: Ensure /etc/caddy directory exists
+    file:
+      path: /etc/caddy
+      state: directory
+      mode: "0755" 
+
+  - name: Deploy Caddyfile
+    copy:
+      src: ../files/Caddyfile
+      dest: /etc/caddy/Caddyfile
+      mode: "0644" # Owner can read/write but not execute
+    notify: 
+      - Reload Caddy
+
+  - name: Deploy Cloudflare API Token .env file
+    copy:
+      content: "CLOUDFLARE_API_TOKEN={{ vault_cloudflare_api_token}}"
+      dest: /etc/caddy/.cloudflare.env
+      mode: "0600"
+    notify:
+      - Restart Caddy
+
+  - name: Create Systemd override directory for Caddy
+    file:
+      path: /etc/systemd/system/caddy.service.d/
+      state: directory
+      mode: '0755'
+
+  - name: Inject EnvironmentFile directive into Caddy Systemd
+    copy:
+      content: |
+        [Service]
+        EnvironmentFile=/etc/caddy/.cloudflare.env
+      dest: /etc/systemd/system/caddy.service.d/override.conf
+      mode: '0644'
+    notify: 
+      - Reload Systemd
+      - Restart Caddy
+
+  handlers:
+    - name: Reload Systemd
+      systemd:
+        daemon_reload: yes
+
+    - name: Restart Caddy
+      systemd:
+        name: caddy
+        state: restarted
+        enabled: yes
+        
+    - name: Reload Caddy
+      systemd:
+        name: caddy
+        state: reloaded
