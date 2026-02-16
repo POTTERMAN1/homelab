@@ -1,0 +1,103 @@
+{
+    debug
+    http_port 80
+    https_port 443
+}
+
+# The Cloudflare DNS-01 Challenge Snippet
+(cloudflare_tls) {
+    tls {
+        dns cloudflare {env.CLOUDFLARE_API_TOKEN}
+    }
+}
+
+# Infrastructure
+proxmox.potterman.party {
+    import cloudflare_tls
+    reverse_proxy 192.168.192.173:8006 {
+        transport http {
+            tls_insecure_skip_verify
+        }
+    }
+}
+
+pbs.potterman.party {
+    import cloudflare_tls
+    reverse_proxy 192.168.192.173:8007 {
+        transport http {
+            tls_insecure_skip_verify
+        }
+    }
+}
+
+nas.potterman.party {
+    import cloudflare_tls
+    reverse_proxy 192.168.192.106:80
+}
+
+pihole.potterman.party {
+    import cloudflare_tls
+    reverse_proxy 192.168.192.143:800
+}
+
+# The Arr Stack & Media
+sonarr.potterman.party {
+    import cloudflare_tls
+    reverse_proxy 192.168.192.143:8989
+}
+
+radarr.potterman.party {
+    import cloudflare_tls
+    reverse_proxy 192.168.192.143:7878
+}
+
+prowlarr.potterman.party {
+    import cloudflare_tls
+    reverse_proxy 192.168.192.143:9696
+}
+
+decypharr.potterman.party {
+    import cloudflare_tls
+    reverse_proxy 192.168.192.143:8282
+}
+
+sabnzbd.potterman.party {
+    import cloudflare_tls
+    reverse_proxy 192.168.192.143:8585
+}
+
+jellyfin.potterman.party {
+    import cloudflare_tls
+    reverse_proxy 192.168.192.143:8096
+}
+
+jellyseer.potterman.party {
+    import cloudflare_tls
+    reverse_proxy 192.168.192.143:5055
+}
+
+# Services & Tools
+paperless.potterman.party {
+    import cloudflare_tls
+    reverse_proxy 192.168.192.143:8010
+}
+
+komodo.potterman.party {
+    import cloudflare_tls
+    reverse_proxy 192.168.192.143:9120
+}
+
+forgejo.potterman.party {
+    import cloudflare_tls
+    reverse_proxy 192.168.192.143:3000
+}
+
+foundry.potterman.party {
+    import cloudflare_tls
+    reverse_proxy 192.168.192.211:30000
+}
+
+seafile.potterman.party {
+    import cloudflare_tls
+    reverse_proxy 192.168.192.143:8060
+}
