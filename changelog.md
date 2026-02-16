@@ -1,18 +1,26 @@
 # Changelog - Homelab Project
 
+## [0.2.0] - 2026-02-16 - Infrastructure Foundation, VPS, Ansible Vault and First Automation
 
+### Added
+- **Feat (Infrastructure):** Deployed a centralized **Caddy Reverse Proxy** on the Proxmox Host (`192.168.2.100`) to act as the primary traffic router for the Homelab.
+- **Feat (DNS):** Implemented **Wildcard DNS routing** (`*.potterman.party`) via Cloudflare pointing to the Proxmox Caddy instance, eliminating the need to create manual A-records for future internal services.
+- **Feat (Security):** Successfully implemented **Ansible Vault** (`ansible-vault`). Cloudflare API tokens are now encrypted at rest and injected directly into Caddy's systemd environment securely at runtime.
+- **Feat (Ansible):** Created `deploy_caddy.yml` playbook. It downloads the custom Caddy binary (with the Cloudflare DNS plugin), pushes the configuration, and manages the systemd service.
 
+### Changed
+- **Chore (Inventory):** Completely restructured `ansible/inventory/inventory.yaml` to perfectly map the physical `192.168.2.x` topology using nested YAML groups (`homelab`, `proxmox`, `virtual_machines`, `lxc_containers`).
+- **Chore (Configuration):** Refactored the `Caddyfile` to use DRY (Don't Repeat Yourself) snippets (`import cloudflare_tls`) for ACME challenges, drastically reducing configuration bloat.
+- **Fix (Network):** Mapped the Forgejo reverse proxy correctly through Caddy, resolving local DNS resolution requirements.
 
-
-
-
-
-
-
-
-
-
-
+### Fixed
+- 
+- **Issue (Docker/Storage):** Diagnosed and fixed a ghost "Disk Full" error on the Pi-hole container caused by a saturated `/dev/shm` (Shared Memory) partition.
+- **Issue (Ansible):** Playbook vault variable not getting passed correctly. Resolved by formatting the playbook correctly.
+- **Issue (Ansible):** Resolved a Vault decryption mismatch by aligning `ansible.cfg` directory context with the `.ansible_vault_pass` file.
+- **Issue (Ansible):** Fixed a YAML dictionary parsing error (`_AnsibleTaggedStr`) inside the encrypted vault file.
+- **Issue (Caddy/ACME):** Resolved a Let's Encrypt `Expected 1 zone, got 0` error by correctly scoping the Cloudflare API Token permissions to **Specific Zone: potterman.party**.
+- **Issue (Caddy/ACME):** Fixed a "context canceled" / "stale lock" race condition during initial certificate generation by implementing a clean state-wipe protocol.
 
 ## [0.1.0] - 2026-01-28 - GitOps Foundation & Workspace Optimization
 ### Added

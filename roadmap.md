@@ -1,31 +1,20 @@
 # 🚀 Project Homelab: Infrastructure & Automation Roadmap
 
 ## Phase 1: GitOps Foundation & Workspace Optimization
-- [x] **Fix Renovate 401 Error:** Refresh GitHub PAT (repo/read:packages) and update Forgejo secrets.
-- [x] **Forgejo Branching Strategy:** Implement Protected `main` and `staging` branches.
-	- [x] homelab repository
-- [x] **Zellij Dashboard:** Create `.kdl` layout with tabs for Ansible, PVE, OMV, and Git logs.
-- [x] **VSCodium Refinement:** Install Ansible/Terraform/YAML extensions + Nerd Fonts.
-- [x] **Roadmap as Code:** Move the roadmap into `ROADMAP.md` in the root of the `homelab` repo.
-	- [x] Implement `CHANGELOG.md`
-	- [x] Forgejo Issues/Milestones: Use native "Mielstones" to group tasks by Phase
-- [x] **Secrets Management:**
-    - [x] Perform Security Audit to check git logs for any leaked sensitive data.
-    - [x] Setup Ansible Vault for secret migration in Phase 2.
-- [x] **Documentation Start:** Initialize **Material for MkDocs**.
-    - [x] Build the `docs/architecture.md` using **Mermaid.js** to visualize the flow from CachyOS → Ansible Hub → Managed Nodes.
+*(See CHANGELOG for completed Phase 1 tasks)*
 
 ## Phase 2: Ansible Migration, SSO & Logic
 
 - [ ] **Ansible Hub (.105) Hardening:**
     - [x] Security/Critical: Check Forgejo history and "nuke" the sensitive commits from Phase 1 audit.
     - [ ] Configure `git-sync` or a simple `post-receive` hook to keep CachyOS and Hub in sync via Forgejo.
-    - [ ] **Inventory Refactor:** Move to directory structure with `production` and `staging` files.
-    - [ ] Centralize variables: Move to `ansible/group_vars/all.yml`.
-    - [ ] Set Vault "human-readable" variables (referencing encrypted strings via clear names).
+    - [x] **Inventory Refactor:** Move to directory structure with `production` and `staging` files.
+    - [ ] Centralize variables: Move to `ansible/group_vars/vars.yml`.
+    - [x] Set Vault "human-readable" variables (referencing encrypted strings via clear names).
 - [ ] **Ansible Migration & Templating:**
-    - [ ] **Vault Setup:** Initialize vault for sensitive service credentials.
+    - [x] **Vault Setup:** Initialize vault for sensitive service credentials.
     - [ ] **Jinja2 Transition:** Replace hardcoded `.env` files with `.j2` templates for all Docker services.
+    - [ ] **Reverse Proxy Automation:** Add script for automated routing.
     - [ ] Convert Docker Compose stacks to Ansible `community.docker` modules.
     - [ ] **Logic & Orchestration:** Implement `depends_on` and `healthcheck` via Ansible wait-loops.
     - [ ] Remove redundant Komodo from the stack.
@@ -50,6 +39,7 @@
     - [ ] **Local MinIO Deployment:** Deploy a local S3-compatible MinIO instance on the Docker VM via Ansible/Jinja2 (for local high-speed storage).
     - [ ] **Hybrid Cloud Sync:** Configure a task to sync local MinIO buckets to AWS/OCI for disaster recovery, practicing hybrid-cloud data mobility.
 - [ ] **Infrastructure Expansion:**
+    - [ ] **Cloud Architecture Defined:** Establish "Split-Proxy" architecture for future IONOS VPS to prevent "Hairpin Routing" bandwidth bottlenecks.
     - [ ] **K3s via Ansible:** Provision a 3-node cluster on Proxmox using Cloud-Init templates.
     - [ ] **Cloud Extension:** Use Terraform for an OCI (Oracle) or AWS "Always Free" instance.
 - [ ] **Identity & SSO:**
