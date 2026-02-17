@@ -1,26 +1,54 @@
----
-homelab:
+# OS TYPE GROUPS
+
+all:
   children:
-    proxmox:
+    linux:
+      children:
+        proxmox:
+        virtual_machines:
+        lxc_containers:
+        cloud:
+    windows:
       hosts:
-        pve:
-          ansible_host: 192.168.2.100
-          ansible_user: root
-
-    virtual_machines:
-      hosts:
-        debian-docker:
-          ansible_host: 192.168.2.102
+        simracing-pc:
+          ansible_host: 192.168.2.xxx # TODO UPDATE LATER
+          ansible_connection: winrm
+          ansible_ssh_extra_args: "-o ConnectTimeout=2"
           ansible_user: potterman
-        omv:
-          ansible_host: 192.168.2.101
-          ansible_user: root
-        haos:
-          ansible_host: 192.168.2.104
-          ansible_user: root
 
-    lxc_containers:
-      hosts:
-        ansible-main:
-          ansible_host: 127.0.0.1
-          ansible_connection: local
+    # LOGICAL GROUPS
+
+    homelab:
+      children:
+        proxmox:
+          hosts:
+            pve:
+              ansible_host: 192.168.2.100
+              ansible_user: root
+
+        virtual_machines:
+          hosts:
+            debian-docker:
+              ansible_host: 192.168.2.102
+              ansible_user: potterman
+            omv:
+              ansible_host: 192.168.2.101
+              zerotier_ip: 192.168.192.106
+              ansible_user: potterman
+        #           haos:
+        #             ansible_host: 192.168.2.104
+        #             ansible_user: root
+
+        lxc_containers:
+          hosts:
+            ansible-main:
+              ansible_host: 127.0.0.1
+              ansible_connection: local
+
+        cloud:
+          hosts:
+            ionos_vps:
+              ansible_host: 217.154.115.236
+              ansible_user: potterman
+              ansible_ssh_private_key_file: ~/.ssh/id_ed25519
+              ansible_ssh_extra_args: "-o StrictHostKeyChecking=no"
