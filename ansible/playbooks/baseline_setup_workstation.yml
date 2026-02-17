@@ -1,0 +1,55 @@
+- name: Universal Workstation Standardization
+  hosts: linux:!haos
+  become: true
+  tasks:
+    - name: Ensure 'potterman' exists with sudo rights
+      ansible.builtin.user:
+        name: potterman
+        groups: sudo
+        shell: /usr/bin/fish
+        append: true
+
+    - name: Standardize Packages
+      ansible.builtin.apt:
+        name: [fish, sudo, ufw, git, curl, gnupg, htop, vim, tar, bzip2]
+        state: present
+        update_cache: true
+
+    - name: Zero-Password Sudo for potterman
+      ansible.builtin.copy:
+        content: "potterman ALL=(ALL) NOPASSWD:ALL"
+        dest: /etc/sudoers.d/potterman
+        mode: '0440'
+
+    - name: Join ZeroTier Mesh
+      ansible.builtin.shell: |
+        set -o pipefail
+        if ! command -v zerotier-cli &> /dev/null; then
+          curl -s https://install.zerotier.com | bash
+        fi
+        zerotier-cli join {{ vault_zerotier_network_id }}
+      args:
+        executable: /bin/bash
+        creates: /var/lib/zerotier-one/networks.d/{{ vault_zerotier_network_id }}.conf
+      register: zt_join
+      changed_when: "'200 join ok' in zt_join.stdout"
+
+    - name: Install NFS Client
+      ansible.builtin.apt:
+        name: nfs-common
+        state: present
+
+    - name: Create NAS Mount Point
+      ansible.builtin.file:
+        path: /mnt/NAS_ZFS
+        state: directory
+        mode: '0755'
+
+    - name: Configure NAS Mount in fstab
+      ansible.posix.mount:
+        src: "192.168.192.106:/export/NAS_ZFS"
+        path: /mnt/NAS_ZFS
+        fstype: nfs
+        opts: "defaults,_netdev,nofail" # _netdev waits for ZT network to be up
+        state: present # 'present' adds to fstab, 'mounted' would try to mount it now
+      when: inventory_hostname != 'omv'
