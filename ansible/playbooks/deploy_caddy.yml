@@ -30,7 +30,7 @@
         src: Caddyfile.j2
         dest: /etc/caddy/Caddyfile
         mode: "0644" # Owner can read/write but not execute
-        validate: caddy validate --config %s
+        validate: caddy validate --adapter caddyfile --config %s
       notify:
         - Reload Caddy
 
@@ -75,4 +75,3 @@
         name: caddy
         state: reloaded
 
-  
