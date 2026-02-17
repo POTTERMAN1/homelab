@@ -1,26 +1,42 @@
 # Changelog - Homelab Project
 
-## [0.2.0] - 2026-02-16 - Infrastructure Foundation, VPS, Ansible Vault and First Automation
 
+## [0.2.1] - 2026-02-17 - Cloud Expansion & Teamspeak Deployment
 ### Added
-- **Feat (Infrastructure):** Deployed a centralized **Caddy Reverse Proxy** on the Proxmox Host (`192.168.2.100`) to act as the primary traffic router for the Homelab.
-- **Feat (DNS):** Implemented **Wildcard DNS routing** (`*.potterman.party`) via Cloudflare pointing to the Proxmox Caddy instance, eliminating the need to create manual A-records for future internal services.
-- **Feat (Security):** Successfully implemented **Ansible Vault** (`ansible-vault`). Cloudflare API tokens are now encrypted at rest and injected directly into Caddy's systemd environment securely at runtime.
-- **Feat (Ansible):** Created `deploy_caddy.yml` playbook. It downloads the custom Caddy binary (with the Cloudflare DNS plugin), pushes the configuration, and manages the systemd service.
-
-### Changed
-- **Chore (Inventory):** Completely restructured `ansible/inventory/inventory.yaml` to perfectly map the physical `192.168.2.x` topology using nested YAML groups (`homelab`, `proxmox`, `virtual_machines`, `lxc_containers`).
-- **Chore (Configuration):** Refactored the `Caddyfile` to use DRY (Don't Repeat Yourself) snippets (`import cloudflare_tls`) for ACME challenges, drastically reducing configuration bloat.
-- **Fix (Network):** Mapped the Forgejo reverse proxy correctly through Caddy, resolving local DNS resolution requirements.
+- Feat: Provisioned an IONOS VPS and successfully joined it to the ZeroTier mesh network (`192.168.192.58`).
+- Feat: Created Ansible playbook (`deploy_teamspeak6_server.yml`) to fully automate Cloudflare DNS A-record creation, Docker engine installation, and TeamSpeak container deployment.
+- Docs: Added troubleshooting notes for IONOS Hardware Firewall blocking external traffic by default.
+- Feat: Created first draft of Ansible playbook (`baseline_setup_workstation.yml`) to make sure that all the hosts in the network have identical packages, environments, permissions, accounts etc.
 
 ### Fixed
-- 
-- **Issue (Docker/Storage):** Diagnosed and fixed a ghost "Disk Full" error on the Pi-hole container caused by a saturated `/dev/shm` (Shared Memory) partition.
-- **Issue (Ansible):** Playbook vault variable not getting passed correctly. Resolved by formatting the playbook correctly.
-- **Issue (Ansible):** Resolved a Vault decryption mismatch by aligning `ansible.cfg` directory context with the `.ansible_vault_pass` file.
-- **Issue (Ansible):** Fixed a YAML dictionary parsing error (`_AnsibleTaggedStr`) inside the encrypted vault file.
-- **Issue (Caddy/ACME):** Resolved a Let's Encrypt `Expected 1 zone, got 0` error by correctly scoping the Cloudflare API Token permissions to **Specific Zone: potterman.party**.
-- **Issue (Caddy/ACME):** Fixed a "context canceled" / "stale lock" race condition during initial certificate generation by implementing a clean state-wipe protocol.
+- Issue: Ansible `apt update` failures on `pve` caused by expired Cloudsmith/xcaddy GPG keys, duplicate `pve-no-subscription` repos, and lingering enterprise lists.
+- Issue: Ansible `apt update` failures on `debian-docker` caused by missing GPG key for Fish Shell release 4.
+- Issue: `ansible-lint` warnings regarding missing `pipefail` on shell commands.
+- Issue: Docker API `permission denied` errors on the VPS by ensuring the `potterman` user is appended to the `docker` group via Ansible.
+- Issue: TeamSpeak log `grep` permission errors by properly recursing `/opt/teamspeak` volume ownership to UID/GID `9987`.
+
+### Security/Maintenance
+- Chore: Identified IONOS Cloud Panel hardware firewall requirements for UDP 9987 and TCP 30033; manual change for now, to be automated properly with token access later on.
+
+## [0.2.0] - 2026-02-16 - Infrastructure Foundation, VPS, Ansible Vault and First Automation
+### Added
+- Feat: Deployed a centralized **Caddy Reverse Proxy** on the Proxmox Host (`192.168.2.100`) to act as the primary traffic router for the Homelab.
+- Feat : Implemented **Wildcard DNS routing** (`*.potterman.party`) via Cloudflare pointing to the Proxmox Caddy instance, eliminating the need to create manual A-records for future internal services.
+- Feat: Successfully implemented **Ansible Vault** (`ansible-vault`). Cloudflare API tokens are now encrypted at rest and injected directly into Caddy's systemd environment securely at runtime.
+- Feat (Ansible): Created `deploy_caddy.yml` playbook. It downloads the custom Caddy binary (with the Cloudflare DNS plugin), pushes the configuration, and manages the systemd service.
+
+### Changed
+- Chore: Completely restructured `ansible/inventory/inventory.yaml` to perfectly map the physical `192.168.2.x` topology using nested YAML groups (`homelab`, `proxmox`, `virtual_machines`, `lxc_containers`).
+- Chore: Refactored the `Caddyfile` to use DRY (Don't Repeat Yourself) snippets (`import cloudflare_tls`) for ACME challenges, drastically reducing configuration bloat.
+- Fix: Mapped the Forgejo reverse proxy correctly through Caddy, resolving local DNS resolution requirements.
+
+### Fixed
+- Issue: Diagnosed and fixed a ghost "Disk Full" error on the Pi-hole container caused by a saturated `/dev/shm` (Shared Memory) partition.
+- Issue: Playbook vault variable not getting passed correctly. Resolved by formatting the playbook correctly.
+- Issue: Resolved a Vault decryption mismatch by aligning `ansible.cfg` directory context with the `.ansible_vault_pass` file.
+- Issue: Fixed a YAML dictionary parsing error (`_AnsibleTaggedStr`) inside the encrypted vault file.
+- Issue: Resolved a Let's Encrypt `Expected 1 zone, got 0` error by correctly scoping the Cloudflare API Token permissions to **Specific Zone: potterman.party.
+- Issue: Fixed a "context canceled" / "stale lock" race condition during initial certificate generation by implementing a clean state-wipe protocol.
 
 ## [0.1.0] - 2026-01-28 - GitOps Foundation & Workspace Optimization
 ### Added
