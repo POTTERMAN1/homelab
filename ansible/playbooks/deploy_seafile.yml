@@ -1,0 +1,94 @@
+---
+- name: Deploy Hybrid-Cloud Seafile
+  hosts: ionos_vps
+  become: true
+  vars:
+    seafile_dir: "/opt/seafile"
+    nas_mount: "/mnt/NAS_ZFS/seafile-data"
+
+  tasks:
+    - name: Ensure Local Directories Exist
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: directory
+        mode: '0755'
+      loop:
+        - "{{ seafile_dir }}"
+        - "{{ seafile_dir }}/mysql"
+
+    - name: Verify NAS mount is active
+      ansible.builtin.command: mountpoint -q {{ nas_mount }}
+      register: mount_check
+      failed_when: mount_check.rc != 0
+      changed_when: false
+
+    - name: Generate Seafile .env file
+      ansible.builtin.copy:
+        dest: "{{ seafile_dir }}/.env"
+        mode: '0600'
+        content: |
+          INIT_SEAFILE_MYSQL_ROOT_PASSWORD={{ vault_seafile_db_pass }}
+          REDIS_PASSWORD={{ vault_seafile_redis_pass }}
+          SEAFILE_VOLUME={{ nas_mount }}
+          SEAFILE_MYSQL_VOLUME={{ seafile_dir }}/mysql
+
+    - name: Deploy Seafile docker-compose.yml
+      ansible.builtin.copy:
+        dest: "{{ seafile_dir }}/docker-compose.yml"
+        mode: "0644"
+        content: |
+          name: seafile
+          services:
+            db:
+              image: mariadb:10.11
+              container_name: seafile-mysql
+              restart: unless-stopped
+              env_file: [".env"]
+              environment:
+                - MARIADB_ROOT_PASSWORD=${INIT_SEAFILE_MYSQL_ROOT_PASSWORD}
+                - MARIADB_DATABASE=seafile_db
+                - MARIADB_USER=seafile
+                - MARIADB_PASSWORD=${INIT_SEAFILE_MYSQL_ROOT_PASSWORD}
+              volumes:
+                - "${SEAFILE_MYSQL_VOLUME}:/var/lib/mysql"
+              networks:
+                - seafile-net
+              healthcheck:
+                test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+                interval: 20s
+                timeout: 5s
+                retries: 5
+
+            redis:
+              image: redis
+              container_name: seafile-redis
+              restart: unless-stopped
+              command: ["/bin/sh", "-c", "redis-server --requirepass \"$$REDIS_PASSWORD\""]
+              env_file: [".env"]
+              networks:
+                - seafile-net
+
+            seafile:
+              image: seafileltd/seafile-mc:13.0.15
+              container_name: seafile
+              restart: unless-stopped
+              ports:
+               - "8060:80"
+              volumes:
+                - "${SEAFILE_VOLUME}:/shared"
+              env_file: [".env"]
+              environment:
+               - NON_ROOT=true
+              depends_on:
+                - db
+                - redis
+              networks:
+                - seafile-net
+          networks:
+            seafile-net:
+              name: seafile-net
+
+    - name: Spin up Seafile Stack
+      community.docker.docker_compose_v2:
+        project_src: "{{ seafile_dir }}"
+        state: present
