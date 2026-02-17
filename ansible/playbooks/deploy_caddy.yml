@@ -31,6 +31,8 @@
         dest: /etc/caddy/Caddyfile
         mode: "0644" # Owner can read/write but not execute
         validate: caddy validate --adapter caddyfile --config %s
+      environment:
+        CLOUDFLARE_API_TOKEN: "{{ vault_cloudflare_api_token }}"
       notify:
         - Reload Caddy
 
