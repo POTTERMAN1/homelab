@@ -1,0 +1,89 @@
+- name: Deploy TeamSpeak 6 via Docker and Configure Cloudflare DNS
+  hosts: ionos_vps
+  become: true
+  vars:
+    public_ip: "{{ ansible_host }}"
+  tasks:
+    # --- 1. Docker Installation ---
+    - name: Install prerequisites for Docker and Cloudflare modules
+      ansible.builtin.apt:
+        name: [apt-transport-https, ca-certificates, curl, gnupg, lsb-release, python3-pip, python3-docker]
+        state: present
+        update_cache: true
+
+    - name: Ensure 'potterman' is in the docker group
+      ansible.builtin.user:
+        name: potterman
+        groups: docker
+        append: true
+
+    - name: Download Docker installation script
+      ansible.builtin.get_url:
+        url: https://get.docker.com
+        dest: /tmp/get-docker.sh
+        mode: '0755'
+
+    - name: Run Docker installation script
+      ansible.builtin.command: /tmp/get-docker.sh
+      args:
+        creates: /usr/bin/docker
+
+    - name: Ensure Docker service is running and enabled
+      ansible.builtin.systemd:
+        name: docker
+        state: started
+        enabled: true
+
+    # --- 2. Cloudflare DNS Automation ---
+    - name: Create 'DNS Only' A-Record for TeamSpeak
+      community.general.cloudflare_dns:
+        zone: potterman.party
+        record: teamspeak
+        type: A
+        value: "{{ ansible_host }}"
+        proxied: false
+        api_token: "{{ vault_cloudflare_api_token }}"
+        state: present
+      delegate_to: localhost
+      become: false
+
+    # --- 3. TeamSpeak 6 Docker Deployment ---
+    - name: Ensure TeamSpeak config directory exists
+      ansible.builtin.file:
+        path: /opt/teamspeak
+        state: directory
+        owner: "9987" # Default TS container user UID
+        group: "9987"
+        recurse: true
+        mode: '0755'
+
+    - name: Deploy TeamSpeak 6 Container
+      community.docker.docker_container:
+        name: teamspeak6
+        # Using the official, latest image
+        image: teamspeak:latest
+        state: started
+        restart_policy: unless-stopped
+        env:
+          TS3SERVER_LICENSE: "accept"
+        ports:
+          - "9987:9987/udp"   # Voice
+          - "10011:10011/tcp" # ServerQuery
+          - "30033:30033/tcp" # FileTransfer
+        volumes:
+          - /opt/teamspeak:/var/ts3server
+
+    - name: Get TeamSpeak Admin Token from logs
+      ansible.builtin.shell: |
+        set -o pipefail
+        sudo grep -r "token=" /opt/teamspeak/logs/ | head -n 1 | cut -d "=" -f2
+      args:
+        executable: /bin/bash
+      register: ts_token
+      changed_when: false
+      failed_when: false
+
+    - name: Print your Admin Key
+      ansible.builtin.debug:
+        msg: "Your TeamSpeak Privilege Key is: {{ ts_token.stdout }}"
+      when: ts_token.stdout != ""
