@@ -8,13 +8,15 @@ all:
         virtual_machines:
         lxc_containers:
         cloud:
-    windows:
-      hosts:
-        simracing-pc:
-          ansible_host: 192.168.2.xxx # TODO UPDATE LATER
-          ansible_connection: winrm
-          ansible_ssh_extra_args: "-o ConnectTimeout=2"
-          ansible_user: potterman
+        workstations:
+    #    windows:
+    #      hosts:
+    #        simracing-pc:
+    #          ansible_host: 192.168.2.xxx # TODO UPDATE LATER
+    #          zerotier_ip: # TODO UPDATE LATER
+    #          ansible_connection: winrm
+    #          ansible_ssh_extra_args: "-o ConnectTimeout=2"
+    #          ansible_user: potterman
 
     # LOGICAL GROUPS
 
@@ -24,20 +26,27 @@ all:
           hosts:
             pve:
               ansible_host: 192.168.2.100
+              zerotier_ip: 192.168.192.245
               ansible_user: root
 
         virtual_machines:
           hosts:
             debian-docker:
               ansible_host: 192.168.2.102
+              zerotier_ip: 192.168.192.143
               ansible_user: potterman
             omv:
               ansible_host: 192.168.2.101
               zerotier_ip: 192.168.192.106
               ansible_user: potterman
-        #           haos:
-        #             ansible_host: 192.168.2.104
-        #             ansible_user: root
+        #                   haos:
+        #                     ansible_host: 192.168.2.104
+        #                     ansible_user: root
+        workstations:
+          hosts:
+            cachy-os:
+              ansible_host: 192.168.2.50
+              zerotier_ip: 192.168.192.211
 
         lxc_containers:
           hosts:
@@ -49,6 +58,7 @@ all:
           hosts:
             ionos_vps:
               ansible_host: 217.154.115.236
+              zerotier_ip: 192.168.192.58
               ansible_user: potterman
               ansible_ssh_private_key_file: ~/.ssh/id_ed25519
               ansible_ssh_extra_args: "-o StrictHostKeyChecking=no"
