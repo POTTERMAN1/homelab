@@ -2,6 +2,7 @@
 *.retry
 .ansible_vault_pass
 .ansible_cache/
+*.lock
 
 # Terraform
 .terraform/
