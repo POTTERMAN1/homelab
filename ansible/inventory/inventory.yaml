@@ -26,7 +26,7 @@ all:
           hosts:
             pve:
               ansible_host: 192.168.2.100
-              zerotier_ip: 192.168.192.245
+              zerotier_ip: 192.168.192.173
               ansible_user: root
 
         virtual_machines:

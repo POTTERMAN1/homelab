@@ -3,18 +3,6 @@
   become: true
   tasks:
 
-    - name: Create 'DNS Only' A-Record for Homepage (Pointing to PVE Caddy ZT IP)
-      community.general.cloudflare_dns:
-        zone: potterman.party
-        record: home
-        type: A
-        value: "{{ hostvars['pve']['zerotier_ip'] }}"
-        proxied: false
-        api_token: "{{ vault_cloudflare_api_token }}"
-        state: present
-      delegate_to: localhost
-      become: false
-
     - name: Ensure Homepage config directory exists with correct permissions
       ansible.builtin.file:
         path: /opt/homepage/config
