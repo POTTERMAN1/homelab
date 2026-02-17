@@ -1,1 +1,2 @@
 cloudflare_api_token: "{{ vault_cloudflare_api_token }}"
+zerotier_network_id: "{{ vault_zerotier_network_id }}"
