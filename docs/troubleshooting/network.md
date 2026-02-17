@@ -26,3 +26,17 @@ cafd3117 -      PLANET   283 DIRECT
 ```bash
 sudo ip route add 192.168.192.0/24 dev zt0 proto static metric 50
 ```
+
+## IONOS VPS: Hardware Firewall Blocking External Traffic
+
+**Symptom:** Docker containers (like TeamSpeak) are running, and `ss -ulpn` shows ports are open and listening on `0.0.0.0`, but external connections (from the public internet) time out or fail.
+
+**Root Cause:** IONOS places an External Hardware Firewall in front of all VPS instances. By default, this firewall drops all incoming traffic except for SSH (Port 22). OS-level firewall rules (`ufw`, `iptables`) or Docker port mappings will not bypass this.
+
+**Resolution:**
+Currently, this requires manual intervention via the IONOS Cloud Panel:
+1. Log into the IONOS Cloud Panel.
+2. Navigate to **Network > Firewall Policies**.
+3. Select the active policy for the VPS and manually add the required ports (e.g., UDP 9987 for TeamSpeak Voice, TCP 30033 for File Transfer).
+
+*Note: This is slated to be automated in Phase 2 using the `ionoscloud.cloud_api.firewallrule` Ansible module once API tokens are properly vaulted.*
