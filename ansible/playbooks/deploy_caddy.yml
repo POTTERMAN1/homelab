@@ -25,11 +25,12 @@
         state: directory
         mode: "0755"
 
-    - name: Deploy Caddyfile
-      ansible.builtin.copy:
-        src: /home/potterman/git/homelab/ansible/files/Caddyfile
+    - name: Deploy Caddyfile Template
+      ansible.builtin.template:
+        src: Caddyfile.j2
         dest: /etc/caddy/Caddyfile
         mode: "0644" # Owner can read/write but not execute
+        validate: caddy validate --config %s
       notify:
         - Reload Caddy
 
@@ -73,3 +74,5 @@
       ansible.builtin.systemd:
         name: caddy
         state: reloaded
+
+  

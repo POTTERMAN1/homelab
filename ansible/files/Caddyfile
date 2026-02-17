@@ -82,11 +82,6 @@ paperless.potterman.party {
     reverse_proxy 192.168.192.143:8010
 }
 
-komodo.potterman.party {
-    import cloudflare_tls
-    reverse_proxy 192.168.192.143:9120
-}
-
 forgejo.potterman.party {
     import cloudflare_tls
     reverse_proxy 192.168.192.143:3000

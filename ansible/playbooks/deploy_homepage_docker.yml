@@ -1,0 +1,42 @@
+- name: Deploy Homepage Dashboard
+  hosts: debian-docker
+  become: true
+  tasks:
+
+    - name: Create 'DNS Only' A-Record for Homepage (Pointing to PVE Caddy ZT IP)
+      community.general.cloudflare_dns:
+        zone: potterman.party
+        record: home
+        type: A
+        value: "{{ hostvars['pve']['zerotier_ip'] }}"
+        proxied: false
+        api_token: "{{ vault_cloudflare_api_token }}"
+        state: present
+      delegate_to: localhost
+      become: false
+
+    - name: Ensure Homepage config directory exists with correct permissions
+      ansible.builtin.file:
+        path: /opt/homepage/config
+        state: directory
+        owner: "1000"
+        group: "1000"
+        mode: '0755'
+        recurse: true
+
+    - name: Deploy Homepage Container
+      community.docker.docker_container:
+        name: homepage
+        image: ghcr.io/gethomepage/homepage:latest
+        state: started
+        restart_policy: unless-stopped
+        ports:
+          - "3005:3000"
+        volumes:
+          - /opt/homepage/config:/app/config
+          - /var/run/docker.sock:/var/run/docker.sock:ro
+
+
+- name: Deploy Caddy | Playbook Handoff
+  ansible.builtin.import_playbook: deploy_caddy.yml
+
