@@ -32,7 +32,7 @@
 
 ### Fixed
 - Issue: Diagnosed and fixed a ghost "Disk Full" error on the Pi-hole container caused by a saturated `/dev/shm` (Shared Memory) partition.
-- Issue: Playbook vault variable not getting passed correctly. Resolved by formatting the playbook correctly.
+- Issue: Playbook vault variable not getting passed correctly. Resolved by formatting the playbook as it was supposed to.
 - Issue: Resolved a Vault decryption mismatch by aligning `ansible.cfg` directory context with the `.ansible_vault_pass` file.
 - Issue: Fixed a YAML dictionary parsing error (`_AnsibleTaggedStr`) inside the encrypted vault file.
 - Issue: Resolved a Let's Encrypt `Expected 1 zone, got 0` error by correctly scoping the Cloudflare API Token permissions to **Specific Zone: potterman.party.
