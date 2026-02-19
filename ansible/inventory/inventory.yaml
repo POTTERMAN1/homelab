@@ -1,64 +1,55 @@
-# OS TYPE GROUPS
-
+---
 all:
   children:
+    # 1. OS-Based Groups
     linux:
-      children:
-        proxmox:
-        virtual_machines:
-        lxc_containers:
-        cloud:
-        workstations:
-    #    windows:
-    #      hosts:
-    #        simracing-pc:
-    #          ansible_host: 192.168.2.xxx # TODO UPDATE LATER
-    #          zerotier_ip: # TODO UPDATE LATER
-    #          ansible_connection: winrm
-    #          ansible_ssh_extra_args: "-o ConnectTimeout=2"
-    #          ansible_user: potterman
+      hosts:
+        pve:
+        debian-docker:
+        omv:
+        cachy-os:
+        ionos_vps:
 
-    # LOGICAL GROUPS
+    # 2. Functional Groups
+    proxmox:
+      hosts:
+        pve:
+          ansible_host: 192.168.2.100
+          zerotier_ip: 192.168.192.173
+          ansible_user: potterman
 
-    homelab:
-      children:
-        proxmox:
-          hosts:
-            pve:
-              ansible_host: 192.168.2.100
-              zerotier_ip: 192.168.192.173
-              ansible_user: root
+    docker_modes: # Matching the group name to your group_vars filename
+      hosts:
+        debian-docker:
+          ansible_host: 192.168.2.102
+          zerotier_ip: 192.168.192.143
+          ansible_user: potterman
 
-        virtual_machines:
-          hosts:
-            debian-docker:
-              ansible_host: 192.168.2.102
-              zerotier_ip: 192.168.192.143
-              ansible_user: potterman
-            omv:
-              ansible_host: 192.168.2.101
-              zerotier_ip: 192.168.192.106
-              ansible_user: potterman
-        #                   haos:
-        #                     ansible_host: 192.168.2.104
-        #                     ansible_user: root
-        workstations:
-          hosts:
-            cachy-os:
-              ansible_host: 192.168.2.50
-              zerotier_ip: 192.168.192.211
+    nas:
+      hosts:
+        omv:
+          ansible_host: 192.168.2.101
+          zerotier_ip: 192.168.192.106
+          ansible_user: potterman
 
-        lxc_containers:
-          hosts:
-            ansible-main:
-              ansible_host: 127.0.0.1
-              ansible_connection: local
+    workstations:
+      hosts:
+        cachy-os:
+          ansible_host: 192.168.2.50
+          zerotier_ip: 192.168.192.211
+          ansible_user: potterman
 
-        cloud:
-          hosts:
-            ionos_vps:
-              ansible_host: 217.154.115.236
-              zerotier_ip: 192.168.192.58
-              ansible_user: potterman
-              ansible_ssh_private_key_file: ~/.ssh/id_ed25519
-              ansible_ssh_extra_args: "-o StrictHostKeyChecking=no"
+    cloud:
+      hosts:
+        ionos_vps:
+          ansible_host: 217.154.115.236
+          zerotier_ip: 192.168.192.58
+          ansible_user: potterman
+          ansible_ssh_private_key_file: ~/.ssh/id_ed25519
+          ansible_ssh_extra_args: "-o StrictHostKeyChecking=no"
+
+    ansible_master:
+      hosts:
+        ansible-main:
+          ansible_host: 127.0.0.1
+          ansible_connection: local
