@@ -1,5 +1,34 @@
 # Changelog - Homelab Project
 
+## [0.2.3] - 2026-02-19 - The Great Recovery & Hardening
+### Added
+- Feat: Implemented Cluster-wide SSH Hardening. Disabled password authentication and root login across all nodes.
+- Feat: Ansible: Created a "Bootstrap" playbook to standardize new nodes (User creation, Fish shell, Sudoers, SSH keys).
+- Feat: Made `install_docker.yml` OS-agnostic (Debian/Ubuntu) and Architecture-aware (x86_64 to amd64 mapping).
+- Feat: Automated NFS mounting to `/mnt/NAS_ZFS` with `_netdev` and `nofail` flags to ensure system stability over ZeroTier.
+
+### Fixed
+- Critical: Successfully recovered from a rootkit/compromise on `ionos_vps` via a full OS reinstall and immediate Ansible-led hardening.
+- Issue: Fixed Ansible connection failures to the new VPS by overriding local SSH config using `-e "ansible_user=root"`.
+- Issue: Fixed a potential shell-loop by ensuring `fish` is installed before being assigned as a default shell in Ansible.
+
+### Changed
+- Chore: Migrated Seafile configuration to use `blockinfile` with Jinja2, enabling easier SSO (Authentik) integration while preserving generated credentials.
+
+
+## [0.2.2] - 2026-02-17 - GitOps Refactor, ZeroTier "Darknet" & Homepage Deployment
+### Added
+- Feat: Deployed Ansible Playbook`deploy_homepage_docker.yml` utilizing a dynamic playbook handoff to `deploy_caddy.yml` for fully automated, zero-downtime reverse proxy routing.
+- Feat: Fully finished and implemented a "Darknet" ZeroTier overlay architecture. Internal services (`*.potterman.party`) now route exclusively over encrypted `192.168.192.x` tunnels without requiring public port forwarding. (It was that way before, now it's just standardized and in files)
+- Feat: Refactored the local Git sync script (`sync.sh`) on the deployment server to be branch-agnostic, safely supporting isolated `staging` environments. Note, this is the first step towards creating `production` and `testing` environments down the line.
+
+### Changed
+- Chore: Refactored `Caddyfile` into a GitOps-compliant Jinja2 template (`Caddyfile.j2`), dynamically mapping host targets using Ansible's `zerotier_ip` inventory variables.
+- Chore: Removed redundant Ansible Cloudflare DNS tasks, fully relying on the established Wildcard (`*`) A-record for all internal proxy routing.
+
+### Fixed
+- Issue: Resolved an Ansible/Caddy validation crash by explicitly injecting the vaulted `CLOUDFLARE_API_TOKEN` into the temporary execution environment during the `caddy validate` template check.
+- Issue: Fixed Caddy syntax validation logic by appending `--adapter caddyfile` to the Ansible template check command.
 
 ## [0.2.1] - 2026-02-17 - Cloud Expansion & Teamspeak Deployment
 ### Added
