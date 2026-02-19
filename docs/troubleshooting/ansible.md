@@ -53,3 +53,19 @@ Add `set -o pipefail` to the start of the shell script, and explicitly define th
     cat /some/file | grep "target"
   args:
     executable: /bin/bash
+```
+## Caddy Template Validation Fails
+
+**Symptom:** `deploy_caddy.yml` fails with `Error: config is not valid JSON`.
+**Root Cause:** Caddy assumes temporary validation files (which have no extension) are JSON by default.
+**Fix:** Force the adapter and inject the Cloudflare token into the environment.
+
+```yaml
+- name: Deploy Caddyfile
+  ansible.builtin.template:
+    src: Caddyfile.j2
+    dest: /etc/caddy/Caddyfile
+    validate: caddy validate --adapter caddyfile --config %s
+  environment:
+    CLOUDFLARE_API_TOKEN: "{{ vault_cloudflare_api_token }}"
+```
