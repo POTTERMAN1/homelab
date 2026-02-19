@@ -1,0 +1,52 @@
+---
+- name: Deploy Authentik SSO
+  hosts: debian-docker
+  become: true
+  tasks:
+    # 1. DRY: Install Docker
+    - name: Ensure Docker Environment
+      ansible.builtin.include_tasks: tasks/install_docker.yml
+
+    # 2. Prepare Directories
+    - name: Create Authentik Directories
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: directory
+        owner: "1000"   # The UID Authentik expects
+        group: "1000"   # The GID Authentik expects
+        mode: '0755'
+      loop:
+        - "{{ authentik_root }}"
+        - "{{ authentik_root }}/media"
+        - "{{ authentik_root }}/certs"
+        - "{{ authentik_root }}/custom-templates"
+
+    # 3. Deploy Configs
+    - name: Render .env File
+      ansible.builtin.template:
+        src: templates/authentik_env.j2
+        dest: "{{ authentik_root }}/.env"
+        mode: '0600'
+
+    - name: Render Docker Compose
+      ansible.builtin.template:
+        src: templates/authentik_compose.yaml.j2
+        dest: "{{ authentik_root }}/docker-compose.yml"
+        mode: '0600'
+
+    # 4. Launch Stack
+    - name: Start Authentik Stack
+      community.docker.docker_compose_v2:
+        project_src: "{{ authentik_root }}"
+        state: present
+        pull: always
+
+    # 5. Smoke Test
+    - name: Wait for Authentik Server (Port 9000)
+      ansible.builtin.wait_for:
+        port: 9000
+        delay: 15
+        timeout: 120
+
+# 6. Update Reverse Proxy
+- import_playbook: deploy_caddy.yml
