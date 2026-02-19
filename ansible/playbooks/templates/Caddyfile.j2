@@ -102,3 +102,9 @@ foundry.potterman.party {
     import cloudflare_tls
     reverse_proxy {{ hostvars['cachy-os']['zerotier_ip'] }}:30000
 }
+
+# Identity Provider (SSO)
+auth.potterman.party {
+    import cloudflare_tls
+    reverse_proxy {{ hostvars['debian-docker']['zerotier_ip'] }}:9000
+}
