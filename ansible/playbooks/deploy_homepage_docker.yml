@@ -1,18 +1,12 @@
-- name: Deploy Homepage Dashboard
+---
+- name: Deploy Homepage Dashboard Container
   hosts: debian-docker
   become: true
   tasks:
+    - name: Ensure Docker Environment is there
+      ansible.builtin.include_tasks: tasks/install_docker.yml
 
-    - name: Ensure Homepage config directory exists with correct permissions
-      ansible.builtin.file:
-        path: /opt/homepage/config
-        state: directory
-        owner: "1000"
-        group: "1000"
-        mode: '0755'
-        recurse: true
-
-    - name: Deploy Homepage Container
+    - name: Start Homepage Container
       community.docker.docker_container:
         name: homepage
         image: ghcr.io/gethomepage/homepage:latest
@@ -21,10 +15,10 @@
         ports:
           - "3005:3000"
         volumes:
-          - /opt/homepage/config:/app/config
+          - "{{ homepage_root }}/config:/app/config"
           - /var/run/docker.sock:/var/run/docker.sock:ro
-
-
-- name: Deploy Caddy | Playbook Handoff
-  ansible.builtin.import_playbook: deploy_caddy.yml
-
+        # Optional: Add env vars if needed
+        env:
+          PUID: "1000"
+          PGID: "1000"
+          HOMEPAGE_ALLOWED_HOSTS: "home.potterman.party,localhost,127.0.0.1"

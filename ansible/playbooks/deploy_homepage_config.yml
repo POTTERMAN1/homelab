@@ -1,0 +1,37 @@
+- name: Configure Homepage Dashboard
+  hosts: debian-docker
+  become: true
+
+  tasks:
+
+    - name: Ensure Config Directory
+      ansible.builtin.file:
+        path: "{{ homepage_root }}/config"
+        state: directory
+        owner: "1000"
+        group: "1000"
+        mode: '0755'
+
+    - name: Deploy Settings with Proxy Trust
+      ansible.builtin.template:
+        src: templates/homepage_settings.yaml.j2
+        dest: "{{ homepage_root }}/config/settings.yaml"
+        owner: "1000" # Standard UID for container user
+        group: "1000"
+        mode: "0644"
+      notify: Restart Homepage
+
+    - name: Deploy Homepage Services
+      ansible.builtin.template:
+        src: templates/homepage_services.yaml.j2
+        dest: "{{ homepage_root }}/config/services.yaml"
+        owner: "1000"
+        group: "1000"
+        mode: "0644"
+      notify: Restart Homepage
+
+  handlers:
+    - name: Restart Homepage
+      community.docker.docker_container:
+        name: homepage
+        restart: true
