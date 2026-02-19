@@ -1,0 +1,4 @@
+docker_base_path: /opt
+authentik_root: "{{ docker_base_path }}/authentik"
+homepage_root: "{{ docker_base_path }}/homepage"
+seafile_root: "{{ docker_base_path }}/seafile"
