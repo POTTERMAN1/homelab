@@ -1,0 +1,37 @@
+import os
+
+SECRET_KEY = "{{ vault_seafile_secret_key }}" # Make sure this matches your vault
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'seahub_db',
+        'USER': 'seafile',
+        'PASSWORD': '{{ vault_seafile_db_password }}',
+        'HOST': 'db',
+        'PORT': '3306',
+    }
+}
+
+# --- SSO / Authentik Section ---
+ENABLE_OAUTH = True
+OAUTH_ENABLE_INSECURE_TRANSPORT = True
+OAUTH_VERIFY_EMAIL = False
+OAUTH_CLIENT_ID = "{{ vault_seafile_client_id }}"
+OAUTH_CLIENT_SECRET = "{{ vault_seafile_client_secret }}"
+OAUTH_REDIRECT_URL = 'https://seafile.potterman.party/oauth/callback/'
+OAUTH_PROVIDER_DOMAIN = 'auth.potterman.party'
+OAUTH_AUTHORIZATION_URL = 'https://auth.potterman.party/application/o/authorize/'
+OAUTH_TOKEN_URL = 'https://auth.potterman.party/application/o/token/'
+OAUTH_USER_INFO_URL = 'https://auth.potterman.party/application/o/userinfo/'
+OAUTH_SCOPE = ['openid', 'profile', 'email']
+
+OAUTH_ATTRIBUTE_MAP = {
+    "id": (True, "sub"),
+    "name": (False, "name"),
+    "email": (False, "email"),
+}
+
+OAUTH_CREATE_UNKNOWN_USER = True
+OAUTH_ACTIVATE_USER_AFTER_CREATION = True
+CSRF_TRUSTED_ORIGINS = ["https://seafile.potterman.party"]
