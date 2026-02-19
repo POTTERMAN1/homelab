@@ -4,37 +4,11 @@
   vars:
     public_ip: "{{ ansible_host }}"
   tasks:
-    # --- 1. Docker Installation ---
-    - name: Install prerequisites for Docker and Cloudflare modules
-      ansible.builtin.apt:
-        name: [apt-transport-https, ca-certificates, curl, gnupg, lsb-release, python3-pip, python3-docker]
-        state: present
-        update_cache: true
+# 1. Docker Deployment
+    - name: Ensure Docker Environment is Ready
+      ansible.builtin.include_tasks: tasks/install_docker.yml
 
-    - name: Ensure 'potterman' is in the docker group
-      ansible.builtin.user:
-        name: potterman
-        groups: docker
-        append: true
-
-    - name: Download Docker installation script
-      ansible.builtin.get_url:
-        url: https://get.docker.com
-        dest: /tmp/get-docker.sh
-        mode: '0755'
-
-    - name: Run Docker installation script
-      ansible.builtin.command: /tmp/get-docker.sh
-      args:
-        creates: /usr/bin/docker
-
-    - name: Ensure Docker service is running and enabled
-      ansible.builtin.systemd:
-        name: docker
-        state: started
-        enabled: true
-
-    # --- 2. Cloudflare DNS Automation ---
+    # 2. Cloudflare DNS Automation
     - name: Create 'DNS Only' A-Record for TeamSpeak
       community.general.cloudflare_dns:
         zone: potterman.party
@@ -47,7 +21,7 @@
       delegate_to: localhost
       become: false
 
-    # --- 3. TeamSpeak 6 Docker Deployment ---
+    # 3. TeamSpeak 6 Docker Deployment
     - name: Ensure TeamSpeak config directory exists
       ansible.builtin.file:
         path: /opt/teamspeak
