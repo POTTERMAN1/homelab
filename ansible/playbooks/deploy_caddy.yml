@@ -2,15 +2,6 @@
   hosts: pve
   become: true
   tasks:
-    - name: Stop Caddy (if running)
-      ansible.builtin.systemd:
-        name: caddy
-        state: stopped
-      register: caddy_stop_result
-      failed_when:
-        - caddy_stop_result.failed
-        - "`Could not find the requested service` not in caddy_stop_result.msg"
-
     - name: Download Caddy binary with Cloudflare plugin
       ansible.builtin.get_url:
         url: "https://caddyserver.com/api/download?os=linux&arch=amd64&p=github.com%2Fcaddy-dns%2Fcloudflare"
@@ -61,6 +52,12 @@
         - Reload Systemd
         - Restart Caddy
 
+    - name: Ensure Caddy is started and enabled
+      ansible.builtin.systemd:
+        name: caddy
+        state: started
+        enabled: true
+
   handlers:
     - name: Reload Systemd
       ansible.builtin.systemd:
@@ -76,4 +73,3 @@
       ansible.builtin.systemd:
         name: caddy
         state: reloaded
-
