@@ -36,6 +36,8 @@ nav:
         - Architecture:
                   - Overview: architecture/overview.md
                   - Network Map: architecture/network.md
+                  - Reverse Proxy: architecture/proxy.md
+                  - Security: architecture/security.md
         - Automation:
                   - Ansible (Config Management): automation/ansible.md
                   - Terraform (Provisioning): automation/terraform.md
