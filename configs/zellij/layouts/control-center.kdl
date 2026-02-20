@@ -31,4 +31,9 @@ layout {
             
         }
     }
+    tab name="ionos_vps" {
+        pane command="ssh" {
+            args "ionos_vps"
+        }
+    }
 }
