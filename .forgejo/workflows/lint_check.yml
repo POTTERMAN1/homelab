@@ -30,7 +30,8 @@ jobs:
       - name: Run YAML Lint
         run: yamllint .
         continue-on-error: true
-
+      # --8<-- [start:lint-step]
       - name: Run Ansible Lint
         working-directory: ./ansible
         run: ansible-lint site.yml
+# --8<-- [end:lint-step]

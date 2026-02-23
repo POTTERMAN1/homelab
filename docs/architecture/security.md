@@ -1,15 +1,29 @@
-# Security
+### 🛡️ 3. The Security Posture
+Recruiters look for the word "Security." Having a dedicated page for it proves it's not an afterthought in your engineering process.
 
-### SSH Hardening & Security Standards
+**Create/Edit: `docs/architecture/security.md`**
+```markdown
+# Security Posture & Hardening
 
-To secure the cluster against brute-force attacks and unauthorized access, a unified security policy has been enforced via Ansible across all nodes.
+Security in this infrastructure is applied in layers, from encrypted variables at rest to strict OS-level authentication policies.
 
-## Policy Implementation:
-- **Password Authentication:** Disabled. All SSH access now requires a valid SSH private key.
-- **Root Login:** Disabled. `PermitRootLogin no` is enforced to prevent direct administrative access via SSH.
-- **Default User:** The user `potterman` is the primary administrative account with `passwordless sudo privileges`.
-- **Validation:** All SSH configuration changes are validated using sshd -t before the service restarts to prevent accidental lockouts.
+## Secrets Management (Ansible Vault)
+No passwords, API tokens, or sensitive variables are stored in plaintext. 
 
+* **Encryption at Rest:** All sensitive strings are encrypted using `ansible-vault` (AES256).
+* **Decryption at Runtime:** During CI/CD pipelines, the vault password is injected dynamically into the ephemeral runner via Forgejo/GitHub repository secrets.
+* **Service Injection:** Passwords are never written to disk in plaintext. Ansible injects them directly into Docker `.env` files or systemd environments during deployment.
+
+## OS & SSH Hardening
+The `common` Ansible role enforces strict baseline security on all newly provisioned nodes before any software is installed:
+
+1. **Root Login Disabled:** `PermitRootLogin no` is strictly enforced across the cluster.
+2. **Password Authentication Disabled:** `PasswordAuthentication no` is enforced. Only Ed25519 SSH keys are accepted.
+3. **Sudoers Restrictions:** Passwordless sudo is strictly scoped via `/etc/sudoers.d/` drops to dedicated administration accounts.
+
+## Surface Area Reduction
+* **No Exposed Ports:** By utilizing the ZeroTier mesh and a single reverse proxy entry point, the internal cluster nodes (Docker hosts, databases) have zero ports exposed to the public internet or the physical LAN.
+ONLY EXCEPTION TO THE RULE IS THE TEAMSPEAK 6 SERVER
 
 
 # Incident Report: IONOS VPS Compromise & Recovery

@@ -1,45 +1,21 @@
-## Core Philosophy
-1. **Infrastructure as Code (IaC):** Every host, from the Dell Optiplex server to the remote IONOS VPS, is configured via Ansible. No manual configuration is permitted on target nodes.
-2. **Zero Trust Networking:** No internal service ports are exposed to the public internet (EXCEPT TEAMSPEAK 6 SERVER). All cross-node communication (Proxmox ↔ VPS ↔ NAS) routes through an encrypted ZeroTier mesh network.
-3. **Single Sign-On:** Authentik acts as the central Identity Provider (IdP). Services like Seafile delegate authentication via OIDC.
+# Network Architecture & SDN
 
-## Network Topology
+The homelab operates on a VPN architecture. To minimize the public attack surface, no internal services (other than the Teamspeak server) are exposed directly to the public internet or local LAN.
 
-This is very unreadable and first draft of my Network topology using Mermaid.js
-I'll whip out a better graph using draw.io in the future
+## ZeroTier Mesh (The Darknet)
+All inter-node communication is routed over a **ZeroTier Network**. 
 
-```mermaid
-graph TD
-    User((User)) -->|HTTPS| CF[Cloudflare DNS]
+* **Subnet:** `192.168.192.0/24`
+* **Encryption:** End-to-end encrypted peer-to-peer tunnels.
+* **Access:** Administrators and CI/CD runners must be authenticated members of the ZeroTier network to access SSH or internal dashboards.
 
-    subgraph "Public Internet"
-        CF -->|A Record| IONOS[IONOS VPS]
-        CF -->|CNAME| PVE_CADDY[Dell Optiplex: Caddy]
-    end
+By utilizing ZeroTier, I abstract away the physical networking layer. Whether a node is a local Proxmox LXC container or a remote IONOS VPS, it exists on the same secure, flat subnet.
 
-    subgraph "Management Layer"
-        ANSI[Ansible Controller] -->|SSH| PVE_CADDY
-        ANSI -->|SSH| IONOS
-        ANSI -->|SSH| DOCKER_VM[Debian VM]
-    end
+## The Routing Flow
+1. **External Request:** A user requests `https://service.potterman.party`.
+2. **DNS Resolution:** Cloudflare resolves the wildcard `*.potterman.party` to the private ZeroTier IP of the Proxmox host, which also has Caddy installed.
+3. **Caddy Proxy:** The Caddy reverse proxy intercepts the request.
+4. **Internal Routing:** Caddy proxies the traffic *over the ZeroTier interface* to the specific node hosting the Docker container (e.g., `192.168.192.15:8080`).
 
-    ZT((ZeroTier Mesh))
-    IONOS <--> ZT
-    PVE_CADDY <--> ZT
-    DOCKER_VM <--> ZT
-    NAS[OMV NAS] <--> ZT
-
-    subgraph "Local Datacenter (Proxmox)"
-        PVE_CADDY -->|ZT Proxy| DOCKER_VM
-        DOCKER_VM --> AUTH[Authentik SSO]
-        DOCKER_VM --> FORGE[Forgejo]
-        DOCKER_VM --> PIH[Pihole]
-        DOCKER_VM --> HOME[Homepage]
-        PVE_CADDY -->|ZT Proxy| NAS
-    end
-
-    subgraph "Remote Cloud (IONOS)"
-        IONOS --> TS[TeamSpeak 6]
-        IONOS --> SEA[Seafile]
-        SEA -.->|OIDC| AUTH
-    end
+## Automated Mesh Joining
+Ansible automatically handles joining new nodes to the mesh. Authorization is manual for now. This guarantees that newly provisioned infrastructure is instantly accessible to the rest of the cluster.
