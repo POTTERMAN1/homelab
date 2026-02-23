@@ -3,6 +3,8 @@ on:
   push:
     branches:
       - main
+    tags:
+      - "*"
 
 jobs:
   mirror:
@@ -17,3 +19,4 @@ jobs:
         run: |
           git remote add github https://${{ secrets.GH_TOKEN }}@github.com/POTTERMAN1/homelab.git
           git push github main --force
+          git push github --tags --force

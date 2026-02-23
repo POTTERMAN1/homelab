@@ -4,6 +4,8 @@ Infrastructure as Code (IaC) for my Homelab. Managed via Ansible and Terraform, 
 
 **Full Documentation:** [docs.potterman.party](https://docs.potterman.party)
 
+**[View the Release Changelog](changelog.md)**
+
 ---
 
 ## Infrastructure Provisioning (Terraform)

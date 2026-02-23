@@ -1,7 +1,7 @@
 site_name: Project Homelab
 site_description: High-Availability Home Lab and Infrastructure-as-Code Portfolio
 site_author: Daniel Szkarłat
-site_url: https://potterman1.github.io/homelab-ops/
+site_url: https://potterman1.github.io/homelab/
 
 theme:
         name: material
@@ -35,6 +35,7 @@ markdown_extensions:
 
 nav:
         - Home: index.md
+        - Changelog: changelog.md
         - Architecture:
                   - Overview: architecture/overview.md
                   - Network Map: architecture/network.md
