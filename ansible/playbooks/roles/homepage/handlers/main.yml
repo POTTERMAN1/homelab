@@ -1,0 +1,4 @@
+- name: Restart Homepage
+  community.docker.docker_container:
+    name: homepage
+    restart: true

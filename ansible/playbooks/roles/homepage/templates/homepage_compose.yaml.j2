@@ -1,0 +1,14 @@
+services:
+  homepage:
+    container_name: homepage
+    image: ghcr.io/gethomepage/homepage:latest
+    restart: unless-stopped
+    ports:
+      - "3005:3000"
+    volumes:
+      - "{{ homepage_root }}/config:/app/config"
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    environment:
+      PUID: "1000"
+      PGID: "1000"
+      HOMEPAGE_ALLOWED_HOSTS: "home.potterman.party,localhost,127.0.0.1"
