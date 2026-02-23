@@ -1,0 +1,45 @@
+- name: Create 'DNS Only' A-Record for TeamSpeak
+  community.general.cloudflare_dns:
+    zone: potterman.party
+    record: teamspeak
+    type: A
+    value: "{{ ansible_host }}"
+    proxied: false
+    api_token: "{{ vault_cloudflare_api_token }}"
+    state: present
+  delegate_to: localhost
+  become: false
+
+- name: Ensure TeamSpeak config directory exists
+  ansible.builtin.file:
+    path: "{{ teamspeak_root }}"
+    state: directory
+    recurse: true
+    mode: '0755'
+
+- name: Render Docker Compose
+  ansible.builtin.template:
+    src: templates/teamspeak_compose.yaml.j2
+    dest: "{{ teamspeak_root }}/docker-compose.yml"
+    mode: "0600"
+
+- name: Start Teamspeak Server Container
+  community.docker.docker_compose_v2:
+    project_src: "{{ teamspeak_root }}"
+    state: present
+    pull: always
+
+- name: Get TeamSpeak Admin Token from logs
+  ansible.builtin.shell: |
+    set -o pipefail
+    sudo grep -r "token=" /opt/teamspeak/logs/ | head -n 1 | cut -d "=" -f2
+  args:
+    executable: /bin/bash
+  register: ts_token
+  changed_when: false
+  failed_when: false
+
+- name: Print your Admin Key
+  ansible.builtin.debug:
+    msg: "Your TeamSpeak Privilege Key is: {{ ts_token.stdout }} "
+  when: ts_token.stdout != ""
