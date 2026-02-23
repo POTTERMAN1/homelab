@@ -1,0 +1,2 @@
+nas_mount_ip: "192.168.2.106"
+public_ip: "{{ ansible_host }}"
