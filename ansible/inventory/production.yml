@@ -1,0 +1,66 @@
+---
+all:
+  children:
+    # 1. OS-Based Groups
+    linux:
+      hosts:
+        pve:
+        debian-docker:
+        omv:
+        cachy-os:
+        ionos_vps:
+
+    # 2. Functional Groups
+    proxmox:
+      hosts:
+        pve:
+          ansible_host: 192.168.2.100
+          zerotier_ip: 192.168.192.173
+          ansible_user: potterman
+
+    docker_nodes:
+      hosts:
+        debian-docker:
+          ansible_host: 192.168.2.102
+          zerotier_ip: 192.168.192.143
+          ansible_user: potterman
+        ionos_vps:
+
+    nas:
+      hosts:
+        omv:
+          ansible_host: 192.168.2.101
+          zerotier_ip: 192.168.192.106
+          ansible_user: potterman
+
+    workstations:
+      hosts:
+        cachy-os:
+          ansible_host: 192.168.2.50
+          zerotier_ip: 192.168.192.211
+          ansible_user: potterman
+
+    ansible_master:
+      hosts:
+        ansible-main:
+          ansible_host: 127.0.0.1
+          ansible_connection: local
+
+    # Groups based on networks
+
+    external_network:
+      hosts:
+        ionos_vps:
+          ansible_host: 217.154.115.236
+          zerotier_ip: 192.168.192.58
+          ansible_user: potterman
+          ansible_ssh_private_key_file: ~/.ssh/id_ed25519
+          ansible_ssh_extra_args: "-o StrictHostKeyChecking=no"
+
+    internal_network:
+      hosts:
+        pve:
+        cachy-os:
+        ansible-main:
+        omv:
+        debian-docker:
