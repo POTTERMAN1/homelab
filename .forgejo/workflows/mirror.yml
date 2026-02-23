@@ -15,5 +15,5 @@ jobs:
 
       - name: Push to GitHub
         run: |
-          git remote add github https://${{ secrets.GH_TOKEN }}@github.com/potterman/homelab.git
+          git remote add github https://${{ secrets.GH_TOKEN }}@github.com/POTTERMAN1 /homelab.git
           git push github main --force
