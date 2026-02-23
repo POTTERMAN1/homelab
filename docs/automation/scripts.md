@@ -2,6 +2,9 @@
 
 ## Homelab Repo Sync Script
 
-This script runs on `ansible-main` and keeps the local repo in sync with Forgejo.\
-It is triggered by a Systemd Timer every 5 minutes.\
+This script runs on `ansible-main` and keeps the local repo in sync with Forgejo.
+It is triggered by a Systemd Timer every 5 minutes.
 
+```bash
+--8<-- "scripts/homelab-sync.sh"
+```

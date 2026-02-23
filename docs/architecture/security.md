@@ -1,8 +1,3 @@
-### 🛡️ 3. The Security Posture
-Recruiters look for the word "Security." Having a dedicated page for it proves it's not an afterthought in your engineering process.
-
-**Create/Edit: `docs/architecture/security.md`**
-```markdown
 # Security Posture & Hardening
 
 Security in this infrastructure is applied in layers, from encrypted variables at rest to strict OS-level authentication policies.

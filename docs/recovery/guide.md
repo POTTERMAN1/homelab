@@ -6,15 +6,15 @@
 
 ### Path A: State Restoration (PBS Intact)
 If the Proxmox Backup Server (PBS) datastore survives the hardware failure:
-1. Reinstall the base Proxmox VE operating system on replacement bare-metal hardware.
-2. Reconnect the PBS datastore to the new Proxmox node.
-3. Restore the `ansible-main` control node, Forgejo, and application containers directly from the latest daily snapshot.
+* Reinstall the base Proxmox VE operating system on replacement bare-metal hardware.
+* Reconnect the PBS datastore to the new Proxmox node.
+* Restore the `ansible-main` control node, Forgejo, and application containers directly from the latest daily snapshot.
 **Data Loss:** Minimal (up to 24 hours).
 
 ### Path B: The IaC Rebuild (PBS Lost)
 If the backup server is lost, but the Git repository (safely mirrored on GitHub) survives, the infrastructure can be rebuilt from the code:
-1. **Provision:** Execute `terraform apply` from a local workstation to recreate the VMs and LXC containers on a fresh Proxmox host.
-2. **Configure:** Run the Ansible `site.yml` master playbook against the newly provisioned IP addresses.
-3. **Restore Routing:** Caddy and ZeroTier will automatically re-establish the internal mesh network and request new SSL certificates from Cloudflare.
+* **Provision:** Execute `terraform apply` from a local workstation to recreate the VMs and LXC containers on a fresh Proxmox host.
+* **Configure:** Run the Ansible `site.yml` master playbook against the newly provisioned IP addresses.
+* **Restore Routing:** Caddy and ZeroTier will automatically re-establish the internal mesh network and request new SSL certificates from Cloudflare.
 
 **Data Loss:** High (persistent application data is lost), but the **infrastructure and services** will be fully operational, secured, and publicly routed within minutes.

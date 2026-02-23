@@ -21,3 +21,4 @@ Here is the live `site.yml` driving the cluster, pulled directly from the reposi
 
 ```yaml
 --8<-- "ansible/site.yml"
+```
