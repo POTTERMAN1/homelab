@@ -1,5 +1,10 @@
 # Changelog - Homelab Project
 
+## [0.2.4] - 2026-02-23 - First Step of Migration Complete & GitHub Mirroring
+### Added
+
+
+
 ## [0.2.3] - 2026-02-19 - The Great Recovery & Hardening
 ### Added
 - Feat: Implemented Cluster-wide SSH Hardening. Disabled password authentication and root login across all nodes.
