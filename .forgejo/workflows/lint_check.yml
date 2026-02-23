@@ -1,0 +1,31 @@
+name: CI / Linting
+on:
+  push:
+    branches:
+      - staging
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  lint:
+    runs-on: self-hosted
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: 3.x
+
+      - name: Install Linters
+        run: |
+          pip install ansible ansible-lint yamllint
+
+      - name: Run YAML Lint
+        run: yamllint .
+        continue-on-error: true
+
+      - name: Run Ansible Lint
+        run: ansible-lint playbooks/
