@@ -1,0 +1,6 @@
+- name: Restart Seafile
+  community.docker.docker_compose_v2:
+    project_src: "{{ seafile_root }}"
+    state: restarted
+    services:
+      - seafile
