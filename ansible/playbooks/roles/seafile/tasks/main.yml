@@ -29,8 +29,8 @@
     file_type: directory
     patterns: "conf"
     recurse: true
-  register: found_dirs
-  until: found_dirs.matched > 0
+  register: seafile_found_dirs
+  until: seafile_found_dirs.matched > 0
   retries: 20
   delay: 5
   changed_when: false
@@ -38,20 +38,20 @@
 - name: Set seahub configuration path
   ansible.builtin.set_fact:
     seahub_conf_dir: "{{ item.path }}"
-  loop: "{{ found_dirs.files }}"
+  loop: "{{ seafile_found_dirs.files }}"
   # Targets the specific config folder inside the shared volume
   when: "'seafile/conf' in item.path"
   changed_when: false
 
 - name: Wait for seahub_settings.py to be generated
   ansible.builtin.wait_for:
-    path: "{{ seahub_conf_dir }}/seahub_settings.py"
+    path: "{{ seafile_seahub_conf_dir }}/seahub_settings.py"
     state: present
     timeout: 120
 
 - name: Inject SSO Configuration into Seahub Settings
   ansible.builtin.blockinfile:
-    path: "{{ seahub_conf_dir }}/seahub_settings.py"
+    path: "{{ seafile_seahub_conf_dir }}/seahub_settings.py"
     block: |
       ENABLE_OAUTH = True
       OAUTH_ENABLE_INSECURE_TRANSPORT = True

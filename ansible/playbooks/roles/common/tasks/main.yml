@@ -60,7 +60,7 @@
   args:
     executable: /bin/bash
     creates: /var/lib/zerotier-one/networks.d/{{ vault_zerotier_network_id }}.conf
-  register: zt_join
+  register: common_zt_join
   changed_when: "'200 join ok' in zt_join.stdout"
 
 - name: Prompt for manual network approval

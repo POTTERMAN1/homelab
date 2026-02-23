@@ -35,11 +35,11 @@
     sudo grep -r "token=" /opt/teamspeak/logs/ | head -n 1 | cut -d "=" -f2
   args:
     executable: /bin/bash
-  register: ts_token
+  register: teamspeak_server_token
   changed_when: false
   failed_when: false
 
 - name: Print your Admin Key
   ansible.builtin.debug:
     msg: "Your TeamSpeak Privilege Key is: {{ ts_token.stdout }} "
-  when: ts_token.stdout != ""
+  when: teamspeak_server_token.stdout != ""

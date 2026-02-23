@@ -51,7 +51,7 @@
     name: potterman
     groups: docker
     append: true
-  register: user_group_check
+  register: docker_user_group_check
 
 - name: Ensure Docker service is running
   ansible.builtin.systemd:
