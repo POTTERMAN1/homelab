@@ -29,4 +29,5 @@ jobs:
         continue-on-error: true
 
       - name: Run Ansible Lint
+        working-directory: ./ansible
         run: ansible-lint playbooks/site.yml
