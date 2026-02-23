@@ -1,0 +1,31 @@
+- name: Basic Server Hardening # Also includes default apps, potterman account and ZeroTier installation
+  hosts: all:!ansible_master:!workstations
+  become: true
+  roles:
+    - common
+
+- name: Caddy Reverse Proxy
+  hosts: pve
+  become: true
+  roles:
+    - caddy
+
+- name: Docker Containers
+  hosts: docker_nodes
+  become: true
+  roles:
+    - docker
+
+- name: VPS Services
+  hosts: ionos_vps
+  become: true
+  roles:
+    - teamspeak
+    - seafile
+
+- name: Internal Services
+  hosts: debian-docker
+  become: true
+  roles:
+    - homepage
+    - authentik
