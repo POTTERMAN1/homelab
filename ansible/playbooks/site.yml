@@ -1,5 +1,0 @@
-- name: 1. Core Workstation Baseline
-  import_playbook: baseline_setup_workstation.yml
-
-- name: 2. Teamspeak 6 Server | Docker Deployment | IONOS VPS
-  import_playbook: deploy_teamspeak6_server.yml
