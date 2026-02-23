@@ -1,0 +1,36 @@
+- name: Create Authentik Directories
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    owner: "1000"   # The UID Authentik expects
+    group: "1000"   # The GID Authentik expects
+    mode: '0755'
+  loop:
+    - "{{ authentik_root }}"
+    - "{{ authentik_root }}/media"
+    - "{{ authentik_root }}/certs"
+    - "{{ authentik_root }}/custom-templates"
+
+- name: Render .env File
+  ansible.builtin.template:
+    src: templates/authentik_env.j2
+    dest: "{{ authentik_root }}/.env"
+    mode: '0600'
+
+- name: Render Docker Compose
+  ansible.builtin.template:
+    src: templates/authentik_compose.yaml.j2
+    dest: "{{ authentik_root }}/docker-compose.yml"
+    mode: '0600'
+
+- name: Start Authentik Stack
+  community.docker.docker_compose_v2:
+    project_src: "{{ authentik_root }}"
+    state: present
+    pull: always
+
+- name: Wait for Authentik Server (Port 9000)
+  ansible.builtin.wait_for:
+    port: 9000
+    delay: 15
+    timeout: 120
