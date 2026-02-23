@@ -1,0 +1,85 @@
+- name: Ensure 'potterman' exists with sudo rights
+  ansible.builtin.user:
+    name: potterman
+    groups: sudo
+    shell: /usr/bin/bash
+    append: true
+
+- name: Ensure SSH keys are authorized
+  ansible.posix.authorized_key:
+    user: potterman
+    state: present
+    key: "{{ lookup('file', item) }}"
+  loop:
+    - "~/.ssh/id_ed25519.pub" # ansible-main
+    - "~/.ssh/cachy_os_key.pub" # cachy-os
+
+- name: Zero-Password Sudo for potterman
+  ansible.builtin.copy:
+    content: "potterman ALL=(ALL) NOPASSWD:ALL"
+    dest: /etc/sudoers.d/potterman
+    mode: '0440'
+    validate: /usr/sbin/visudo -csf %s
+
+- name: Harden SSH Configuration
+  ansible.builtin.lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: "{{ item.regexp }}"
+    line: "{{ item.line }}"
+    validate: /usr/sbin/sshd -t -f %s
+  loop:
+    - { regexp: '^#?PasswordAuthentication', line: 'PasswordAuthentication no' }
+    - { regexp: '^#?PermitRootLogin', line: 'PermitRootLogin no' }
+  notify: Restart SSH
+
+- name: Install baseline utilities
+  ansible.builtin.package:
+    name:
+      - fish
+      - git
+      - curl
+      - htop
+      - ufw
+      - neovim
+      - nfs-common
+    state: present
+
+- name: Switch "potterman" to fish shell
+  ansible.builtin.user:
+    name: potterman
+    shell: /usr/bin/fish
+    append: true
+
+- name: Join ZeroTier Mesh
+  ansible.builtin.shell: |
+    set -o pipefail
+    if ! command -v zerotier-cli &> /dev/null; then
+      curl -s https://install.zerotier.com | bash
+    fi
+    zerotier-cli join {{ vault_zerotier_network_id }}
+  args:
+    executable: /bin/bash
+    creates: /var/lib/zerotier-one/networks.d/{{ vault_zerotier_network_id }}.conf
+  register: zt_join
+  changed_when: "'200 join ok' in zt_join.stdout"
+
+- name: Prompt for manual network approval
+  ansible.builtin.debug:
+    msg: Approve new device in ZeroTier Network
+
+- name: Wait for NAS to be reachable via ZeroTier
+  ansible.builtin.wait_for:
+    host: "{{ nas_mount_ip }}"
+    port: 2049
+    state: started
+    delay: 5
+    timeout: 300
+  when: zt_join is changed or ansible_facts['nodename'] in groups['external_network']
+
+- name: Ensure NAS is mounted
+  ansible.posix.mount:
+    path: /mnt/NAS_ZFS
+    src: "{{ nas_mount_ip }}:/export/NAS_ZFS"
+    fstype: nfs
+    opts: "defaults,_netdev,nofail"
+    state: present
