@@ -24,6 +24,9 @@ jobs:
         run: |
           pip3 install ansible ansible-lint yamllint --break-system-packages
 
+      - name: Set up Ansible Vault Password
+        run: echo "${{ secrets.ANSIBLE_VAULT_PASS }}" > /root/.ansible_vault_pass
+
       - name: Run YAML Lint
         run: yamllint .
         continue-on-error: true
