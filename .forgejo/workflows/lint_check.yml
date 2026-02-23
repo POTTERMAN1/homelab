@@ -19,14 +19,6 @@ jobs:
         run: |
           apt-get update
           apt-get install -y python3 python3-pip
-      - name: Debug Repository Structure
-        run: |
-          echo  "Current Directory"
-          pwd
-          echo  "Root Contents"
-          ls -la
-          echo  "Finding Site Playbook"
-          find . -name "site.y*ml"
 
       - name: Install Linters
         run: |
@@ -38,4 +30,4 @@ jobs:
 
       - name: Run Ansible Lint
         working-directory: ./ansible
-        run: ansible-lint playbooks/site.yml
+        run: ansible-lint site.yml
