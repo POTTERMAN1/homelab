@@ -1,9 +1,17 @@
 # Changelog - Homelab Project
 
-## [0.2.4] - 2026-02-23 - First Step of Migration Complete & GitHub Mirroring
+## [0.3.0] - 2026-02-23 - Role Refactor & CI/CD Pipelines
 ### Added
+- Feat: Created `.forgejo/workflows/ci-lint.yml` to automatically run `yamllint` and `ansible-lint` against the `staging` branch.
+- Feat: Integrated Ansible Vault securely into the Forgejo runner using `ANSIBLE_VAULT_PASS` repository secrets to allow dynamic linting.
+- Feat: Created `.forgejo/workflows/mirror.yml` to automatically push the `main` branch to a GitHub mirror repository.
+- Feat: Created `.github/workflows/deploy-docs.yml` to automatically build and deploy the MkDocs documentation to GitHub Pages.
+- Docs: Added documentation for Terraform's role in provisioning the initial `ansible-main` control node on Proxmox.
 
-
+### Changed
+- Chore: Executed a massive architectural refactor, converting flat playbooks into isolated Ansible Roles (`common`, `caddy`, `docker`, `seafile`, `authentik`, `homepage`, `teamspeak`).
+- Chore: Renamed role variables (e.g., `common_zt_join`, `docker_user_group_check`) across all playbooks to strictly adhere to `ansible-lint` best practices and avoid variable collisions.
+- Chore: Caddy reverse proxy now dynamically routes traffic strictly through the ZeroTier mesh IPs using Ansible's `hostvars` dictionary.
 
 ## [0.2.3] - 2026-02-19 - The Great Recovery & Hardening
 ### Added

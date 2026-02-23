@@ -26,7 +26,7 @@
     - [x] Convert Docker Compose stacks to Ansible `community.docker` modules.
     - [ ] **Logic & Orchestration:** Implement `depends_on` and `healthcheck` via Ansible wait-loops.
     - [x] Remove redundant Komodo from the stack.
-    - [ ] Add `staging` branch/logic to repository and deploy a dedicated `staging` runner.
+    - [x] Add `staging` branch/logic to repository and deploy a dedicated `staging` runner.
     - [x] Forgejo Actions (CI/CD): Create a pipeline that triggers on git push to lint YAML files and run a "check mode" (dry-run) of playbooks.
     - [ ] Infracost / Policy Check: Add a step in the CI/CD to estimate cloud costs or check for open security groups before Terraform applies.
 - [ ] **Terraform Init and Refactor (The Builder)**
