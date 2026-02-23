@@ -37,7 +37,7 @@
 
 - name: Set seahub configuration path
   ansible.builtin.set_fact:
-    seahub_conf_dir: "{{ item.path }}"
+    seafile_seahub_conf_dir: "{{ item.path }}"
   loop: "{{ seafile_found_dirs.files }}"
   # Targets the specific config folder inside the shared volume
   when: "'seafile/conf' in item.path"
