@@ -19,8 +19,8 @@ jobs:
         with:
           python-version: 3.x
 
-      - name: Install MkDocs and Material Theme
-        run: pip install mkdocs-material
+      - name: Install MkDocs and Material Theme # non 2.0 for now, pending migration in Phase 3
+        run: pip install "mkdocs<2.0" mkdocs-material
 
       - name: Build and Deploy Docs
         run: mkdocs gh-deploy --force

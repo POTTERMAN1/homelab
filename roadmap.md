@@ -76,6 +76,10 @@
   - [ ] Git methology and principles
   - [ ] Updated network topology
   - [ ] A guide for new "onboarding" process.
+- [ ] **Documentation Generator Migration (Zensical)**
+  - [ ] Evaluate Zensical once it reaches a stable release.
+  - [ ] Migrate `mkdocs.yml` configuration and extensions to the new Zensical format.
+  - [ ] Update `.github/workflows/deploy-docs.yml` to use the Zensical build commands instead of MkDocs.
 
 ## Phase 4: Proxmox & PBS "Absolute Zero" Recovery
 
