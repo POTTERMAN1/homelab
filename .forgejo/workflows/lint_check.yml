@@ -9,19 +9,20 @@ on:
 
 jobs:
   lint:
-    runs-on: self-hosted
+    runs-on: docker
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: 3.x
+      # Replaces actions/setup-python completely
+      - name: Install System Dependencies
+        run: |
+          apt-get update
+          apt-get install -y python3 python3-pip
 
       - name: Install Linters
         run: |
-          pip install ansible ansible-lint yamllint
+          pip3 install ansible ansible-lint yamllint --break-system-packages
 
       - name: Run YAML Lint
         run: yamllint .
