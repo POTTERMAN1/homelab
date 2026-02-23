@@ -30,6 +30,8 @@ markdown_extensions:
                             format: !!python/name:pymdownx.superfences.fence_code_format
         - admonition
         - footnotes
+        - pymdownx.snippets:
+                  base_path: "."
 
 nav:
         - Home: index.md
