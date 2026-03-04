@@ -1,0 +1,27 @@
+# Task that deploys Pihole Docker container
+
+
+
+
+
+services:
+  pihole:
+    hostname: pihole
+    image: pihole/pihole:2025.11.1
+    ports:
+      # DNS Ports
+      - "53:53/tcp"
+      - "53:53/udp"
+      # Default HTTP Port
+      - "800:80/tcp"
+      # Default HTTPs Port. FTL will generate a self-signed certificate
+      - "4443:443/tcp"
+    env_file:
+      - ./pihole.env
+    environment:
+      - TZ=${TZ}
+      - FTLCONF_webserver_api_password=${FTLCONF_webserver_api_password}
+      - FTLCONF_dns_listeningMode=${FTLCONF_dns_listeningMode}
+    volumes:
+      - /srv/docker/pihole/config:/etc/pihole
+    restart: unless-stopped
