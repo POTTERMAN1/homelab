@@ -61,7 +61,7 @@
     executable: /bin/bash
     creates: /var/lib/zerotier-one/networks.d/{{ vault_zerotier_network_id }}.conf
   register: common_zt_join
-  changed_when: "'200 join ok' in zt_join.stdout"
+  changed_when: "'200 join ok' in common_zt_join.stdout"
 
 - name: Prompt for manual network approval
   ansible.builtin.debug:
@@ -74,7 +74,7 @@
     state: started
     delay: 5
     timeout: 300
-  when: zt_join is changed or ansible_facts['nodename'] in groups['external_network']
+  when: common_zt_join is changed or ansible_facts['nodename'] in groups['external_network']
 
 - name: Ensure NAS is mounted
   ansible.posix.mount:
