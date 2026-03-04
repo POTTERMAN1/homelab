@@ -1,0 +1,19 @@
+# This is the file that stores data of the services
+# Domain names, subdomains, ports etc. for Caddy automation
+
+global_docker_base_path: "/opt"
+global_nas_mount_path: "/mnt/NAS_ZFS"
+global_timezone: "Europe/Warsaw"
+
+app_services:
+  pihole:
+    subdomain: "pihole"
+    domain: "potterman.party"
+    internal_port:
+    root_path: "{{ global_docker_base_path }}/pihole"
+
+  paperless:
+    subdomain: "paperless"
+    domain: "potterman.party"
+    internal_port:
+    root_path: "{{ global_docker_base_path }}/paperless"
