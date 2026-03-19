@@ -20,7 +20,6 @@
   hosts: ionos_vps
   become: true
   roles:
-    - teamspeak
     - seafile
 
 - name: Internal Services
@@ -29,3 +28,5 @@
   roles:
     - homepage
     - authentik
+    - firefly
+    - foundryvtt
