@@ -12,7 +12,7 @@
 
 - name: Render Docker Compose
   ansible.builtin.template:
-    src: templates/seafile_compose.yaml.j2
+    src: templates/seafile_docker-compose.yaml.j2
     dest: "{{ seafile_root }}/docker-compose.yml"
     mode: "0644"
 

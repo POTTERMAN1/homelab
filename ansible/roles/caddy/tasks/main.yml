@@ -14,7 +14,7 @@
 
 - name: Deploy Caddyfile Template
   ansible.builtin.template:
-    src: Caddyfile.j2
+    src: templates/Caddyfile.j2
     dest: /etc/caddy/Caddyfile
     mode: "0644" # Owner can read/write but not execute
     validate: caddy validate --adapter caddyfile --config %s

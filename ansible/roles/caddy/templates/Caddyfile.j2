@@ -100,11 +100,28 @@ seafile.potterman.party {
 
 foundry.potterman.party {
     import cloudflare_tls
-    reverse_proxy {{ hostvars['cachy-os']['zerotier_ip'] }}:30000
+    reverse_proxy {{ hostvars['debian-docker']['zerotier_ip'] }}:30000
 }
 
 # Identity Provider (SSO)
 auth.potterman.party {
     import cloudflare_tls
     reverse_proxy {{ hostvars['debian-docker']['zerotier_ip'] }}:9000
+}
+
+# Firefly III
+firefly.potterman.party {
+    import cloudflare_tls
+    forward_auth {{ hostvars['debian-docker']['zerotier_ip'] }}:9000 {
+        uri /outpost.goauthentik.io/auth/caddy
+        copy_headers X-Authentik-Username X-Authentik-Groups X-Authentik-Entitlements X-Authentik-Email X-Authentik-Name X-Authentik-Uid
+        trusted_proxies private_ranges
+        }
+    reverse_proxy {{ hostvars['debian-docker']['zerotier_ip'] }}:{{ app_services.firefly.internal_port }}
+}
+
+# Terraria Server (SSO)
+terraria.potterman.party {
+    import cloudflare_tls
+    reverse_proxy {{ hostvars['cachy-os']['zerotier_ip'] }}:7777
 }
