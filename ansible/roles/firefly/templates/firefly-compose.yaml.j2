@@ -1,0 +1,44 @@
+services:
+  app:
+    image: fireflyiii/core:version-6.5.4
+    hostname: app
+    container_name: firefly_iii_core
+    restart: always
+    volumes:
+      - "{{ app_services.firefly.root_path }}/upload:/var/www/html/storage/upload"
+    env_file: .env
+    networks:
+      - firefly_iii
+    ports:
+      - "{{ app_services.firefly.internal_port }}:8080"
+    depends_on:
+      - db
+  db:
+    image: mariadb:11.8
+    hostname: db
+    container_name: firefly_iii_db
+    restart: always
+    env_file: .env
+    networks:
+      - firefly_iii
+    volumes:
+      - "{{ app_services.firefly.root_path }}/mysql:/var/lib/mysql"
+  cron:
+    image: alpine:3.23.3
+    restart: always
+    container_name: firefly_iii_cron
+    env_file: .env
+    command: sh -c "
+      apk add tzdata && \
+      (ln -s /usr/share/zoneinfo/$$TZ /etc/localtime || true) && \
+      echo \"0 3 * * * wget -qO- http://app:8080/api/v1/cron/$$STATIC_CRON_TOKEN;echo\"
+      | crontab - && \
+      crond -f -L /dev/stdout"
+    networks:
+      - firefly_iii
+    depends_on:
+      - app
+
+networks:
+  firefly_iii:
+    driver: bridge
