@@ -1,0 +1,35 @@
+- name: Ensure Local Foundry Directories Exist
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    owner: "1000"
+    group: "1000"
+    mode: '0755'
+  loop:
+    - "{{ app_services.foundryvtt.root_path }}/"
+    - "{{ app_services.foundryvtt.root_path }}/foundry_user_data"
+
+- name: Render Healthcheck
+  ansible.builtin.template:
+    src: templates/healthcheck.js.j2
+    dest: "{{ app_services.foundryvtt.root_path }}/healthcheck.js"
+    mode: "0644"
+
+- name: Render Dockerfile
+  ansible.builtin.template:
+    src: templates/Dockerfile.j2
+    dest: "{{ app_services.foundryvtt.root_path }}/Dockerfile"
+    mode: "0644"
+
+- name: Render Docker Compose
+  ansible.builtin.template:
+    src: templates/foundryvtt_docker-compose.yaml.j2
+    dest: "{{ app_services.foundryvtt.root_path }}/docker-compose.yml"
+    mode: "0644"
+
+- name: Spin up FoundryVTT
+  community.docker.docker_compose_v2:
+    project_src: "{{ app_services.foundryvtt.root_path }}"
+    state: present
+    build: always
+    wait: true
