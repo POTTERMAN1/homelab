@@ -2,13 +2,14 @@ resource "proxmox_virtual_environment_pool" "backup_all_vm" {
   pool_id = "backup_all_vm"
   comment = "Managed by Terraform"
 }
-
+# TODO MIGRATION
 resource "proxmox_virtual_environment_container" "ansible_hub" {
   description  = "Managed by Terraform"
   pool_id      = proxmox_virtual_environment_pool.backup_all_vm.id
   node_name    = var.pve_node_name
   vm_id        = var.node_id
   unprivileged = true
+  tags         = ["proxmox", "vm", "ansible", "terraform", "MIGRATION"]
 
   initialization {
     hostname = "ansible-main"
@@ -36,6 +37,11 @@ resource "proxmox_virtual_environment_container" "ansible_hub" {
     type             = "debian"
   }
 
+  cpu {
+    architecture = "amd64"
+    cores        = 2
+    units        = 1024
+  }
   disk {
     datastore_id = "local-lvm"
     size         = 20
@@ -47,7 +53,8 @@ resource "proxmox_virtual_environment_container" "ansible_hub" {
   }
 
   memory {
-    dedicated = 1024
+    dedicated = 4096
+    swap      = 512
   }
   provisioner "remote-exec" {
     inline = [
@@ -70,4 +77,24 @@ resource "proxmox_virtual_environment_container" "ansible_hub" {
     }
 
   }
+}
+
+
+#module "ansible_hub" {
+#  source = "./modules/proxmox-lxc"
+
+#  vm_id     = 105
+#  hostname  = "ansible-main"
+#  dedicated = 4096
+#  cores     = 2
+#}
+module "k3s_node_01" {
+  source = "./modules/proxmox-vm"
+
+  hostname  = "k3s-01"
+  vm_id     = 201
+  dedicated = 4096
+  floating  = 4096
+  size      = 30
+  tags      = ["proxmox", "terraform", "vm", "k3"]
 }

@@ -16,3 +16,16 @@ variable "ssh_public_key" {
   default     = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHPtN2ntV0h4uw/Ej4yqkLszk5coARGufSFjU+EdowI2 potterman@potterman"
 
 }
+
+
+variable "proxmox_ve_endpoint" {
+  description = "Proxmox VE API endpoint URL"
+  type        = string
+  sensitive   = true
+}
+
+variable "proxmox_api_token" {
+  description = "Proxmox VE API Token"
+  type        = string
+  sensitive   = true
+}
