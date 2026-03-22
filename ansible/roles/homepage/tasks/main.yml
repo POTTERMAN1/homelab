@@ -1,6 +1,6 @@
 - name: Ensure Config Directory exists
   ansible.builtin.file:
-    path: "{{ homepage_root }}/config"
+    path: "{{ app_services.homepage.root_path }}/config"
     state: directory
     owner: "1000"
     group: "1000"
@@ -9,13 +9,13 @@
 - name: Render Docker Compose
   ansible.builtin.template:
     src: templates/homepage_compose.yaml.j2
-    dest: "{{ homepage_root }}/docker-compose.yml"
+    dest: "{{ app_services.homepage.root_path }}/docker-compose.yml"
     mode: "0600"
 
 - name: Deploy Settings with Proxy Trust
   ansible.builtin.template:
     src: templates/homepage_settings.yaml.j2
-    dest: "{{ homepage_root }}/config/settings.yaml"
+    dest: "{{ app_services.homepage.root_path }}/config/settings.yaml"
     owner: "1000"
     group: "1000"
     mode: "0644"
@@ -24,7 +24,7 @@
 - name: Deploy Homepage Services
   ansible.builtin.template:
     src: templates/homepage_services.yaml.j2
-    dest: "{{ homepage_root }}/config/services.yaml"
+    dest: "{{ app_services.homepage.root_path }}/config/services.yaml"
     owner: "1000"
     group: "1000"
     mode: "0644"
@@ -32,6 +32,6 @@
 
 - name: Start Homepage Stack
   community.docker.docker_compose_v2:
-    project_src: "{{ homepage_root }}"
+    project_src: "{{ app_services.homepage.root_path }}"
     state: present
     pull: always

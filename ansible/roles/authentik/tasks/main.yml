@@ -6,26 +6,26 @@
     group: "1000"   # The GID Authentik expects
     mode: '0755'
   loop:
-    - "{{ authentik_root }}"
-    - "{{ authentik_root }}/media"
-    - "{{ authentik_root }}/certs"
-    - "{{ authentik_root }}/custom-templates"
+    - "{{ app_services.authentik.root_path }}"
+    - "{{ app_services.authentik.root_path }}/media"
+    - "{{ app_services.authentik.root_path }}/certs"
+    - "{{ app_services.authentik.root_path }}/custom-templates"
 
 - name: Render .env File
   ansible.builtin.template:
     src: templates/authentik_env.j2
-    dest: "{{ authentik_root }}/.env"
+    dest: "{{ app_services.authentik.root_path }}/.env"
     mode: '0600'
 
 - name: Render Docker Compose
   ansible.builtin.template:
     src: templates/authentik_compose.yaml.j2
-    dest: "{{ authentik_root }}/docker-compose.yml"
+    dest: "{{ app_services.authentik.root_path }}/docker-compose.yml"
     mode: '0600'
 
 - name: Start Authentik Stack
   community.docker.docker_compose_v2:
-    project_src: "{{ authentik_root }}"
+    project_src: "{{ app_services.authentik.root_path }}"
     state: present
     pull: always
 
