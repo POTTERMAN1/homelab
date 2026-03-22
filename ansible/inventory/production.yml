@@ -51,7 +51,7 @@ all:
       hosts:
         k3s-node1:
           ansible_host: 192.168.2.201
-          zerotier_ip:
+          zerotier_ip: 192.168.192.174
           ansible_user: potterman
     # Groups based on networks
 
