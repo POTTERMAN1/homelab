@@ -1,9 +1,0 @@
-{
-	"folders": [
-		{
-			"uri": "vscode-remote://ssh-remote+potterman@192.168.2.102/srv"
-		}
-	],
-	"remoteAuthority": "ssh-remote+potterman@192.168.2.102",
-	"settings": {}
-}
