@@ -3,12 +3,14 @@
 .ansible_vault_pass
 .ansible_cache/
 *.lock
+.ansible/
 
 # Terraform
 .terraform/
 .terraform.lock.hcl
 *.tfstate
 *.tfstate.backup
+*.tfstate.*.backup
 *.tfvars
 *.tfvars.json
 override.tf
@@ -32,6 +34,10 @@ Thumbs.db
 # VSCodium 
 .vscode/
 .history/
+vscode-workspaces/
 
 # FoundryVTT
 FoundryVTT-Node-*.zip
+
+# Kubernetes secrets in configmaps
+kubernetes/garage/configmap.yaml
