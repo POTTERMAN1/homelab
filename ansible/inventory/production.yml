@@ -6,6 +6,7 @@ all:
       hosts:
         pve:
         debian-docker:
+        k3s-node1:
         omv:
         cachy-os:
         ionos_vps:
@@ -46,6 +47,12 @@ all:
           ansible_host: 127.0.0.1
           ansible_connection: local
 
+    k3s:
+      hosts:
+        k3s-node1:
+          ansible_host: 192.168.2.201
+          zerotier_ip:
+          ansible_user: potterman
     # Groups based on networks
 
     external_network:
@@ -64,3 +71,4 @@ all:
         ansible-main:
         omv:
         debian-docker:
+        k3s-node1:

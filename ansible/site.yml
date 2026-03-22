@@ -30,3 +30,7 @@
     - authentik
     - firefly
     - foundryvtt
+
+- name: Kubernetes
+  hosts: k3s
+  become: true
