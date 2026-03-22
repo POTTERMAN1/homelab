@@ -54,3 +54,9 @@ app_services:
     subdomain: "terraria"
     domain: "potterman.party"
     internal_port: 7777
+
+  garage:
+    type: "k3"
+    subdomain: "s3"
+    domain: "potterman.party"
+    internal_port: 30900
