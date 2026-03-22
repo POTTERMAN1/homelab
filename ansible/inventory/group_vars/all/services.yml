@@ -31,3 +31,26 @@ app_services:
     internal_port: 30000
     root_path: "{{ global_docker_base_path }}/foundryvtt"
     foundry_user_data_path: "{{ global_nas_mount_path }}/foundryvtt/foundry_user_data"
+
+  authentik:
+    subdmain: "auth"
+    domain: "potterman.party"
+    internal_port: 9000
+    root_path: "{{ global_docker_base_path }}/authentik"
+
+  seafile:
+    subdomain: "seafile"
+    domain: "potterman.party"
+    internal_port: 8060
+    root_path: "{{ global_docker_base_path }}/seafile/config"
+
+  homepage:
+    subdmain: "homepage"
+    domain: "potterman.party"
+    internal_port: 3005
+    root_path: "{{ global_docker_base_path }}/homepage"
+
+  terraria:
+    subdomain: "terraria"
+    domain: "potterman.party"
+    internal_port: 7777
