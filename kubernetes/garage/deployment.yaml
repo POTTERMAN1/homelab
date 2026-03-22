@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: garage-deployment
+  namespace: garage
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: garage
+  template:
+    metadata:
+      labels:
+        app: garage
+    spec:
+      containers:
+        - name: garage
+          image: dxflrs/garage:v2.2.0
+          ports:
+            - containerPort: 3900
+              name: s3-api
+            - containerPort: 3901
+              name: rpc
+            - containerPort: 3903
+              name: admin
+          resources:
+            requests:
+              cpu: 500m
+              memory: 512Mi
+            limits:
+              cpu: 1000m
+              memory: 1Gi
+          imagePullPolicy: IfNotPresent
+          volumeMounts:
+            - name: config
+              mountPath: "/etc/garage.toml"
+              subPath: garage.toml
+            - name: metadata
+              mountPath: "/var/lib/garage/meta"
+            - name: data
+              mountPath: "/var/lib/garage/data"
+      volumes:
+        - name: config
+          configMap:
+            name: garage-config
+        - name: metadata
+          persistentVolumeClaim:
+            claimName: pvc-garage-metadata
+        - name: data
+          persistentVolumeClaim:
+            claimName: pvc-garage-data

@@ -1,0 +1,127 @@
+# templates/Caddyfile.j2
+{
+    debug
+    http_port 80
+    https_port 443
+}
+
+# The Cloudflare DNS-01 Challenge Snippet
+(cloudflare_tls) {
+    tls {
+        dns cloudflare {env.CLOUDFLARE_API_TOKEN}
+    }
+}
+
+# Infrastructure
+proxmox.potterman.party {
+    import cloudflare_tls
+    # PVE ZT IP
+    reverse_proxy {{ hostvars['pve']['zerotier_ip'] }}:8006 {
+        transport http {
+            tls_insecure_skip_verify
+        }
+    }
+}
+
+pbs.potterman.party {
+    import cloudflare_tls
+    reverse_proxy {{ hostvars['pve']['zerotier_ip'] }}:8007 {
+        transport http {
+            tls_insecure_skip_verify
+        }
+    }
+}
+
+forgejo.potterman.party {
+    import cloudflare_tls
+    reverse_proxy {{ hostvars['debian-docker']['zerotier_ip'] }}:3000
+}
+
+# NAS
+nas.potterman.party {
+    import cloudflare_tls
+    # OMV NAS ZT IP
+    reverse_proxy {{ hostvars['omv']['zerotier_ip'] }}:80
+}
+
+# Pihole | DNS Adblock
+pihole.potterman.party {
+    import cloudflare_tls
+    reverse_proxy {{ hostvars['debian-docker']['zerotier_ip'] }}:800
+}
+
+# The Arr Stack & Media
+sonarr.potterman.party {
+    import cloudflare_tls
+    reverse_proxy {{ hostvars['debian-docker']['zerotier_ip'] }}:8989
+}
+
+radarr.potterman.party {
+    import cloudflare_tls
+    reverse_proxy {{ hostvars['debian-docker']['zerotier_ip'] }}:7878
+}
+
+prowlarr.potterman.party {
+    import cloudflare_tls
+    reverse_proxy {{ hostvars['debian-docker']['zerotier_ip'] }}:9696
+}
+
+decypharr.potterman.party {
+    import cloudflare_tls
+    reverse_proxy {{ hostvars['debian-docker']['zerotier_ip'] }}:8282
+}
+
+sabnzbd.potterman.party {
+    import cloudflare_tls
+    reverse_proxy {{ hostvars['debian-docker']['zerotier_ip'] }}:8585
+}
+
+jellyfin.potterman.party {
+    import cloudflare_tls
+    reverse_proxy {{ hostvars['debian-docker']['zerotier_ip'] }}:8096
+}
+
+jellyseer.potterman.party {
+    import cloudflare_tls
+    reverse_proxy {{ hostvars['debian-docker']['zerotier_ip'] }}:5055
+}
+
+# Dashboard
+home.potterman.party {
+    import cloudflare_tls
+    reverse_proxy {{ hostvars['debian-docker']['zerotier_ip'] }}:3005
+}
+
+# Seafile | VPS
+seafile.potterman.party {
+    import cloudflare_tls
+    reverse_proxy {{ hostvars['ionos_vps']['zerotier_ip'] }}:8060
+}
+
+foundry.potterman.party {
+    import cloudflare_tls
+    reverse_proxy {{ hostvars['debian-docker']['zerotier_ip'] }}:30000
+}
+
+# Identity Provider (SSO)
+auth.potterman.party {
+    import cloudflare_tls
+    reverse_proxy {{ hostvars['debian-docker']['zerotier_ip'] }}:9000
+}
+
+# Firefly III
+firefly.potterman.party {
+    import cloudflare_tls
+    forward_auth {{ hostvars['debian-docker']['zerotier_ip'] }}:9000 {
+        uri /outpost.goauthentik.io/auth/caddy
+        copy_headers X-Authentik-Username X-Authentik-Groups X-Authentik-Entitlements X-Authentik-Email X-Authentik-Name X-Authentik-Uid
+        trusted_proxies private_ranges
+        }
+    reverse_proxy {{ hostvars['debian-docker']['zerotier_ip'] }}:{{ app_services.firefly.internal_port }}
+}
+
+# S3 Object Storage (Garage on K3s)
+s3.potterman.party {
+    import cloudflare_tls
+    reverse_proxy {{ hostvars['k3s-node1']['zerotier_ip'] }}:30900
+}

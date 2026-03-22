@@ -1,0 +1,13 @@
+services:
+  foundryvtt:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+      args:
+        FOUNDRY_VERSION: "{{ app_services.foundryvtt.foundry_version }}"
+    container_name: foundryvtt
+    restart: unless-stopped
+    ports:
+      - "30000:30000"
+    volumes:
+      - "{{ app_services.foundryvtt.foundry_user_data_path }}:/foundry_user_data"

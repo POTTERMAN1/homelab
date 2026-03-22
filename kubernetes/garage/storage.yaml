@@ -1,0 +1,59 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: pv-garage-metadata
+spec:
+  capacity:
+    storage: 512Mi
+  volumeMode: Filesystem
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: garage-local
+  hostPath:
+    path: "/var/lib/garage/meta"
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: pv-garage-data
+spec:
+  capacity:
+    storage: 10Gi
+  volumeMode: Filesystem
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: garage-nfs
+  hostPath:
+    path: "/mnt/NAS_ZFS/garage-data"
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: pvc-garage-metadata
+  namespace: garage
+spec:
+  resources:
+    requests:
+      storage: 512Mi
+  volumeMode: Filesystem
+  storageClassName: garage-local
+  volumeName: pv-garage-metadata
+  accessModes:
+    - ReadWriteOnce
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: pvc-garage-data
+  namespace: garage
+spec:
+  resources:
+    requests:
+      storage: 10Gi
+  volumeMode: Filesystem
+  storageClassName: garage-nfs
+  volumeName: pv-garage-data
+  accessModes:
+    - ReadWriteOnce

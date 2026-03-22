@@ -1,0 +1,29 @@
+- name: Ensure that Firefly Directories exist on the system
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    owner: "1000"
+    group: "1000"
+    mode: '0755'
+  loop:
+    - "{{ app_services.firefly.root_path }}"
+    - "{{ app_services.firefly.root_path }}/mysql"
+    - "{{ app_services.firefly.root_path }}/upload"
+
+- name: Render .env File
+  ansible.builtin.template:
+    src: templates/firefly_env.j2
+    dest: "{{ app_services.firefly.root_path }}/.env"
+    mode: '0600'
+
+- name: Render Compose File
+  ansible.builtin.template:
+    src: templates/firefly-compose.yaml.j2
+    dest: "{{ app_services.firefly.root_path }}/docker-compose.yaml"
+    mode: "0600"
+
+- name: Start Firefly Stack
+  community.docker.docker_compose_v2:
+    project_src: "{{ app_services.firefly.root_path }}"
+    state: present
+    pull: always
