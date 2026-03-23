@@ -44,6 +44,7 @@ nav:
         - Automation:
                   - Ansible (Config Management): automation/ansible.md
                   - Terraform (Provisioning): automation/terraform.md
+                  - Kubernetes (K3s): automation/kubernetes.md
                   - Git (Forgejo & Github Mirror): automation/git.md
                   - Scripts: automation/scripts.md
         - Disaster Recovery:
@@ -55,6 +56,7 @@ nav:
         - Troubleshooting:
                   - Renovate: troubleshooting/renovate.md
                   - Forgejo: troubleshooting/forgejo.md
+                  - Docker: troubleshooting/docker.md
                   - Hardware: troubleshooting/hardware.md
                   - Linux/CachyOS: troubleshooting/cachyos.md
                   - Network: troubleshooting/network.md

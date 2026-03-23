@@ -1,5 +1,48 @@
 # Changelog - Homelab Project
 
+## [0.3.2] - 2026-03-21 - Terraform Modules, K3s & Kubernetes Object Storage
+### Added
+- Feat: Created reusable Terraform module `modules/proxmox-vm` for VM provisioning via cloud-init templates, with configurable CPU, memory, disk, networking, and SSH key injection.
+- Feat: Created reusable Terraform module `modules/proxmox-lxc` for LXC container provisioning with the same modular variable pattern.
+- Feat: Built a Debian 13 (Trixie) cloud-init VM template (ID 9000) on Proxmox for standardized VM provisioning.
+- Feat: Provisioned `k3s-01` (VM 201, `192.168.2.201`) using the new Terraform VM module — first VM deployed entirely through IaC.
+- Feat: Installed K3s (Kubernetes) on `k3s-01`, establishing the cluster's first control-plane node.
+- Feat: Deployed **Garage** (S3-compatible object storage) on Kubernetes using hand-written manifests: Namespace, Secret, ConfigMap, PersistentVolume, PersistentVolumeClaim, Deployment, and Service (NodePort).
+- Feat: Garage backed by NAS storage via hostPath (`/mnt/NAS_ZFS/garage-data`) with metadata on local SSD (`/var/lib/garage/meta`).
+- Feat: Added `k3s-01` to Ansible inventory and applied the `common` hardening role.
+- Feat: Added Caddy reverse proxy entry for `s3.potterman.party` routing to Garage's K3s NodePort (30900).
+- Docs: Updated roadmap with Azure, Kubernetes, and expanded CI/CD pipeline tasks.
+
+### Changed
+- Chore: Upgraded `bpg/proxmox` Terraform provider from `0.93.0` to `~> 0.98`.
+- Chore: Migrated Terraform provider authentication from SSH-only to API token-based auth with sensitive variable handling via `terraform.tfvars`.
+- Chore: Resolved Terraform state drift on `ansible_hub` container (memory 1024→4096, CPU block alignment) to prevent unintended in-place modifications.
+
+### Fixed
+- Issue: Terraform module provider resolution failing due to missing `required_providers` block in child modules (defaulting to `hashicorp/proxmox` instead of `bpg/proxmox`).
+- Issue: Terraform API token permission error (`Pool.Audit`) resolved by correcting privilege separation settings on the Proxmox API token.
+- Issue: Cloud-init SSH key update on running K3s VM failing with `ide2: hotplug problem` — resolved by stopping the VM before applying cloud-init changes.
+
+## [0.3.1] - 2026-03-16 - FoundryVTT, Firefly III & Structural Refactor
+### Added
+- Feat: Deployed **FoundryVTT** on `debian-docker` using a custom-built Docker image with a multi-arg Dockerfile (Node.js 22-slim base, version-pinned build via `ARG`, `.dockerignore` whitelist, custom healthcheck script).
+- Feat: FoundryVTT user data served from NAS via NFS mount (`/mnt/NAS_ZFS/foundry_user_data`) to offload 12GB+ of world data from local disk.
+- Feat: Deployed **Firefly III** (budget tracking) on `debian-docker` with Authentik SSO integration via Caddy `forward_auth` directive.
+- Feat: Created centralized `services.yml` for application service variables, replacing scattered variable definitions across individual role files.
+- Feat: Added Caddy reverse proxy entries for `foundry.potterman.party` and `firefly.potterman.party`.
+
+### Changed
+- Chore: Refactored Ansible role directory from `ansible/playbooks/roles/` to `ansible/roles/` to follow community conventions and resolve VSCode/ansible-lint path resolution warnings.
+- Chore: Updated `ansible.cfg` — changed `roles_path` to `./roles`, removed `playbook_dir` directive.
+- Chore: Migrated role variable references in `authentik`, `homepage`, and `seafile` tasks to use the new `app_services` variable structure from `services.yml`.
+- Chore: Removed old Terraform provider binaries and VSCode workspace files from repository.
+- Chore: FoundryVTT Caddy route updated from `cachy-os` ZeroTier IP to `debian-docker` ZeroTier IP.
+
+### Fixed
+- Issue: FoundryVTT Docker healthcheck failing with HTTP 302 — resolved by accepting 2xx and 3xx status codes as healthy responses.
+- Issue: `debian-docker` disk full (29GB/30GB) during Docker image build — resolved by pruning unused images and build cache (`docker system prune -a`).
+- Issue: Fixed variable naming inconsistencies between Dockerfile `--dataPath`, compose volume mounts, and Ansible task directory names.
+
 ## [0.3.0] - 2026-02-23 - Role Refactor & CI/CD Pipelines
 ### Added
 - Feat: Created `.forgejo/workflows/ci-lint.yml` to automatically run `yamllint` and `ansible-lint` against the `staging` branch.

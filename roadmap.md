@@ -1,4 +1,4 @@
-# 🚀 Project Homelab: Infrastructure & Automation Roadmap
+# Project Homelab: Infrastructure & Automation Roadmap
 
 ## Phase 1: GitOps Foundation & Workspace Optimization
 *(See CHANGELOG for completed Phase 1 tasks)*
@@ -32,12 +32,17 @@
     - [ ] Infracost / Policy Check: Add a step in the CI/CD to estimate cloud costs or check for open security groups before Terraform applies.
     - [ ] Integrate **Trivy** into Forgejo Actions to automatically scan Docker images for CVEs (vulnerabilities) before deployment.
     - [ ] Implement **Gitleaks** or **TruffleHog** in the CI/CD pipeline to block commits that contain exposed API keys or passwords.
-- [ ] **Terraform Init and Refactor (The Builder)**
+- [x] **Terraform Init and Refactor (The Builder)**
   - [x] Initialize Terraform on the `ansible-hub` Deployment server.
-  - [ ] Refactor Terraform code into reusable modules.
-    - [ ] Move all existing PVE hosts to Terraform
-      - [ ] Standardize Cloud-Init deployments (Injecting base `potterman` user and SSH key on boot).
-      - [ ] Standardize Hardware profiles (CPU, RAM, Disk sizing).
+  - [x] Refactor Terraform code into reusable modules.
+    - [x] Created `modules/proxmox-vm` for VM provisioning via cloud-init templates.
+    - [x] Created `modules/proxmox-lxc` for LXC container provisioning.
+    - [x] Built Debian 13 (Trixie) cloud-init VM template (ID 9000) on Proxmox.
+    - [x] Standardize Cloud-Init deployments (Injecting base `potterman` user and SSH key on boot).
+    - [x] Standardize Hardware profiles (CPU, RAM, Disk sizing) via module variables with sensible defaults.
+    - [x] Upgraded `bpg/proxmox` provider from `0.93.0` to `0.98`.
+    - [x] Migrated provider authentication from SSH-only to API token-based auth.
+    - [ ] Move all existing PVE hosts to Terraform (ansible-main LXC migration blocked by state drift - documented as known technical debt).
 - [x] **Github clone & MkDocs migration**
   - [x] Mirror the homelab repository on Github
   - [x] Deploy GitHub Pages for the MkDocs documentation
@@ -45,15 +50,16 @@
 - [ ] **Azure State & Secret Backend:**
     - [ ] **Cloud Onboarding:** Set up an Azure Free Tier account and Resource Group.
     - [ ] **Remote State Backend:** Migrate Terraform state to an **Azure Blob Storage Container** (using Azure Storage Account native state locking). 
-    - [ ] **Local MinIO Deployment:** Deploy a local S3-compatible MinIO instance on the Docker VM via Ansible/Jinja2 (for local high-speed storage).
-    - [ ] **Hybrid Cloud Sync:** Configure a task to sync local MinIO buckets to Azure Blob Storage for disaster recovery, practicing hybrid-cloud data mobility.
-    - [ ] Deploy **HashiCorp Vault** or integrate **Mozilla SOPS** (using Azure Key Vault / AWS KMS for the master key).
+    - [ ] **Local S3 Deployment:** ~~MinIO~~ Deploy **Garage** (S3-compatible object storage) - completed on Kubernetes (see K8s section below).
+    - [ ] **Hybrid Cloud Sync:** Configure a task to sync local Garage buckets to Azure Blob Storage for disaster recovery, practicing hybrid-cloud data mobility.
+    - [ ] Deploy **HashiCorp Vault** or integrate **Mozilla SOPS** (using Azure Key Vault/AWS KMS for the master key).
     - [ ] Refactor Ansible pipelines to fetch secrets dynamically at runtime rather than storing them in Ansible Vault.
 - [ ] **Infrastructure Expansion & VPS Migration:**
     - [x] **Cloud Extension (Ansible):** Provisioned IONOS VPS, automated Docker & DNS, and deployed TeamSpeak over ZeroTier.
     - [x] **Cloud Architecture:** Finalize and deploy "Split-Proxy" architecture for future IONOS VPS.    
     - [x] **Teamspeak 6:** Deploy public-facing TS6 server on the VPS.
     - [x] **Seafile Migration:** Move Seafile instance from local homelab to the public VPS.
+    - [ ] **Seafile S3 Backend:** Connect Seafile to Garage S3 endpoint for overflow storage to NAS.
     - [ ] **Hybrid Backup:** Configure VPS Seafile to mirror/backup data directly to the local OMV NAS.
     - [ ] **Storage Contingency:** Plan and document Cloudflare R2 integration for Seafile in case VPS local storage hits maximum capacity.
     - [ ] **Azure Cloud Extension:** Use Terraform to provision an Azure B1s (Free Tier) Virtual Machine.
@@ -61,27 +67,35 @@
 - [ ] **Continuous Testing (IaC):**
     - [ ] Implement **Checkov** or **Tfsec** in CI/CD to scan Terraform for security misconfigurations (e.g., exposed ports, unencrypted disks) before `terraform apply`.
     - [ ] Evaluate **Molecule** to test Ansible roles in ephemeral Docker containers to ensure idempotency before merging to `main`.
-- [ ] **Cloud-Native Container Orchestration (Kubernetes):**
-    - [ ] Provision a highly available K3s/RKE2 cluster using Terraform and Ansible.
+- [x] **Cloud-Native Container Orchestration (Kubernetes):**
+    - [x] Provision K3s node (`k3s-01`, VM 201) via Terraform module and Ansible common role.
+    - [x] Deploy first Kubernetes workload: **Garage** (S3-compatible object storage) using hand-written manifests (Namespace, Secret, ConfigMap, PV/PVC, Deployment, Service with NodePort).
+    - [x] Garage backed by NAS storage via hostPath with metadata on local SSD.
     - [ ] Migrate stateless applications (e.g., Homepage, Pi-hole) from Ansible Docker modules to **Helm Charts** or **Kustomize**.
     - [ ] Deploy **ArgoCD** or **FluxCD** to continuously monitor the Git repository and automatically pull/sync K8s deployments (True GitOps).
 - [ ] **Identity & SSO + Entra ID Integration:**
     - [x] Deploy **Authentik**.
-    - [ ] Connect existing services (Forgejo, Seafile, etc.) to SSO.
+    - [x] Connect Firefly III to Authentik SSO via Caddy `forward_auth`.
+    - [x] Connect Seafile to Authentik SSO via OIDC.
+    - [ ] Connect remaining services (Forgejo, etc.) to SSO.
     - [ ] **Enterprise Identity:** Federate local Authentik with **Microsoft Entra ID (Azure AD)** via SAML/OIDC, allowing login to your homelab using Microsoft credentials.
 - [ ] **Data Mobility:**
     - [ ] Setup **Rclone** for offsite backup staging.
     - [ ] Daily `rsync` for heavy volume data to OMV NAS.
 - [ ] **Cloud Migration Simulation**
-  - [ ] Document the process of moving Terraform State from local disk to AWS S3
+  - [ ] Document the process of moving Terraform State from local disk to Azure S3
 - [ ] **Container Lifecycle Management:**
     - [ ] Implement explicit Semantic Versioning (SemVer) pinning for all Ansible Docker roles.
     - [ ] Deploy and configure **Renovate** to automate PR generation for container and IaC updates.
+- [x] **Custom Docker Images:**
+    - [x] **FoundryVTT:** Custom Dockerfile (Node.js 22-slim, version-pinned via build ARG, `.dockerignore` whitelist, custom JS healthcheck, NAS-mounted user data).
+    - [x] **Firefly III:** Deployed with Authentik SSO integration via `forward_auth` and `remote_user_guard`.
 
 ## Phase 3: Monitoring, Health & Notifications
 
 - [ ] **Unified Notifications:** Deploy **ntfy.sh** connected to PVE and Ansible.
-- [ ] **Enterprise Observability Stack (Prometheus & Grafana):** - [ ] Deploy Prometheus to scrape metrics, and Grafana to visualize them.
+- [ ] **Enterprise Observability Stack (Prometheus & Grafana):**
+    - [ ] Deploy Prometheus to scrape metrics, and Grafana to visualize them.
     - [ ] Deploy `node_exporter` via Ansible to all Linux nodes, and `windows_exporter` to the Windows Server, creating a unified dashboard.
 - [ ] **Log Centralization:** Evaluate a "Light" log aggregator (Loki).
 - [ ] **Uptime Kuma:** Monitor internal services; alert via ntfy.
@@ -90,7 +104,7 @@
 - [ ] Documentation as Code: MkDocs
 - [ ] **Onboarding Documentation** 
   - [ ] Create a thorough description of the Infrastructure
-  - [ ] Git methology and principles
+  - [ ] Git methodology and principles
   - [ ] Updated network topology
   - [ ] A guide for new "onboarding" process.
 - [ ] **Documentation Generator Migration (Zensical)**
