@@ -1,6 +1,6 @@
 - name: Restart Seafile
   community.docker.docker_compose_v2:
-    project_src: "{{ seafile_root }}"
+    project_src: "{{ app_services.seafile.root_path }}"
     state: restarted
     services:
       - seafile
