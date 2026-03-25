@@ -1,0 +1,13 @@
+services:
+  teamspeak:
+    image: teamspeaksystems/teamspeak6-server:latest
+    container_name: teamspeak6-server
+    restart: unless-stopped
+    ports:
+      - "9987:9987/udp" # Voice Port
+      - "30033:30033/tcp" # File Transfer
+      # - "10080:10080/tcp" # Web Query
+    environment:
+      - TSSERVER_LICENSE_ACCEPTED=accept
+    volumes:
+      - /opt/teamspeak:/var/tsserver
