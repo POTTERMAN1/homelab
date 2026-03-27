@@ -3,114 +3,130 @@
 ## Phase 1: GitOps Foundation & Workspace Optimization
 *(See CHANGELOG for completed Phase 1 tasks)*
 
-## Phase 2: Ansible Migration, SSO & Logic
+## Phase 2: Service Migration, Maintenance & Monitoring
 
-- [x] **Ansible Hub (.105) Hardening:**
-    - [x] Security/Critical: Check Forgejo history and "nuke" the sensitive commits from Phase 1 audit.
-    - [x] Configure `git-sync` or a simple `post-receive` hook to keep CachyOS and Hub in sync via Forgejo.
-    - [x] **Inventory Refactor:** Move to directory structure with `production` and `staging` files.
-    - [x] Centralize variables: Move to `ansible/group_vars/vars.yml`.
-    - [x] Set Vault "human-readable" variables (referencing encrypted strings via clear names).
-- [ ] **Workstation Standardization (Ansible):**
-    - [x] Unify all environments (Debian-Docker, PVE, etc.) to match the CachyOS setup.
-    - [x] Deploy `fish` shell and autocomplete globally.
-    - [x] Configure passwordless `sudo` in `/etc/sudoers.d/` for the `potterman` user.
-    - [x] Deploy `fish` shell, starship prompt, and autocomplete globally.
-    - [ ] Trimming down unused/unneeded default applications across hosts.
-    - [x] **OS Hardening:** Disable root SSH login and enforce SSH-key only authentication across all nodes.
-- [ ] **Ansible Migration & Templating:**
-    - [x] **Vault Setup:** Initialize vault for sensitive service credentials.
-    - [x] **Caddy Deployment:** Deployed Caddy with Cloudflare DNS-01 challenge for wildcard certificates.
-    - [ ] **Jinja2 Transition:** Replace hardcoded `.env` files with `.j2` templates for all Docker services.
-    - [ ] **Reverse Proxy Automation:** Add script for automated routing.
-    - [x] Convert Docker Compose stacks to Ansible `community.docker` modules.
-    - [ ] **Logic & Orchestration:** Implement `depends_on` and `healthcheck` via Ansible wait-loops.
-    - [x] Remove redundant Komodo from the stack.
-    - [x] Add `staging` branch/logic to repository and deploy a dedicated `staging` runner.
-    - [x] Forgejo Actions (CI/CD): Create a pipeline that triggers on git push to lint YAML files and run a "check mode" (dry-run) of playbooks.
-    - [ ] Create a `shellcheck` CI/CD pipeline to Forgejo Actions.
-    - [ ] Infracost / Policy Check: Add a step in the CI/CD to estimate cloud costs or check for open security groups before Terraform applies.
-    - [ ] Integrate **Trivy** into Forgejo Actions to automatically scan Docker images for CVEs (vulnerabilities) before deployment.
-    - [ ] Implement **Gitleaks** or **TruffleHog** in the CI/CD pipeline to block commits that contain exposed API keys or passwords.
-- [x] **Terraform Init and Refactor (The Builder)**
-  - [x] Initialize Terraform on the `ansible-hub` Deployment server.
-  - [x] Refactor Terraform code into reusable modules.
-    - [x] Created `modules/proxmox-vm` for VM provisioning via cloud-init templates.
-    - [x] Created `modules/proxmox-lxc` for LXC container provisioning.
-    - [x] Built Debian 13 (Trixie) cloud-init VM template (ID 9000) on Proxmox.
-    - [x] Standardize Cloud-Init deployments (Injecting base `potterman` user and SSH key on boot).
-    - [x] Standardize Hardware profiles (CPU, RAM, Disk sizing) via module variables with sensible defaults.
-    - [x] Upgraded `bpg/proxmox` provider from `0.93.0` to `0.98`.
-    - [x] Migrated provider authentication from SSH-only to API token-based auth.
-    - [ ] Move all existing PVE hosts to Terraform (ansible-main LXC migration blocked by state drift - documented as known technical debt).
-- [x] **Github clone & MkDocs migration**
-  - [x] Mirror the homelab repository on Github
-  - [x] Deploy GitHub Pages for the MkDocs documentation
-  - [x] Set up GitHub runner to update the docs after any pulls
-- [ ] **Azure State & Secret Backend:**
-    - [ ] **Cloud Onboarding:** Set up an Azure Free Tier account and Resource Group.
-    - [ ] **Remote State Backend:** Migrate Terraform state to an **Azure Blob Storage Container** (using Azure Storage Account native state locking). 
-    - [ ] **Local S3 Deployment:** ~~MinIO~~ Deploy **Garage** (S3-compatible object storage) - completed on Kubernetes (see K8s section below).
-    - [ ] **Hybrid Cloud Sync:** Configure a task to sync local Garage buckets to Azure Blob Storage for disaster recovery, practicing hybrid-cloud data mobility.
-    - [ ] Deploy **HashiCorp Vault** or integrate **Mozilla SOPS** (using Azure Key Vault/AWS KMS for the master key).
-    - [ ] Refactor Ansible pipelines to fetch secrets dynamically at runtime rather than storing them in Ansible Vault.
-- [ ] **Infrastructure Expansion & VPS Migration:**
-    - [x] **Cloud Extension (Ansible):** Provisioned IONOS VPS, automated Docker & DNS, and deployed TeamSpeak over ZeroTier.
-    - [x] **Cloud Architecture:** Finalize and deploy "Split-Proxy" architecture for future IONOS VPS.    
-    - [x] **Teamspeak 6:** Deploy public-facing TS6 server on the VPS.
-    - [x] **Seafile Migration:** Move Seafile instance from local homelab to the public VPS.
-    - [ ] **Seafile S3 Backend:** Connect Seafile to Garage S3 endpoint for overflow storage to NAS.
-    - [ ] **Hybrid Backup:** Configure VPS Seafile to mirror/backup data directly to the local OMV NAS.
-    - [ ] **Storage Contingency:** Plan and document Cloudflare R2 integration for Seafile in case VPS local storage hits maximum capacity.
-    - [ ] **Azure Cloud Extension:** Use Terraform to provision an Azure B1s (Free Tier) Virtual Machine.
-    - [ ] **Hybrid Networking:** Connect the Azure VM to your local Proxmox environment via the ZeroTier SDN mesh.
-- [ ] **Continuous Testing (IaC):**
-    - [ ] Implement **Checkov** or **Tfsec** in CI/CD to scan Terraform for security misconfigurations (e.g., exposed ports, unencrypted disks) before `terraform apply`.
-    - [ ] Evaluate **Molecule** to test Ansible roles in ephemeral Docker containers to ensure idempotency before merging to `main`.
-- [x] **Cloud-Native Container Orchestration (Kubernetes):**
-    - [x] Provision K3s node (`k3s-01`, VM 201) via Terraform module and Ansible common role.
-    - [x] Deploy first Kubernetes workload: **Garage** (S3-compatible object storage) using hand-written manifests (Namespace, Secret, ConfigMap, PV/PVC, Deployment, Service with NodePort).
-    - [x] Garage backed by NAS storage via hostPath with metadata on local SSD.
-    - [ ] Migrate stateless applications (e.g., Homepage, Pi-hole) from Ansible Docker modules to **Helm Charts** or **Kustomize**.
-    - [ ] Deploy **ArgoCD** or **FluxCD** to continuously monitor the Git repository and automatically pull/sync K8s deployments (True GitOps).
-- [ ] **Identity & SSO + Entra ID Integration:**
-    - [x] Deploy **Authentik**.
-    - [x] Connect Firefly III to Authentik SSO via Caddy `forward_auth`.
-    - [x] Connect Seafile to Authentik SSO via OIDC.
-    - [ ] Connect remaining services (Forgejo, etc.) to SSO.
-    - [ ] **Enterprise Identity:** Federate local Authentik with **Microsoft Entra ID (Azure AD)** via SAML/OIDC, allowing login to your homelab using Microsoft credentials.
-- [ ] **Data Mobility:**
-    - [ ] Setup **Rclone** for offsite backup staging.
-    - [ ] Daily `rsync` for heavy volume data to OMV NAS.
-- [ ] **Cloud Migration Simulation**
-  - [ ] Document the process of moving Terraform State from local disk to Azure S3
-- [ ] **Container Lifecycle Management:**
-    - [ ] Implement explicit Semantic Versioning (SemVer) pinning for all Ansible Docker roles.
-    - [ ] Deploy and configure **Renovate** to automate PR generation for container and IaC updates.
-- [x] **Custom Docker Images:**
-    - [x] **FoundryVTT:** Custom Dockerfile (Node.js 22-slim, version-pinned via build ARG, `.dockerignore` whitelist, custom JS healthcheck, NAS-mounted user data).
-    - [x] **Firefly III:** Deployed with Authentik SSO integration via `forward_auth` and `remote_user_guard`.
+### Immediate — Service Migration & Cleanup
+- [ ] **Ansible Service Migration:**
+    - [x] Migrate **Pi-hole** to Ansible role with Jinja2 compose template and version pin in `services.yml`.
+    - [x] Migrate **Arr Stack** (Sonarr, Radarr, Prowlarr, Sabnzbd, Decypharr) to Ansible roles.
+    - [x] Migrate **Jellyfin** and **Jellyseerr** to Ansible roles.
+    - [x] Deploy new **Paperless-ngx** instance via Ansible role.
+    - [ ] Migrate **Forgejo** to Ansible roles.
+    - [ ] Purge legacy manual Docker Compose stacks from `debian-docker` after migration.
+    - [ ] Connect all remaining services to **Authentik SSO** (Forgejo, Jellyfin, etc.).
+- [ ] **Game Server Stack:**
+    - [ ] Evaluate and deploy **Pterodactyl/Pelican** for centralized game server management with web panel.
+    - [ ] Dockerize **Terraria** dedicated server (custom Dockerfile - standalone binary, volume-mounted world saves).
+    - [ ] Deploy **modded Minecraft** server via Pterodactyl or custom Ansible role.
+    - [ ] Configure Caddy/DNS routing for game server access over ZeroTier.
+- [ ] **Host Debloating & Maintenance:**
+    - [ ] Create debloating Bash script for CachyOS workstation.
+    - [ ] Audit all hosts for manually installed packages not in Ansible baseline (`apt-mark showmanual`).
+    - [ ] Configure **unattended-upgrades** for weekly automatic security patches across all nodes.
+    - [ ] Create Ansible playbook for monthly full update cycle with notification, approval, and PBS snapshot before applying.
+    - [ ] Automate Docker cleanup (`docker system prune`) on `debian-docker` via scheduled task.
+    - [ ] Validate `common` role hardening hasn't drifted on long-running hosts.
+- [ ] **Jinja2 Transition:** Replace any remaining hardcoded `.env` files with `.j2` templates across all Docker services.
 
-## Phase 3: Monitoring, Health & Notifications
+### Monitoring, Observability & Dashboards
+- [ ] **Prometheus & Grafana on K3s:**
+    - [ ] Deploy Prometheus via K8s manifests (or Helm chart as a learning exercise).
+    - [ ] Deploy Grafana with persistent storage on NAS.
+    - [ ] Deploy `node_exporter` via Ansible to all Linux nodes for host-level metrics.
+    - [ ] Create dashboards: host health (CPU, RAM, disk), Docker container status, ZFS pool metrics, ZeroTier network throughput.
+- [ ] **Alerting:** Deploy **ntfy.sh** and configure Grafana alert rules to push notifications for disk warnings, service downtime, and high resource usage.
+- [ ] **Log Centralization:** Deploy **Loki** on K3s, configure Promtail on all hosts to ship logs. Correlated logging across Caddy → ZeroTier → Docker → application.
+- [ ] **Uptime Kuma:** Monitor external service availability; alert via ntfy.
 
-- [ ] **Unified Notifications:** Deploy **ntfy.sh** connected to PVE and Ansible.
-- [ ] **Enterprise Observability Stack (Prometheus & Grafana):**
-    - [ ] Deploy Prometheus to scrape metrics, and Grafana to visualize them.
-    - [ ] Deploy `node_exporter` via Ansible to all Linux nodes, and `windows_exporter` to the Windows Server, creating a unified dashboard.
-- [ ] **Log Centralization:** Evaluate a "Light" log aggregator (Loki).
-- [ ] **Uptime Kuma:** Monitor internal services; alert via ntfy.
-- [ ] Custom Tooling (Python/PowerShell): Write a script that uses the Proxmox and **Azure REST API** to generate a summary report of the infrastructure health and billing costs.
-- [ ] **Landing Page:** Set up **Homepage** as the "Crowning Jewel" for easy access.
-- [ ] Documentation as Code: MkDocs
-- [ ] **Onboarding Documentation** 
-  - [ ] Create a thorough description of the Infrastructure
-  - [ ] Git methodology and principles
-  - [ ] Updated network topology
-  - [ ] A guide for new "onboarding" process.
-- [ ] **Documentation Generator Migration (Zensical)**
-  - [ ] Evaluate Zensical once it reaches a stable release.
-  - [ ] Migrate `mkdocs.yml` configuration and extensions to the new Zensical format.
-  - [ ] Update `.github/workflows/deploy-docs.yml` to use the Zensical build commands instead of MkDocs.
+### Ansible & Templating Completion
+- [x] **Vault Setup:** Initialize vault for sensitive service credentials.
+- [x] **Caddy Deployment:** Deployed Caddy with Cloudflare DNS-01 challenge for wildcard certificates.
+- [x] Convert Docker Compose stacks to Ansible `community.docker` modules.
+- [x] Remove redundant Komodo from the stack.
+- [x] Add `staging` branch/logic to repository and deploy a dedicated `staging` runner.
+- [x] Forgejo Actions (CI/CD): Pipeline that lints YAML and Ansible on push to `staging`.
+- [ ] **Reverse Proxy Automation:** Script for automated Caddy routing when new services are added.
+- [ ] **Logic & Orchestration:** Implement `depends_on` and `healthcheck` via Ansible wait-loops where applicable.
+
+### CI/CD Pipeline Expansion
+- [ ] Create a `shellcheck` CI/CD pipeline in Forgejo Actions.
+- [ ] Integrate **Trivy** into Forgejo Actions to scan Docker images for CVEs before deployment.
+- [ ] Implement **Gitleaks** or **TruffleHog** to block commits containing exposed secrets.
+- [ ] Infracost / Policy Check: Estimate cloud costs or check for open security groups before Terraform applies.
+
+### Terraform — Completed & Ongoing
+- [x] Initialize Terraform on `ansible-main`.
+- [x] Created reusable `modules/proxmox-vm` for VM provisioning via cloud-init templates.
+- [x] Created reusable `modules/proxmox-lxc` for LXC container provisioning.
+- [x] Built Debian 13 cloud-init VM template (ID 9000) on Proxmox.
+- [x] Upgraded `bpg/proxmox` provider to `0.98` with API token authentication.
+- [ ] Move remaining PVE hosts to Terraform (ansible-main migration blocked by state drift — documented as known tech debt).
+- [ ] Refactor Terraform modules for reuse across cloud providers (prepare for AWS/Azure).
+
+### Kubernetes — Completed & Ongoing
+- [x] Provisioned K3s node (`k3s-01`, VM 201) via Terraform module.
+- [x] Deployed **Garage** (S3-compatible object storage) with hand-written manifests.
+- [ ] **Helm:** Convert Garage manifests to a Helm chart as a learning exercise.
+- [ ] **GitOps:** Evaluate ArgoCD or FluxCD for automatic manifest sync from Git.
+- [ ] Migrate stateless services to K3s when monitoring stack proves the cluster is stable.
+
+### Container Lifecycle & Version Management
+- [ ] Deploy **Renovate** on Forgejo to scan `services.yml` for version pins and auto-generate PRs.
+- [ ] Implement SemVer pinning for all Ansible Docker roles.
+- [ ] Automated deployment pipeline: Renovate PR → lint → merge → Ansible redeploy of affected service.
+
+### Custom Docker Images
+- [x] **FoundryVTT:** Custom Dockerfile (Node.js 22-slim, version-pinned build, healthcheck, NAS-mounted data).
+- [ ] **Terraria:** Custom Dockerfile (standalone binary, 32-bit dependencies, volume-mounted world saves).
+- [ ] **Python Health API:** Custom Dockerfile (FastAPI, Docker socket integration, K8s deployment target).
+
+### Deployed Services (Ansible-Managed)
+- [x] **Firefly III:** Deployed with Authentik SSO via Caddy `forward_auth`.
+- [x] **FoundryVTT:** Custom-built Docker image with NAS-mounted user data.
+- [x] **Authentik:** Centralized Identity Provider for SSO.
+- [x] **Seafile:** Cloud storage with OIDC SSO on IONOS VPS.
+- [x] **Homepage:** Central dashboard.
+
+### Identity & SSO
+- [x] Deploy **Authentik**.
+- [x] Connect Firefly III to Authentik SSO.
+- [x] Connect Seafile to Authentik SSO via OIDC.
+- [ ] Connect remaining services (Forgejo, Jellyfin, etc.) to SSO.
+- [ ] Create e-mail forwarding and a way for users to register their accounts in Authentik. Manually approved per-service later.
+
+### Data & Storage
+- [ ] **Seafile S3 Backend:** Connect Seafile to Garage S3 endpoint for NAS overflow storage.
+- [ ] **Hybrid Backup:** Configure VPS Seafile to mirror data to local OMV NAS.
+- [ ] Setup **Rclone** for offsite backup staging.
+- [ ] Daily `rsync` for heavy volume data to OMV NAS.
+
+### GitHub & Documentation — Completed
+- [x] Mirror the homelab repository on GitHub.
+- [x] Deploy GitHub Pages for MkDocs documentation.
+- [x] Set up GitHub runner to update docs on push.
+
+## Phase 3: Cloud Expansion & Advanced IaC
+
+### AWS (Learning via Homelab)
+- [ ] Set up AWS Free Tier account.
+- [ ] Terraform an EC2 instance with VPC, subnet, and security group using `hashicorp/aws` provider.
+- [ ] Connect AWS instance to ZeroTier mesh for hybrid cloud networking.
+- [ ] Deploy a service via Ansible on the AWS instance.
+- [ ] Practice Terraform remote state backend on S3 with DynamoDB locking.
+
+### Azure
+- [ ] Set up Azure Free Tier account and Resource Group.
+- [ ] Terraform an Azure VM with VNet, subnet, and NSG.
+- [ ] Migrate Terraform state to Azure Blob Storage Container.
+- [ ] Connect Azure VM to ZeroTier mesh.
+
+### Secrets Management Evolution
+- [ ] Evaluate **HashiCorp Vault** or **Mozilla SOPS** for dynamic secret injection.
+- [ ] Practice secret rotation workflows.
+
+### Continuous Testing (IaC)
+- [ ] Implement **Checkov** or **Tfsec** to scan Terraform for security misconfigurations.
+- [ ] Evaluate **Molecule** to test Ansible roles in ephemeral Docker containers.
 
 ## Phase 4: Proxmox & PBS "Absolute Zero" Recovery
 
@@ -119,29 +135,44 @@
 - [ ] Implement off-site backups for critical application volumes (Seafile data, Authentik DB).
 - [ ] **Terraform Blueprints:** Finalize code to recreate VM "shells" on fresh hardware.
 - [ ] **Disaster Recovery Runbook:** Document exact steps in MkDocs for a "total melt" recovery.
-- [ ] **Enterprise Backup Simulation (Veeam):**
-    - [ ] Deploy Veeam Backup & Replication (Community Edition) on the Windows Server VM.
-    - [ ] Configure Veeam Agent backups for a Windows endpoint to a local NAS SMB share, simulating corporate workstation disaster recovery.
+- [ ] **Architecture Diagram:** Create a comprehensive Mermaid diagram showing full request flow, SPOFs, and component dependencies.
 
 ## Phase 5: Media Production & Simracing
 
 - [ ] **Post-Race Sync:** Ansible-automated `rsync` of VR recordings from CachyOS to OMV.
 - [ ] **Resolve NAS Tuning:** Optimize NFS/SMB for 4K Linux editing performance.
 
-## Phase 6: Enterprise Windows Server & Azure Hybrid Cloud
+## Phase 6: Documentation & Portfolio Polish
 
-- [ ] **Windows Server Infrastructure (IaC):**
-    - [ ] Use Terraform to provision a **Windows Server 2022/2025** VM on Proxmox.
-    - [ ] Configure Ansible to manage Windows nodes via `winrm` or OpenSSH for Windows.
-- [ ] **Active Directory Domain Services (AD DS):**
-    - [ ] Write a PowerShell script/Ansible playbook to promote the Windows Server to a Domain Controller (e.g., `corp.potterman.party`). 
-    - [ ] Implement foundational Group Policy Objects (GPOs) for security baselines.
-- [ ] **Azure AD Connect (Hybrid Identity):**
-    - [ ] Install Azure AD Connect on the Windows Server to sync local Active Directory users up to your Azure Entra ID tenant.
-- [ ] **Client Endpoint Management (PowerShell):**
-    - [ ] **VR/Sim Gold-State:** Export manual Registry/GPO tweaks for high-performance VR runtimes.
-    - [ ] **PowerShell Master Script:** Create endpoint bootstrapping scripts using `Winget` to automate client software deployment.
-    - [ ] **Smart Ventoy Drive:** Configure `ventoy.json` and Windows OS Auto-Installation (Unattended XML) for bare-metal client provisioning.
-- [ ] **Microsoft 365 Automation (Graph API):**
-    - [ ] Provision a free M365 Developer Tenant.
-    - [ ] Write a PowerShell script using the `MgGraph` module to automate user onboarding (creating an Entra ID user, assigning an E5 license, and adding them to a Teams group).
+- [ ] **Onboarding Documentation:**
+    - [ ] Comprehensive infrastructure description for new contributors.
+    - [ ] Git methodology and branching strategy guide.
+    - [ ] Updated network topology with Mermaid diagrams.
+    - [ ] Step-by-step onboarding process.
+- [ ] **Runbooks:** Proactive troubleshooting decision trees for each critical service.
+- [ ] **Capacity Planning:** Documented resource usage trends and growth projections.
+- [ ] **Documentation Generator Migration (Zensical):**
+    - [ ] Evaluate Zensical once stable.
+    - [ ] Migrate MkDocs configuration if warranted.
+
+## Backlog — Future Projects (No Timeline)
+
+### Enterprise Windows Server & Azure Hybrid Cloud
+- [ ] Terraform-provisioned Windows Server 2022/2025 VM on Proxmox.
+- [ ] Active Directory Domain Services (`corp.potterman.party`).
+- [ ] Azure AD Connect for hybrid identity sync.
+- [ ] PowerShell endpoint bootstrapping scripts.
+- [ ] Microsoft 365 automation via Graph API.
+
+### Network Segmentation & Advanced Networking
+- [ ] OPNsense deployment for VLAN segmentation.
+- [ ] Separate trust zones for DNS, media, and application workloads.
+- [ ] K8s NetworkPolicies for pod-level isolation.
+
+### High Availability Experimentation
+- [ ] Second `debian-docker` VM for Docker-level HA with Caddy load balancing.
+- [ ] Second K3s node for Kubernetes-native HA and scheduling practice.
+- [ ] Database replication patterns (PostgreSQL, MariaDB).
+
+### Enterprise Identity Federation
+- [ ] Federate Authentik with Microsoft Entra ID via SAML/OIDC.
