@@ -11,8 +11,8 @@
     - [x] Migrate **Arr Stack** (Sonarr, Radarr, Prowlarr, Sabnzbd, Decypharr) to Ansible roles.
     - [x] Migrate **Jellyfin** and **Jellyseerr** to Ansible roles.
     - [x] Deploy new **Paperless-ngx** instance via Ansible role.
-    - [ ] Migrate **Forgejo** to Ansible roles.
-    - [ ] Purge legacy manual Docker Compose stacks from `debian-docker` after migration.
+    - [x] Migrate **Forgejo** to Ansible roles.
+    - [x] Purge legacy manual Docker Compose stacks from `debian-docker` after migration.
     - [ ] Connect all remaining services to **Authentik SSO** (Forgejo, Jellyfin, etc.).
 - [ ] **Game Server Stack:**
     - [ ] Evaluate and deploy **Pterodactyl/Pelican** for centralized game server management with web panel.
@@ -49,9 +49,9 @@
 - [ ] **Logic & Orchestration:** Implement `depends_on` and `healthcheck` via Ansible wait-loops where applicable.
 
 ### CI/CD Pipeline Expansion
-- [ ] Create a `shellcheck` CI/CD pipeline in Forgejo Actions.
-- [ ] Integrate **Trivy** into Forgejo Actions to scan Docker images for CVEs before deployment.
-- [ ] Implement **Gitleaks** or **TruffleHog** to block commits containing exposed secrets.
+- [x] Create a `shellcheck` CI/CD pipeline in Forgejo Actions.
+- [ ] Integrate **Trivy** (compromised, moved to backlog) into Forgejo Actions to scan Docker images for CVEs before deployment.
+- [x] Implement **Gitleaks** or **TruffleHog** to block commits containing exposed secrets.
 - [ ] Infracost / Policy Check: Estimate cloud costs or check for open security groups before Terraform applies.
 
 ### Terraform — Completed & Ongoing

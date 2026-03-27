@@ -1,0 +1,32 @@
+FROM {{ app_services.ci_lint.image }}:{{ app_services.ci_lint.version }}
+
+# System dependencies (single layer)
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    shellcheck \
+    git \
+    nodejs \
+    npm \
+    wget \
+    unzip \
+    && rm -rf /var/lib/apt/lists/*
+
+# Python linters
+RUN pip install --no-cache-dir ansible ansible-lint yamllint
+
+# Node linters
+RUN npm install -g markdownlint-cli@{{ app_services.ci_lint.markdownlint_version }}
+
+# Security & IaC tools (single layer)
+RUN GITLEAKS_VERSION="{{ app_services.ci_lint.gitleaks_version }}" && \
+    TFLINT_VERSION="{{ app_services.ci_lint.tflint_version }}" && \
+    HADOLINT_VERSION="{{ app_services.ci_lint.hadolint_version }}" && \
+    KUBECONFORM_VERSION="{{ app_services.ci_lint.kubeconform_version }}" && \
+    wget -qO- "https://github.com/gitleaks/gitleaks/releases/download/v${GITLEAKS_VERSION}/gitleaks_${GITLEAKS_VERSION}_linux_x64.tar.gz" | tar xz -C /usr/local/bin gitleaks && \
+    wget -qO /tmp/tflint.zip "https://github.com/terraform-linters/tflint/releases/download/v${TFLINT_VERSION}/tflint_linux_amd64.zip" && \
+    unzip /tmp/tflint.zip -d /usr/local/bin && rm /tmp/tflint.zip && \
+    wget -qO /usr/local/bin/hadolint "https://github.com/hadolint/hadolint/releases/download/v${HADOLINT_VERSION}/hadolint-Linux-x86_64" && \
+    chmod +x /usr/local/bin/hadolint && \
+    wget -qO- "https://github.com/yannh/kubeconform/releases/download/v${KUBECONFORM_VERSION}/kubeconform-linux-amd64.tar.gz" | tar xz -C /usr/local/bin kubeconform
+
+# Cleanup wget/unzip (no longer needed at runtime)
+RUN apt-get purge -y wget unzip && apt-get autoremove -y && rm -rf /var/lib/apt/lists/*

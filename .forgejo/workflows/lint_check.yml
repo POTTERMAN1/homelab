@@ -1,4 +1,4 @@
-name: CI / Linting
+name: CI / Linting & Security
 on:
   push:
     branches:
@@ -10,28 +10,58 @@ on:
 jobs:
   lint:
     runs-on: docker
+    container:
+      image: potter-ci-lint:latest
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
-
-      # Replaces actions/setup-python completely
-      - name: Install System Dependencies
-        run: |
-          apt-get update
-          apt-get install -y python3 python3-pip
-
-      - name: Install Linters
-        run: |
-          pip3 install ansible ansible-lint yamllint --break-system-packages
+        with:
+          fetch-depth: 0
 
       - name: Set up Ansible Vault Password
         run: printf "%s" "${{ secrets.ANSIBLE_VAULT_PASS }}" > ~/.ansible_vault_pass
 
+      # --- Syntax & Formatting ---
       - name: Run YAML Lint
         run: yamllint .
         continue-on-error: true
-      # --8<-- [start:lint-step]
+
+      - name: Run Markdownlint
+        run: markdownlint '**/*.md' --ignore node_modules
+        continue-on-error: true
+
+      # --- IaC Linting ---
+      - name: Ansible Syntax Check
+        working-directory: ./ansible
+        run: ansible-playbook site.yml --syntax-check
+
       - name: Run Ansible Lint
         working-directory: ./ansible
         run: ansible-lint site.yml
-# --8<-- [end:lint-step]
+
+      - name: Run ShellCheck
+        run: find . -name '*.sh' -exec shellcheck {} +
+        continue-on-error: true
+
+      - name: Run Hadolint (Dockerfiles)
+        run: find . -name 'Dockerfile*' -not -name '*.j2' | xargs -r hadolint
+        continue-on-error: true
+
+      - name: Run TFLint
+        run: |
+          cd terraform
+          tflint --init
+          tflint
+        continue-on-error: true
+
+      - name: Run Kubeconform
+        run: find kubernetes -name '*.yaml' | xargs -r kubeconform -strict
+        continue-on-error: true
+
+      # --- Security ---
+      - name: Run Gitleaks
+        run: gitleaks detect --source . --verbose
+
+      - name: Run Trivy (filesystem scan)
+        run: trivy fs --severity HIGH,CRITICAL --exit-code 1 .
+        continue-on-error: true

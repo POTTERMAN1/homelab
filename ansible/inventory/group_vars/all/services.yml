@@ -142,3 +142,13 @@ app_services:
     root_path: "{{ global_docker_base_path }}/forgejo"
     runner_image: "code.forgejo.org/forgejo/runner"
     runner_version: "9.0.3"
+
+  ci_lint:
+    image: "python"
+    version: "3.12-slim"
+    trivy_version: "0.58.2"
+    gitleaks_version: "8.24.0"
+    tflint_version: "0.55.1"
+    hadolint_version: "2.12.0"
+    kubeconform_version: "0.6.7"
+    markdownlint_version: "0.44.0"

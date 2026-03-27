@@ -18,6 +18,25 @@
   register: forgejo_runner_dockerfile
   tags: forgejo
 
+- name: Render CI Lint Dockerfile
+  ansible.builtin.template:
+    src: templates/Dockerfile.ci-lint.j2
+    dest: "{{ app_services.forgejo.root_path }}/Dockerfile.ci-lint"
+    mode: "0644"
+  register: forgejo_ci_lint_dockerfile
+  tags: forgejo
+
+- name: Build CI Lint image
+  community.docker.docker_image:
+    name: potter-ci-lint
+    tag: latest
+    source: build
+    build:
+      path: "{{ app_services.forgejo.root_path }}"
+      dockerfile: Dockerfile.ci-lint
+    force_source: "{{ forgejo_ci_lint_dockerfile is changed }}"
+  tags: forgejo
+
 - name: Render Runner Config
   ansible.builtin.template:
     src: templates/runner_config.yaml.j2
