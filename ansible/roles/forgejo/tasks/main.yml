@@ -1,0 +1,41 @@
+- name: Ensure Forgejo directories exist
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    owner: "1000"
+    group: "1000"
+    mode: '0755'
+  loop:
+    - "{{ app_services.forgejo.root_path }}"
+    - "{{ app_services.forgejo.root_path }}/runner"
+  tags: forgejo
+
+- name: Render Runner Dockerfile
+  ansible.builtin.template:
+    src: templates/Dockerfile.runner.j2
+    dest: "{{ app_services.forgejo.root_path }}/Dockerfile.runner"
+    mode: "0644"
+  register: forgejo_runner_dockerfile
+  tags: forgejo
+
+- name: Render Runner Config
+  ansible.builtin.template:
+    src: templates/runner_config.yaml.j2
+    dest: "{{ app_services.forgejo.root_path }}/runner/config.yaml"
+    mode: "0644"
+  tags: forgejo
+
+- name: Render Docker Compose
+  ansible.builtin.template:
+    src: templates/forgejo_compose.yaml.j2
+    dest: "{{ app_services.forgejo.root_path }}/docker-compose.yml"
+    mode: "0644"
+  tags: forgejo
+
+- name: Start Forgejo stack
+  community.docker.docker_compose_v2:
+    project_src: "{{ app_services.forgejo.root_path }}"
+    state: present
+    build: "{{ 'always' if (forgejo_runner_dockerfile is changed or forgejo_force_build | default(false)) else 'never' }}"
+    wait: true
+  tags: forgejo

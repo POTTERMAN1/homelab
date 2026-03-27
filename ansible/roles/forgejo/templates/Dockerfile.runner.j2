@@ -1,0 +1,6 @@
+FROM {{ app_services.forgejo.runner_image }}:{{ app_services.forgejo.runner_version }}
+USER root
+RUN addgroup -g 989 docker
+RUN adduser -u 1000 -D runner && addgroup runner docker
+RUN apk add --no-cache docker-cli nodejs npm bash
+USER 1000:1000

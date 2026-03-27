@@ -33,7 +33,7 @@
     - foundryvtt
     - pihole
     - media-stack
-#    - forgejo
+    - forgejo
     - paperless
 
 - name: Kubernetes

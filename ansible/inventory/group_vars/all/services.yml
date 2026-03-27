@@ -131,3 +131,14 @@ app_services:
     version: "2.7.3"
     internal_port: 5055
     root_path: "{{ global_docker_base_path }}/jellyseer"
+
+  forgejo:
+    subdomain: "forgejo"
+    domain: "potterman.party"
+    image: "codeberg.org/forgejo/forgejo"
+    version: "14"
+    internal_port: 3000
+    ssh_port: 2222
+    root_path: "{{ global_docker_base_path }}/forgejo"
+    runner_image: "code.forgejo.org/forgejo/runner"
+    runner_version: "9.0.3"

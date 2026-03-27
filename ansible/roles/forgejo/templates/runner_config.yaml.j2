@@ -1,0 +1,9 @@
+log:
+  level: debug
+  job_level: debug
+runner:
+  file: .runner
+  capacity: 5
+  labels: ["self-hosted", "docker", "linux"]
+container:
+  valid_volumes: ["**"]
