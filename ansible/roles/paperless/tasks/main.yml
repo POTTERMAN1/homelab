@@ -1,0 +1,27 @@
+- name: Ensure Paperless directories exist
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    owner: "1000"
+    group: "1000"
+    mode: '0755'
+  loop:
+    - "{{ app_services.paperless.root_path }}"
+    - "{{ app_services.paperless.consume_path }}"
+    - "{{ app_services.paperless.backup_path }}"
+  tags: paperless
+
+- name: Render Docker Compose
+  ansible.builtin.template:
+    src: templates/paperless_compose.yaml.j2
+    dest: "{{ app_services.paperless.root_path }}/docker-compose.yml"
+    mode: "0644"
+  tags: paperless
+
+- name: Start Paperless stack
+  community.docker.docker_compose_v2:
+    project_src: "{{ app_services.paperless.root_path }}"
+    state: present
+    pull: policy
+    wait: true
+  tags: paperless

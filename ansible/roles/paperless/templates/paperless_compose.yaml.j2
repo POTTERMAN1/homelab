@@ -1,0 +1,103 @@
+services:
+  paperless-redis:
+    image: "{{ app_services.paperless.redis_image }}:{{ app_services.paperless.redis_version }}"
+    container_name: paperless-redis
+    restart: unless-stopped
+    volumes:
+      - redis-data:/data
+
+  paperless-postgres:
+    image: "{{ app_services.paperless.postgres_image }}:{{ app_services.paperless.postgres_version }}"
+    container_name: paperless-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: paperless
+      POSTGRES_USER: paperless
+      POSTGRES_PASSWORD: "{{ vault_paperless_db_password }}"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U paperless"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+
+  gotenberg:
+    image: "{{ app_services.paperless.gotenberg_image }}:{{ app_services.paperless.gotenberg_version }}"
+    container_name: paperless-gotenberg
+    restart: unless-stopped
+    command:
+      - "gotenberg"
+      - "--chromium-disable-javascript=true"
+      - "--chromium-allow-list=file:///tmp/.*"
+
+  tika:
+    image: "{{ app_services.paperless.tika_image }}:{{ app_services.paperless.tika_version }}"
+    container_name: paperless-tika
+    restart: unless-stopped
+
+  paperless:
+    image: "{{ app_services.paperless.image }}:{{ app_services.paperless.version }}"
+    container_name: paperless
+    restart: unless-stopped
+    depends_on:
+      paperless-postgres:
+        condition: service_healthy
+      paperless-redis:
+        condition: service_started
+      gotenberg:
+        condition: service_started
+      tika:
+        condition: service_started
+    ports:
+      - "{{ app_services.paperless.internal_port }}:8000"
+    environment:
+      PAPERLESS_REDIS: redis://paperless-redis:6379
+      PAPERLESS_DBENGINE: postgresql
+      PAPERLESS_DBHOST: paperless-postgres
+      PAPERLESS_DBNAME: paperless
+      PAPERLESS_DBUSER: paperless
+      PAPERLESS_DBPASS: "{{ vault_paperless_db_password }}"
+      PAPERLESS_SECRET_KEY: "{{ vault_paperless_secret_key }}"
+      PAPERLESS_OCR_LANGUAGES: pol eng nld
+      PAPERLESS_OCR_LANGUAGE: pol
+      PAPERLESS_TIKA_ENABLED: "true"
+      PAPERLESS_TIKA_GOTENBERG_ENDPOINT: http://gotenberg:3000
+      PAPERLESS_TIKA_ENDPOINT: http://tika:9998
+      PAPERLESS_TIME_ZONE: "{{ global_timezone }}"
+      PAPERLESS_URL: "https://{{ app_services.paperless.subdomain }}.{{ app_services.paperless.domain }}"
+      PAPERLESS_APPS: allauth.socialaccount.providers.openid_connect
+      PAPERLESS_SOCIALACCOUNT_PROVIDERS: >
+        {
+          "openid_connect": {
+            "OAUTH_PKCE_ENABLED": true,
+            "APPS": [
+              {
+                "provider_id": "authentik",
+                "name": "authentik",
+                "client_id": "{{ vault_paperless_client_id }}",
+                "secret": "{{ vault_paperless_client_secret }}",
+                "settings": {
+                  "server_url": "https://auth.potterman.party/application/o/paperless-ngx/.well-known/openid-configuration",
+                  "fetch_userinfo": true
+                }
+              }
+            ],
+            "SCOPE": ["openid", "profile", "email"]
+          }
+        }
+      PAPERLESS_LOGOUT_REDIRECT_URL: "https://auth.potterman.party/application/o/paperless-ngx/end-session/"
+      PAPERLESS_SOCIAL_AUTO_SIGNUP: true
+      PAPERLESS_SOCIALACCOUNT_ALLOW_SIGNUPS: true
+      PAPERLESS_DISABLE_REGULAR_LOGIN: true
+      PAPERLESS_REDIRECT_LOGIN_TO_SSO: true
+
+    volumes:
+      - "{{ app_services.paperless.root_path }}/data:/usr/src/paperless/data"
+      - "{{ app_services.paperless.root_path }}/media:/usr/src/paperless/media"
+      - "{{ app_services.paperless.consume_path }}:/usr/src/paperless/consume"
+      - "{{ app_services.paperless.backup_path }}:/usr/src/paperless/export"
+
+volumes:
+  redis-data:
+  pgdata:
