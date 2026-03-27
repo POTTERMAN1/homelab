@@ -21,6 +21,7 @@
   become: true
   roles:
     - seafile
+    - teamspeak
 
 - name: Internal Services
   hosts: debian-docker
@@ -30,7 +31,13 @@
     - authentik
     - firefly
     - foundryvtt
+    - pihole
+    - media-stack
+#    - forgejo
+    - paperless
 
 - name: Kubernetes
   hosts: k3s
   become: true
+#  roles:
+#    - kubernetes
