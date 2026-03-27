@@ -6,7 +6,7 @@ services:
     ports:
       - "3005:3000"
     volumes:
-      - "{{ homepage_root }}/config:/app/config"
+      - "{{ app_services.homepage.root_path }}/config:/app/config"
       - /var/run/docker.sock:/var/run/docker.sock:ro
     environment:
       PUID: "1000"
