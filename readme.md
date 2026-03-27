@@ -1,6 +1,6 @@
 # homelab
-Infrastructure as Code (IaC) for my Homelab. Managed via Ansible and Terraform, featuring a ZeroTier mesh network, dynamic Caddy proxying, and centralized SSO via Authentik.
 
+Infrastructure as Code (IaC) for my Homelab. Managed via Ansible and Terraform, featuring a ZeroTier mesh network, dynamic Caddy proxying, and centralized SSO via Authentik.
 
 **Full Documentation:** [docs.potterman.party](https://docs.potterman.party)
 
@@ -9,7 +9,8 @@ Infrastructure as Code (IaC) for my Homelab. Managed via Ansible and Terraform, 
 ---
 
 ## Infrastructure Provisioning (Terraform)
-While Ansible handles the configuration management and software deployment, **Terraform** is utilized for the foundational hardware provisioning. 
+
+While Ansible handles the configuration management and software deployment, **Terraform** is utilized for the foundational hardware provisioning.
 
 Currently, Terraform is used to provision only the `ansible-main` control node directly on the local Dell Optiplex Proxmox (PVE) host.
 
@@ -18,6 +19,7 @@ In the future I'll expand Terraform to all my hosts, physical and virtual.
 ---
 
 ## Configuration Management (Ansible)
+
 Once the hardware is provisioned, Ansible takes the wheel. The architecture is broken down into modular Ansible roles:
 
 * **`common`**: Applies baseline security (SSH hardening, `ufw`), shell environments (`fish`), and joins the host to the ZeroTier network.
@@ -36,6 +38,7 @@ Once the hardware is provisioned, Ansible takes the wheel. The architecture is b
 ---
 
 ## Network Architecture
+
 The homelab utilizes a "Zero Trust" model for internal services. No internal application ports are exposed directly to the public internet (except Teamspeak server).
 
 1. Public requests hit **Cloudflare DNS**.
@@ -45,20 +48,21 @@ The homelab utilizes a "Zero Trust" model for internal services. No internal app
 ---
 
 ## CI/CD Pipeline
-This repository uses GitOps principles. 
+
+This repository uses GitOps principles.
+
 * Code is hosted locally on a self-hosted Forgejo instance.
 * Commits to the `main` branch trigger a Forgejo Action that automatically mirrors the repository to GitHub.
 * The GitHub mirror subsequently triggers a GitHub Action to build and deploy the `MkDocs` documentation to GitHub Pages.
 
-
 ## AI Usage & Mentorship Transparency
 
-Transparency is important to me. Throughout the lifecycle of this homelab migration, I utilized Google's Gemini as an interactive mentor and pair-programmer. 
+Transparency is important to me. Throughout the lifecycle of this homelab migration, I utilized Google's Gemini as an interactive mentor and pair-programmer.
 
 * **Phase 1 (Architecture & Learning):** Initially, I used AI to understand the core concepts of Infrastructure as Code, GitOps workflows, and Ansible role modularity. It served as a senior engineering tutor to explain *why* certain architectural decisions (like ZeroTier SDN or DNS-01 challenges) are preferred in enterprise environments.
 * **Phase 2 (Code Review & Validation):** As my proficiency grew, the AI's role shifted strictly to code review and CI/CD debugging. I utilized it to help diagnose strict `ansible-lint` violations, troubleshoot Forgejo Action pathing errors, and validate Jinja2 template syntax.
 
-**Zero Blind Copy-Pasting:** Every line of code, Terraform block, and CI/CD workflow in this repository was manually reviewed, tested, and understood before being merged into the `main` branch. 
+**Zero Blind Copy-Pasting:** Every line of code, Terraform block, and CI/CD workflow in this repository was manually reviewed, tested, and understood before being merged into the `main` branch.
 
 <details>
 <summary><b>Click to view my Custom AI Mentor Prompt</b></summary>

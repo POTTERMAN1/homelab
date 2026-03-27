@@ -12,6 +12,7 @@ The homelab runs a lightweight **K3s** Kubernetes cluster for cloud-native workl
 ## Deployed Workloads
 
 ### Garage — S3-Compatible Object Storage
+
 Garage replaces the now-archived MinIO project as the self-hosted S3 endpoint. It provides overflow storage for Seafile and a general-purpose object store for the homelab.
 
 **Kubernetes Resources:**
@@ -37,7 +38,7 @@ Garage separates metadata (small, frequent reads) from bulk data (large, sequent
 
 All Kubernetes manifests are stored in `kubernetes/garage/` and applied manually via `kubectl`. The `configmap.yaml` is gitignored since it contains secrets embedded in the TOML configuration.
 
-```
+```bash
 kubernetes/garage/
 ├── namespace.yaml
 ├── configmap.yaml    # gitignored (contains secrets)

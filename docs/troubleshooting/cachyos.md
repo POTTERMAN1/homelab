@@ -1,6 +1,6 @@
 # Troubleshooting | Linux/CachyOS
 
-### Issue: CachyOS hangs for 90 seconds during shutdown sequence 2026-01-27
+## Issue: CachyOS hangs for 90 seconds during shutdown sequence 2026-01-27
 
 **Root Cause**: See logs.
 

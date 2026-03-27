@@ -2,7 +2,6 @@
 
 ## [Unreleased]
 
-
 ## [0.3.2] - 2026-03-21 - Terraform Modules, K3s & Kubernetes Object Storage
 
 ### Added
@@ -89,7 +88,6 @@
 
 - Migrated Seafile configuration to use `blockinfile` with Jinja2, enabling easier SSO (Authentik) integration while preserving generated credentials.
 
-
 ## [0.2.2] - 2026-02-17 - GitOps Refactor, ZeroTier "Darknet" & Homepage Deployment
 
 ### Added
@@ -134,7 +132,7 @@
 ### Added
 
 - Deployed a centralized **Caddy Reverse Proxy** on the Proxmox Host (`192.168.2.100`) to act as the primary traffic router for the Homelab.
--  Implemented **Wildcard DNS routing** (`*.potterman.party`) via Cloudflare pointing to the Proxmox Caddy instance, eliminating the need to create manual A-records for future internal services.
+- Implemented **Wildcard DNS routing** (`*.potterman.party`) via Cloudflare pointing to the Proxmox Caddy instance, eliminating the need to create manual A-records for future internal services.
 - Successfully implemented **Ansible Vault** (`ansible-vault`). Cloudflare API tokens are now encrypted at rest and injected directly into Caddy's systemd environment securely at runtime.
 - Ansible): Created `deploy_caddy.yml` playbook. It downloads the custom Caddy binary (with the Cloudflare DNS plugin), pushes the configuration, and manages the systemd service.
 
@@ -186,12 +184,11 @@
 - CachyOS hangs for 90 seconds during shutdown sequence.
 - Asymmetric Routing / Gateway Conflict (ZeroTier)
 
-
 ## [0.0.2] - 2026-01-28 - Documentation, Workstation and ZFS woes
 
 ### Added
 
-- Zellij Dashboard layout with PVE/Docker/OMV/Ansible/CachyOS tabs. 
+- Zellij Dashboard layout with PVE/Docker/OMV/Ansible/CachyOS tabs.
 - Phase 1-6 Roadmap initialization. `./ROADMAP.md`
 - Initial Network Graph via /infrastructure/network.md using Mermaid.js
 - `CHANGELOG.md` is now functional

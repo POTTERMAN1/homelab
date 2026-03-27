@@ -3,6 +3,7 @@
 Before Ansible can configure the operating systems and deploy Docker containers, the underlying virtual machines and LXC containers must exist. In this infrastructure, all provisioning on the Proxmox cluster is handled by **Terraform** using the `bpg/proxmox` provider (v0.98).
 
 ## The Provider
+
 The provider connects to the Proxmox VE API using token-based authentication. Sensitive credentials (endpoint URL and API token) are stored in `terraform.tfvars` which is gitignored.
 
 ```hcl
@@ -14,11 +15,13 @@ The provider connects to the Proxmox VE API using token-based authentication. Se
 Terraform code is organized into reusable modules to avoid duplication and standardize deployments:
 
 ### `modules/proxmox-vm`
+
 Provisions full Virtual Machines by cloning a **Debian 13 cloud-init template** (ID 9000). Cloud-init handles initial user creation, SSH key injection, IP assignment, and DNS configuration at boot - allowing Ansible to connect immediately.
 
 Key features: configurable CPU, memory, disk size, and network settings via variables with sensible defaults. The IP address is automatically derived from the VM ID (`192.168.2.${vm_id}/24`).
 
 ### `modules/proxmox-lxc`
+
 Provisions lightweight LXC containers from Debian templates. Same variable-driven pattern as the VM module but uses `proxmox_virtual_environment_container` instead.
 
 ## Infrastructure Definition (main.tf)
