@@ -8,28 +8,38 @@
   loop:
     - "{{ app_services.foundryvtt.root_path }}/"
     - "{{ app_services.foundryvtt.root_path }}/foundry_user_data"
+  tags: foundryvtt
 
 - name: Render Healthcheck
   ansible.builtin.template:
     src: templates/healthcheck.js.j2
     dest: "{{ app_services.foundryvtt.root_path }}/healthcheck.js"
     mode: "0644"
+  tags: foundryvtt
 
 - name: Render Dockerfile
   ansible.builtin.template:
     src: templates/Dockerfile.j2
     dest: "{{ app_services.foundryvtt.root_path }}/Dockerfile"
     mode: "0644"
+  register: foundryvtt_dockerfile
+  tags: foundryvtt
 
 - name: Render Docker Compose
   ansible.builtin.template:
     src: templates/foundryvtt_docker-compose.yaml.j2
     dest: "{{ app_services.foundryvtt.root_path }}/docker-compose.yml"
     mode: "0644"
+  register: foundryvtt_compose
+  tags: foundryvtt
 
 - name: Spin up FoundryVTT
   community.docker.docker_compose_v2:
     project_src: "{{ app_services.foundryvtt.root_path }}"
     state: present
-    build: always
+    build: "{{ foundryvtt_build_policy }}"
     wait: true
+  vars:
+    foundryvtt_build_policy: >-
+      {{ 'always' if (foundryvtt_dockerfile is changed or foundryvtt_compose is changed) else 'never' }}
+  tags: foundryvtt

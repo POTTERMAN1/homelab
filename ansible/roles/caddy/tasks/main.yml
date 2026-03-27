@@ -5,13 +5,14 @@
     mode: "0755" # Owner can execute
   notify:
     - Restart Caddy
+  tags: docker
 
 - name: Ensure /etc/caddy directory exists
   ansible.builtin.file:
     path: /etc/caddy
     state: directory
     mode: "0755"
-
+  tags: docker
 - name: Deploy Caddyfile Template
   ansible.builtin.template:
     src: templates/Caddyfile.j2
@@ -22,6 +23,7 @@
     CLOUDFLARE_API_TOKEN: "{{ vault_cloudflare_api_token }}"
   notify:
     - Reload Caddy
+  tags: docker
 
 - name: Deploy Cloudflare API Token .env file
   ansible.builtin.copy:
@@ -30,12 +32,14 @@
     mode: "0600"
   notify:
     - Restart Caddy
+  tags: docker
 
 - name: Create Systemd override directory for Caddy
   ansible.builtin.file:
     path: /etc/systemd/system/caddy.service.d/
     state: directory
     mode: '0755'
+  tags: docker
 
 - name: Inject EnvironmentFile directive into Caddy Systemd
   ansible.builtin.copy:
@@ -47,9 +51,11 @@
   notify:
     - Reload Systemd
     - Restart Caddy
+  tags: docker
 
 - name: Ensure Caddy is started and enabled
   ansible.builtin.systemd:
     name: caddy
     state: started
     enabled: true
+  tags: docker

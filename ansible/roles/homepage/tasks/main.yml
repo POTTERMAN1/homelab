@@ -5,12 +5,14 @@
     owner: "1000"
     group: "1000"
     mode: '0755'
+  tags: homepage
 
 - name: Render Docker Compose
   ansible.builtin.template:
     src: templates/homepage_compose.yaml.j2
     dest: "{{ app_services.homepage.root_path }}/docker-compose.yml"
     mode: "0600"
+  tags: homepage
 
 - name: Deploy Settings with Proxy Trust
   ansible.builtin.template:
@@ -20,6 +22,7 @@
     group: "1000"
     mode: "0644"
   notify: Restart Homepage
+  tags: homepage
 
 - name: Deploy Homepage Services
   ansible.builtin.template:
@@ -29,9 +32,11 @@
     group: "1000"
     mode: "0644"
   notify: Restart Homepage
+  tags: homepage
 
 - name: Start Homepage Stack
   community.docker.docker_compose_v2:
     project_src: "{{ app_services.homepage.root_path }}"
     state: present
     pull: always
+  tags: homepage

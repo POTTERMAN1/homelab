@@ -2,8 +2,9 @@
   ansible.builtin.user:
     name: potterman
     groups: sudo
-    shell: /usr/bin/bash
+    shell: /usr/bin/fish
     append: true
+  tags: docker
 
 - name: Ensure SSH keys are authorized
   ansible.posix.authorized_key:
@@ -13,6 +14,7 @@
   loop:
     - "~/.ssh/id_ed25519.pub" # ansible-main
     - "~/.ssh/cachy_os_key.pub" # cachy-os
+  tags: docker
 
 - name: Zero-Password Sudo for potterman
   ansible.builtin.copy:
@@ -20,6 +22,7 @@
     dest: /etc/sudoers.d/potterman
     mode: '0440'
     validate: /usr/sbin/visudo -csf %s
+  tags: docker
 
 - name: Harden SSH Configuration
   ansible.builtin.lineinfile:
@@ -31,6 +34,7 @@
     - { regexp: '^#?PasswordAuthentication', line: 'PasswordAuthentication no' }
     - { regexp: '^#?PermitRootLogin', line: 'PermitRootLogin no' }
   notify: Restart SSH
+  tags: docker
 
 - name: Install baseline utilities
   ansible.builtin.package:
@@ -43,12 +47,7 @@
       - neovim
       - nfs-common
     state: present
-
-- name: Switch "potterman" to fish shell
-  ansible.builtin.user:
-    name: potterman
-    shell: /usr/bin/fish
-    append: true
+  tags: docker
 
 - name: Join ZeroTier Mesh
   ansible.builtin.shell: |
@@ -62,10 +61,12 @@
     creates: /var/lib/zerotier-one/networks.d/{{ vault_zerotier_network_id }}.conf
   register: common_zt_join
   changed_when: "'200 join ok' in common_zt_join.stdout"
+  tags: docker
 
 - name: Prompt for manual network approval
   ansible.builtin.debug:
     msg: Approve new device in ZeroTier Network
+  tags: docker
 
 - name: Wait for NAS to be reachable via ZeroTier
   ansible.builtin.wait_for:
@@ -75,6 +76,7 @@
     delay: 5
     timeout: 300
   when: common_zt_join is changed or ansible_facts['nodename'] in groups['external_network']
+  tags: docker
 
 - name: Ensure NAS is mounted
   ansible.posix.mount:
@@ -83,3 +85,4 @@
     fstype: nfs
     opts: "defaults,_netdev,nofail"
     state: present
+  tags: docker

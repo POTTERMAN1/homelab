@@ -8,13 +8,14 @@
   loop:
     - "{{ app_services.seafile.root_path }}"
     - "{{ app_services.seafile.root_path }}/seafile-data"
-    - "{{ app_services.seafile.root_path }}/mariadb"
+  tags: seafile
 
 - name: Render Docker Compose
   ansible.builtin.template:
     src: templates/seafile_docker-compose.yaml.j2
     dest: "{{ app_services.seafile.root_path }}/docker-compose.yml"
     mode: "0644"
+  tags: seafile
 
 - name: Spin up Seafile Stack
   community.docker.docker_compose_v2:
@@ -22,7 +23,7 @@
     state: present
     pull: always
     wait: true
-
+  tags: seafile
 - name: Find the seahub config directory natively
   ansible.builtin.find:
     paths: "{{ app_services.seafile.root_path }}/seafile-data"
@@ -34,6 +35,7 @@
   retries: 20
   delay: 5
   changed_when: false
+  tags: seafile
 
 - name: Set seahub configuration path
   ansible.builtin.set_fact:
@@ -42,12 +44,30 @@
   # Targets the specific config folder inside the shared volume
   when: "'seafile/conf' in item.path"
   changed_when: false
+  tags: seafile
 
 - name: Wait for seahub_settings.py to be generated
   ansible.builtin.wait_for:
     path: "{{ seafile_seahub_conf_dir }}/seahub_settings.py"
     state: present
     timeout: 120
+  tags: seafile
+
+- name: Ensure SERVICE_URL is HTTPS
+  ansible.builtin.lineinfile:
+    path: "{{ seafile_seahub_conf_dir }}/seahub_settings.py"
+    regexp: '^SERVICE_URL\s*='
+    line: "SERVICE_URL = 'https://seafile.potterman.party'"
+  notify: Restart Seafile
+  tags: seafile
+
+- name: Ensure FILE_SERVER_ROOT is HTTPS
+  ansible.builtin.lineinfile:
+    path: "{{ seafile_seahub_conf_dir }}/seahub_settings.py"
+    regexp: '^FILE_SERVER_ROOT\s*='
+    line: "FILE_SERVER_ROOT = 'https://seafile.potterman.party/seafhttp'"
+  notify: Restart Seafile
+  tags: seafile
 
 - name: Inject SSO Configuration into Seahub Settings
   ansible.builtin.blockinfile:
@@ -79,3 +99,4 @@
       CLIENT_SSO_VIA_LOCAL_BROWSER = True
     marker: "# {mark} ANSIBLE MANAGED BLOCK - SSO CONFIG"
   notify: Restart Seafile
+  tags: seafile

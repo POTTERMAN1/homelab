@@ -64,7 +64,6 @@ services:
       AUTHENTIK_POSTGRESQL__NAME: authentik
       AUTHENTIK_POSTGRESQL__PASSWORD: "{{ vault_authentik_pg_password }}"
       AUTHENTIK_SECRET_KEY: "{{ vault_authentik_secret_key }}"
-    # AUTHENTIK_EMAIL__HOST: ... TODO LATER
     volumes:
       - ./media:/media
       - ./certs:/certs

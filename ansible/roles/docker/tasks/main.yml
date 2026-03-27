@@ -7,12 +7,14 @@
       - lsb-release
     state: present
     update_cache: true
+  tags: docker
 
 - name: Create directory for Docker GPG key
   ansible.builtin.file:
     path: /etc/apt/keyrings
     state: directory
     mode: "0755"
+  tags: docker
 
 - name: Download Docker's official GPG key
   ansible.builtin.get_url:
@@ -21,6 +23,7 @@
     dest: /etc/apt/keyrings/docker.asc
     mode: "0644"
     force: false
+  tags: docker
 
 - name: Add Docker repository to Apt sources
   ansible.builtin.apt_repository:
@@ -33,6 +36,7 @@
     state: present
     filename: docker
     update_cache: true
+  tags: docker
 
 - name: Install Docker Engine and Ansible SDK
   ansible.builtin.apt:
@@ -45,6 +49,7 @@
       - python3-docker
     state: present
     update_cache: true
+  tags: docker
 
 - name: Ensure 'potterman' is in the docker group
   ansible.builtin.user:
@@ -52,9 +57,10 @@
     groups: docker
     append: true
   register: docker_user_group_check
-
+  tags: docker
 - name: Ensure Docker service is running
   ansible.builtin.systemd:
     name: docker
     state: started
     enabled: true
+  tags: docker

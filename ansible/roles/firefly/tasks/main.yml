@@ -7,23 +7,26 @@
     mode: '0755'
   loop:
     - "{{ app_services.firefly.root_path }}"
-    - "{{ app_services.firefly.root_path }}/mysql"
     - "{{ app_services.firefly.root_path }}/upload"
+  tags: firefly
 
 - name: Render .env File
   ansible.builtin.template:
     src: templates/firefly_env.j2
     dest: "{{ app_services.firefly.root_path }}/.env"
     mode: '0600'
+  tags: firefly
 
 - name: Render Compose File
   ansible.builtin.template:
     src: templates/firefly-compose.yaml.j2
     dest: "{{ app_services.firefly.root_path }}/docker-compose.yaml"
     mode: "0600"
+  tags: firefly
 
 - name: Start Firefly Stack
   community.docker.docker_compose_v2:
     project_src: "{{ app_services.firefly.root_path }}"
     state: present
     pull: always
+  tags: firefly

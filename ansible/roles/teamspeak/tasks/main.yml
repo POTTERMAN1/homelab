@@ -9,6 +9,7 @@
     state: present
   delegate_to: localhost
   become: false
+  tags: teamspeak
 
 - name: Ensure TeamSpeak config directory exists
   ansible.builtin.file:
@@ -19,18 +20,21 @@
     mode: '0755'
   loop:
     - "{{ app_services.teamspeak.root_path }}"
+  tags: teamspeak
 
 - name: Render Docker Compose
   ansible.builtin.template:
     src: templates/teamspeak_compose.yaml.j2
     dest: "{{ app_services.teamspeak.root_path }}/docker-compose.yml"
     mode: "0600"
+  tags: teamspeak
 
 - name: Start Teamspeak Server Container
   community.docker.docker_compose_v2:
     project_src: "{{ app_services.teamspeak.root_path }}"
     state: present
     pull: always
+  tags: teamspeak
 
 - name: Get TeamSpeak Admin Token from logs
   ansible.builtin.shell: |
@@ -41,8 +45,10 @@
   register: ts_token
   changed_when: false
   failed_when: false
+  tags: teamspeak
 
 - name: Print your Admin Key
   ansible.builtin.debug:
     msg: "Your TeamSpeak Privilege Key is: {{ ts_token.stdout }} "
   when: ts_token.stdout != ""
+  tags: teamspeak
