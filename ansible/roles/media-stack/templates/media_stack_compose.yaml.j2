@@ -1,0 +1,105 @@
+services:
+  sonarr:
+    image: "{{ app_services.sonarr.image }}:{{ app_services.sonarr.version }}"
+    container_name: sonarr
+    hostname: sonarr
+    restart: unless-stopped
+    environment:
+      - PUID=1000
+      - PGID=1000
+    ports:
+      - "{{ app_services.sonarr.internal_port }}:8989"
+    volumes:
+      - "{{ app_services.sonarr.root_path }}/config:/config"
+      - "{{ global_nas_mount_path }}/media-data:/media-data"
+
+  radarr:
+    image: "{{ app_services.radarr.image }}:{{ app_services.radarr.version }}"
+    container_name: radarr
+    hostname: radarr
+    restart: unless-stopped
+    environment:
+      - PUID=1000
+      - PGID=1000
+    ports:
+      - "{{ app_services.radarr.internal_port }}:7878"
+    volumes:
+      - "{{ app_services.radarr.root_path }}/config:/config"
+      - "{{ global_nas_mount_path }}/media-data:/media-data"
+
+  prowlarr:
+    image: "{{ app_services.prowlarr.image }}:{{ app_services.prowlarr.version }}"
+    container_name: prowlarr
+    hostname: prowlarr
+    restart: unless-stopped
+    environment:
+      - PUID=1000
+      - PGID=1000
+    ports:
+      - "{{ app_services.prowlarr.internal_port }}:9696"
+    volumes:
+      - "{{ app_services.prowlarr.root_path }}/config:/config"
+      - "{{ global_nas_mount_path }}/media-data:/media-data"
+
+  sabnzbd:
+    image: "{{ app_services.sabnzbd.image }}:{{ app_services.sabnzbd.version }}"
+    container_name: sabnzbd
+    hostname: sabnzbd
+    restart: unless-stopped
+    environment:
+      - PUID=1000
+      - PGID=1000
+    ports:
+      - "{{ app_services.sabnzbd.internal_port }}:{{ app_services.sabnzbd.container_port }}"
+    volumes:
+      - "{{ app_services.sabnzbd.root_path }}/config:/config"
+      - "{{ global_nas_mount_path }}/media-data/usenet:/media-data/usenet"
+
+  decypharr:
+    image: "{{ app_services.decypharr.image }}:{{ app_services.decypharr.version }}"
+    container_name: decypharr
+    hostname: decypharr
+    restart: unless-stopped
+    environment:
+      - PUID=1000
+      - PGID=1000
+    ports:
+      - "{{ app_services.decypharr.internal_port }}:8282"
+    volumes:
+      - "{{ app_services.decypharr.root_path }}/app:/app"
+      - "{{ global_nas_mount_path }}/media-data/torrents:/media-data/torrents"
+    devices:
+      - /dev/dri:/dev/dri
+      - /dev/fuse:/dev/fuse:rwm
+    cap_add:
+      - SYS_ADMIN
+    security_opt:
+      - apparmor:unconfined
+
+  jellyfin:
+    image: "{{ app_services.jellyfin.image }}:{{ app_services.jellyfin.version }}"
+    container_name: jellyfin
+    hostname: jellyfin
+    restart: unless-stopped
+    environment:
+      - PUID=1000
+      - PGID=1000
+    ports:
+      - "{{ app_services.jellyfin.internal_port }}:8096"
+    volumes:
+      - "{{ app_services.jellyfin.root_path }}/config:/config"
+      - "{{ app_services.jellyfin.root_path }}/cache:/cache"
+      - "{{ global_nas_mount_path }}/media-data/media:/media-data/media"
+
+  jellyseerr:
+    image: "{{ app_services.jellyseerr.image }}:{{ app_services.jellyseerr.version }}"
+    container_name: jellyseerr
+    hostname: jellyseerr
+    restart: unless-stopped
+    environment:
+      - PUID=1000
+      - PGID=1000
+    ports:
+      - "{{ app_services.jellyseerr.internal_port }}:5055"
+    volumes:
+      - "{{ app_services.jellyseerr.root_path }}/config:/app/config"

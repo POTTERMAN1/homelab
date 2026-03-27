@@ -1,0 +1,36 @@
+- name: Ensure media stack directories exist
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    owner: "1000"
+    group: "1000"
+    mode: '0755'
+  loop:
+    - "{{ app_services.sonarr.root_path }}"
+    - "{{ app_services.radarr.root_path }}"
+    - "{{ app_services.prowlarr.root_path }}"
+    - "{{ app_services.sabnzbd.root_path }}"
+    - "{{ app_services.decypharr.root_path }}"
+    - "{{ app_services.jellyfin.root_path }}"
+    - "{{ app_services.jellyfin.root_path }}"
+    - "{{ app_services.jellyseerr.root_path }}"
+  tags: media-stack
+
+- name: Ensure that the `docker br0` network is up and running
+  community.docker.docker_network:
+    name: docker-br0
+    state: present
+  tags: media-stack
+
+- name: Render Docker Compose
+  ansible.builtin.template:
+    src: templates/media_stack_compose.yaml.j2
+    dest: /opt/media-stack/docker-compose.yml
+    mode: "0644"
+  tags: media-stack
+
+- name: Start media stack
+  community.docker.docker_compose_v2:
+    project_src: /opt/media-stack
+    state: present
+  tags: media-stack
