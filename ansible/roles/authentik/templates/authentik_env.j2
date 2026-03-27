@@ -1,3 +1,9 @@
 AUTHENTIK_ERROR_REPORTING__ENABLED=true
 # The URL needed for email links and redirects
 AUTHENTIK_EXT_NOTIFIERS__OPPS__ENABLED=true
+AUTHENTIK_EMAIL__HOST: "{{ vault_authentik_email_host }}"
+AUTHENTIK_EMAIL__PORT: "{{ vault_authentik_email_port }}"
+AUTHENTIK_EMAIL__USERNAME: "{{ vault_authentik_email_username }}"
+AUTHENTIK_EMAIL__PASSWORD: "{{ vault_authentik_email_password }}"
+AUTHENTIK_EMAIL__USE_SSL: "true"
+AUTHENTIK_EMAIL__FROM: "{{ vault_authentik_email_from }}"
