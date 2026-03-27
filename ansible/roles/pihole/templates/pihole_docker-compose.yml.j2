@@ -1,0 +1,18 @@
+services:
+  pihole:
+    container_name: pihole
+    hostname: pihole
+    image: "pihole/pihole:{{ app_services.pihole.version }}"
+    ports:
+      # DNS Ports
+      - "53:53/tcp"
+      - "53:53/udp"
+      - "{{ app_services.pihole.internal_port }}:80/tcp"
+      - "4443:443/tcp"
+    environment:
+      - "TZ={{ global_timezone }}"
+      - "FTLCONF_webserver_api_password={{ vault_FTLCONF_pihole_webserver_password }}"
+      - FTLCONF_dns_listeningMode=ALL
+    volumes:
+      - "{{ app_services.pihole.root_path }}:/etc/pihole"
+    restart: unless-stopped
