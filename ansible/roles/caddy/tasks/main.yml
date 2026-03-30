@@ -2,7 +2,7 @@
   ansible.builtin.get_url:
     url: "https://caddyserver.com/api/download?os=linux&arch=amd64&p=github.com%2Fcaddy-dns%2Fcloudflare"
     dest: /usr/bin/caddy
-    mode: "0755" # Owner can execute
+    mode: "0755"   # Owner can execute
   notify:
     - Restart Caddy
   tags: docker
@@ -17,7 +17,7 @@
   ansible.builtin.template:
     src: templates/Caddyfile.j2
     dest: /etc/caddy/Caddyfile
-    mode: "0644" # Owner can read/write but not execute
+    mode: "0644"   # Owner can read/write but not execute
     validate: caddy validate --adapter caddyfile --config %s
   environment:
     CLOUDFLARE_API_TOKEN: "{{ vault_cloudflare_api_token }}"
