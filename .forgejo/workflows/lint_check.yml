@@ -24,11 +24,9 @@ jobs:
       # --- Syntax & Formatting ---
       - name: Run YAML Lint
         run: yamllint .
-        continue-on-error: true
 
       - name: Run Markdownlint
         run: markdownlint '**/*.md' --ignore node_modules
-        continue-on-error: true
 
       # --- IaC Linting ---
       - name: Ansible Syntax Check
@@ -41,22 +39,18 @@ jobs:
 
       - name: Run ShellCheck
         run: find . -name '*.sh' -exec shellcheck {} +
-        continue-on-error: true
 
       - name: Run Hadolint (Dockerfiles)
         run: find . -name 'Dockerfile*' -not -name '*.j2' | xargs -r hadolint
-        continue-on-error: true
 
       - name: Run TFLint
         run: |
           cd terraform
           tflint --init
           tflint
-        continue-on-error: true
 
       - name: Run Kubeconform
         run: find kubernetes -name '*.yaml' | xargs -r kubeconform -strict
-        continue-on-error: true
 
       # --- Security ---
       - name: Run Gitleaks
