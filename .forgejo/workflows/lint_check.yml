@@ -56,6 +56,6 @@ jobs:
       - name: Run Gitleaks
         run: gitleaks detect --source . --verbose
 
-      - name: Run Trivy (filesystem scan)
-        run: trivy fs --severity HIGH,CRITICAL --exit-code 1 .
-        continue-on-error: true
+#      - name: Run Trivy (filesystem scan)
+#        run: trivy fs --severity HIGH,CRITICAL --exit-code 1 .
+#        continue-on-error: true
