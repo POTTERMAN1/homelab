@@ -1,4 +1,4 @@
-- name: Basic Server Hardening # Also includes default apps, potterman account and ZeroTier installation
+- name: Basic Server Hardening   # Also includes default apps, potterman account and ZeroTier installation
   hosts: all:!ansible_master:!workstations
   become: true
   roles:
