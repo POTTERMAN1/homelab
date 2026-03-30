@@ -6,9 +6,9 @@ Security in this infrastructure is applied in layers, from encrypted variables a
 
 No passwords, API tokens, or sensitive variables are stored in plaintext.
 
-* **Encryption at Rest:** All sensitive strings are encrypted using `ansible-vault` (AES256).
-* **Decryption at Runtime:** During CI/CD pipelines, the vault password is injected dynamically into the ephemeral runner via Forgejo/GitHub repository secrets.
-* **Service Injection:** Passwords are never written to disk in plaintext. Ansible injects them directly into Docker `.env` files or systemd environments during deployment.
+- **Encryption at Rest:** All sensitive strings are encrypted using `ansible-vault` (AES256).
+- **Decryption at Runtime:** During CI/CD pipelines, the vault password is injected dynamically into the ephemeral runner via Forgejo/GitHub repository secrets.
+- **Service Injection:** Passwords are never written to disk in plaintext. Ansible injects them directly into Docker `.env` files or systemd environments during deployment.
 
 ## OS & SSH Hardening
 
@@ -20,8 +20,8 @@ The `common` Ansible role enforces strict baseline security on all newly provisi
 
 ## Surface Area Reduction
 
-* **No Exposed Ports:** By utilizing the ZeroTier mesh and a single reverse proxy entry point, the internal cluster nodes (Docker hosts, databases) have zero ports exposed to the public internet or the physical LAN.
-ONLY EXCEPTION TO THE RULE IS THE TEAMSPEAK 6 SERVER
+- **No Exposed Ports:** By utilizing the ZeroTier mesh and a single reverse proxy entry point, the internal cluster nodes (Docker hosts, databases) have zero ports exposed to the public internet or the physical LAN.
+  ONLY EXCEPTION TO THE RULE IS THE TEAMSPEAK 6 SERVER
 
 ### Incident Report: IONOS VPS Compromise & Recovery
 
@@ -38,6 +38,6 @@ ONLY EXCEPTION TO THE RULE IS THE TEAMSPEAK 6 SERVER
 
 #### Lessons Learned
 
-* Always apply the Ansible hardening playbook immediately after a fresh OS install.
-* Do not leave the default `root` password active for longer than the time it takes to push SSH keys.
-* Do not forget about disabling `root` access. I'm glad this was an isolated VPS and not my personal PC.
+- Always apply the Ansible hardening playbook immediately after a fresh OS install.
+- Do not leave the default `root` password active for longer than the time it takes to push SSH keys.
+- Do not forget about disabling `root` access. I'm glad this was an isolated VPS and not my personal PC.

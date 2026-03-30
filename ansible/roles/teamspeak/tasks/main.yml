@@ -17,7 +17,7 @@
     state: directory
     owner: "root"
     group: "root"
-    mode: '0755'
+    mode: "0755"
   loop:
     - "{{ app_services.teamspeak.root_path }}"
   tags: teamspeak

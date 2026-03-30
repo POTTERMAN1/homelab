@@ -4,9 +4,11 @@
 
 **Symptom:** Caddy fails to obtain a Let's Encrypt certificate. Logs show `adding temporary record for zone "domain.com.": expected 1 zone, got 0`.
 **Root Cause:** The Cloudflare API Token didn't have specific DNS zone set.
-**Fix:** 1. Go to Cloudflare Dashboard -> API Tokens.
+**Fix:**
+
+1. Go to Cloudflare Dashboard -> API Tokens.
 2. Ensure permissions are exactly: **Zone:DNS:Edit** and **Zone:Zone:Read**.
-3. *Crucial:* Set **Zone Resources** to **Include -> Specific Zone -> yourdomain.com** In this specific case it should be `potterman.party`.
+3. _Crucial:_ Set **Zone Resources** to **Include -> Specific Zone -> yourdomain.com** In this specific case it should be `potterman.party`.
 
 ## Issue: "Context canceled" or "Unable to unlock"
 

@@ -33,7 +33,7 @@ Ensure the user is appended to the `docker` group. In Ansible, this must be done
     append: true
 ```
 
-*Note:* If doing this manually, the user **must** log out and log back in for the group assignment to take effect.
+_Note:_ If doing this manually, the user **must** log out and log back in for the group assignment to take effect.
 
 ## Container Volume Permission Errors (Log Grepping)
 

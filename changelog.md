@@ -148,7 +148,7 @@
 - Playbook vault variable not getting passed correctly. Resolved by formatting the playbook as it was supposed to.
 - Resolved a Vault decryption mismatch by aligning `ansible.cfg` directory context with the `.ansible_vault_pass` file.
 - Fixed a YAML dictionary parsing error (`_AnsibleTaggedStr`) inside the encrypted vault file.
-- Resolved a Let's Encrypt `Expected 1 zone, got 0` error by correctly scoping the Cloudflare API Token permissions to **Specific Zone: potterman.party.
+- Resolved a Let's Encrypt `Expected 1 zone, got 0` error by correctly scoping the Cloudflare API Token permissions to \*\*Specific Zone: potterman.party.
 - Fixed a "context canceled" / "stale lock" race condition during initial certificate generation by implementing a clean state-wipe protocol.
 
 ## [0.1.0] - 2026-01-28 - GitOps Foundation & Workspace Optimization

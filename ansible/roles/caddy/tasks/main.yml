@@ -38,7 +38,7 @@
   ansible.builtin.file:
     path: /etc/systemd/system/caddy.service.d/
     state: directory
-    mode: '0755'
+    mode: "0755"
   tags: docker
 
 - name: Inject EnvironmentFile directive into Caddy Systemd
@@ -47,7 +47,7 @@
       [Service]
       EnvironmentFile=/etc/caddy/.cloudflare.env
     dest: /etc/systemd/system/caddy.service.d/override.conf
-    mode: '0644'
+    mode: "0644"
   notify:
     - Reload Systemd
     - Restart Caddy

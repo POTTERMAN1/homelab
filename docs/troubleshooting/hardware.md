@@ -20,4 +20,4 @@ To check the status of the primary storage pools on the OMV/Proxmox nodes:
 zpool status -v
 ```
 
-***Further improvements*** pending Phase 3: Monitoring, Health & Notifications.
+**_Further improvements_** pending Phase 3: Monitoring, Health & Notifications.

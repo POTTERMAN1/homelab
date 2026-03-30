@@ -22,18 +22,18 @@ In the future I'll expand Terraform to all my hosts, physical and virtual.
 
 Once the hardware is provisioned, Ansible takes the wheel. The architecture is broken down into modular Ansible roles:
 
-* **`common`**: Applies baseline security (SSH hardening, `ufw`), shell environments (`fish`), and joins the host to the ZeroTier network.
-* **`caddy`**: Deploys reverse proxy utilizing Cloudflare DNS-01 challenges and routes traffic through the ZeroTier backbone.
-* **`docker`**: Installs the Docker daemon, Compose, and Python SDKs.
-* **`authentik`**: Centralized Identity Provider (IdP) for Single Sign-On.
-* **`seafile`**: Self-hosted cloud storage with automated OIDC injection connecting it to Authentik.
-* **`homepage`**: The central dashboard for monitoring infrastructure.
-* **`paperless`**: Archival, digitizing and processing of documents.
-* **`forgejo`**: Self-hosted fork of Gitea for repository management.
-* **`foundryvtt`**: Self-hosted FoundryVTT instance via a Dockerfile.
-* **`arr_stack`**: Media stack, management and Jellyfin hosting.
-* **`pihole`**: Ad-blocking DNS for my local network.
-* **`firefly`**: Self-hosted budgeting software, behind Authentik SSO.
+- **`common`**: Applies baseline security (SSH hardening, `ufw`), shell environments (`fish`), and joins the host to the ZeroTier network.
+- **`caddy`**: Deploys reverse proxy utilizing Cloudflare DNS-01 challenges and routes traffic through the ZeroTier backbone.
+- **`docker`**: Installs the Docker daemon, Compose, and Python SDKs.
+- **`authentik`**: Centralized Identity Provider (IdP) for Single Sign-On.
+- **`seafile`**: Self-hosted cloud storage with automated OIDC injection connecting it to Authentik.
+- **`homepage`**: The central dashboard for monitoring infrastructure.
+- **`paperless`**: Archival, digitizing and processing of documents.
+- **`forgejo`**: Self-hosted fork of Gitea for repository management.
+- **`foundryvtt`**: Self-hosted FoundryVTT instance via a Dockerfile.
+- **`arr_stack`**: Media stack, management and Jellyfin hosting.
+- **`pihole`**: Ad-blocking DNS for my local network.
+- **`firefly`**: Self-hosted budgeting software, behind Authentik SSO.
 
 ---
 
@@ -51,16 +51,16 @@ The homelab utilizes a "Zero Trust" model for internal services. No internal app
 
 This repository uses GitOps principles.
 
-* Code is hosted locally on a self-hosted Forgejo instance.
-* Commits to the `main` branch trigger a Forgejo Action that automatically mirrors the repository to GitHub.
-* The GitHub mirror subsequently triggers a GitHub Action to build and deploy the `MkDocs` documentation to GitHub Pages.
+- Code is hosted locally on a self-hosted Forgejo instance.
+- Commits to the `main` branch trigger a Forgejo Action that automatically mirrors the repository to GitHub.
+- The GitHub mirror subsequently triggers a GitHub Action to build and deploy the `MkDocs` documentation to GitHub Pages.
 
 ## AI Usage & Mentorship Transparency
 
 Transparency is important to me. Throughout the lifecycle of this homelab migration, I utilized Google's Gemini as an interactive mentor and pair-programmer.
 
-* **Phase 1 (Architecture & Learning):** Initially, I used AI to understand the core concepts of Infrastructure as Code, GitOps workflows, and Ansible role modularity. It served as a senior engineering tutor to explain *why* certain architectural decisions (like ZeroTier SDN or DNS-01 challenges) are preferred in enterprise environments.
-* **Phase 2 (Code Review & Validation):** As my proficiency grew, the AI's role shifted strictly to code review and CI/CD debugging. I utilized it to help diagnose strict `ansible-lint` violations, troubleshoot Forgejo Action pathing errors, and validate Jinja2 template syntax.
+- **Phase 1 (Architecture & Learning):** Initially, I used AI to understand the core concepts of Infrastructure as Code, GitOps workflows, and Ansible role modularity. It served as a senior engineering tutor to explain _why_ certain architectural decisions (like ZeroTier SDN or DNS-01 challenges) are preferred in enterprise environments.
+- **Phase 2 (Code Review & Validation):** As my proficiency grew, the AI's role shifted strictly to code review and CI/CD debugging. I utilized it to help diagnose strict `ansible-lint` violations, troubleshoot Forgejo Action pathing errors, and validate Jinja2 template syntax.
 
 **Zero Blind Copy-Pasting:** Every line of code, Terraform block, and CI/CD workflow in this repository was manually reviewed, tested, and understood before being merged into the `main` branch.
 
@@ -111,4 +111,5 @@ To ensure the AI acted as a strict mentor rather than just an answer generator, 
 > No security shortcuts. Don't disable SELinux, skip TLS, or hardcode credentials for convenience.
 > No "quickest fix" bias. Default to the most robust, maintainable solution. If there's a tradeoff between speed and quality, flag it and let me choose.
 > No role-playing titles. Just be direct and knowledgeable. I don't need you to pretend to be a "Senior Staff Engineer" — I need you to help me become one.
+
 </details>

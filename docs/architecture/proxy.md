@@ -24,10 +24,10 @@ Here is the live Caddyfile template powering the infrastructure:
 
 Caddy routes traffic to services across three host types:
 
-* **Proxmox Host (`pve`):** Proxmox Web UI, PBS Web UI
-* **Docker VM (`debian-docker`):** Forgejo, Pi-hole, Sonarr, Radarr, Prowlarr, Jellyfin, Jellyseerr, Homepage, Authentik, Firefly III, FoundryVTT, and the Arr media stack
-* **IONOS VPS (`ionos_vps`):** Seafile cloud storage
-* **K3s Node (`k3s-node1`):** Garage S3 object storage (via NodePort 30900)
+- **Proxmox Host (`pve`):** Proxmox Web UI, PBS Web UI
+- **Docker VM (`debian-docker`):** Forgejo, Pi-hole, Sonarr, Radarr, Prowlarr, Jellyfin, Jellyseerr, Homepage, Authentik, Firefly III, FoundryVTT, and the Arr media stack
+- **IONOS VPS (`ionos_vps`):** Seafile cloud storage
+- **K3s Node (`k3s-node1`):** Garage S3 object storage (via NodePort 30900)
 
 ## Zero Downtime Reloads
 

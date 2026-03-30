@@ -16,12 +16,12 @@
 ```bash
 potterman@ansible-main:~/git/homelab$ sudo zerotier-cli peers
 200 peers
-<ztaddr>   <ver>  <role> <lat> <link>   
-12afsa13 1.15.3 LEAF     156 DIRECT   
-778fasf1 -      PLANET   154 DIRECT   
-caf32144 -      PLANET    49 DIRECT   
-cae11244 -      PLANET   189 DIRECT   
-cafd3117 -      PLANET   283 DIRECT   
+<ztaddr>   <ver>  <role> <lat> <link>
+12afsa13 1.15.3 LEAF     156 DIRECT
+778fasf1 -      PLANET   154 DIRECT
+caf32144 -      PLANET    49 DIRECT
+cae11244 -      PLANET   189 DIRECT
+cafd3117 -      PLANET   283 DIRECT
 ```
 
 - Adjusted the route metric to ensure the `zt` interface takes precedence for the `192.168.192.0/24' range.
@@ -44,4 +44,4 @@ Currently, this requires manual intervention via the IONOS Cloud Panel:
 2. Navigate to **Network > Firewall Policies**.
 3. Select the active policy for the VPS and manually add the required ports (e.g., UDP 9987 for TeamSpeak Voice, TCP 30033 for File Transfer).
 
-*Note: This is slated to be automated in Phase 2 using the `ionoscloud.cloud_api.firewallrule` Ansible module once API tokens are properly vaulted.*
+_Note: This is slated to be automated in Phase 2 using the `ionoscloud.cloud_api.firewallrule` Ansible module once API tokens are properly vaulted._

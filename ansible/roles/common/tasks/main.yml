@@ -12,15 +12,15 @@
     state: present
     key: "{{ lookup('file', item) }}"
   loop:
-    - "~/.ssh/id_ed25519.pub"   # ansible-main
-    - "~/.ssh/cachy_os_key.pub"   # cachy-os
+    - "~/.ssh/id_ed25519.pub" # ansible-main
+    - "~/.ssh/cachy_os_key.pub" # cachy-os
   tags: docker
 
 - name: Zero-Password Sudo for potterman
   ansible.builtin.copy:
     content: "potterman ALL=(ALL) NOPASSWD:ALL"
     dest: /etc/sudoers.d/potterman
-    mode: '0440'
+    mode: "0440"
     validate: /usr/sbin/visudo -csf %s
   tags: docker
 
@@ -31,8 +31,8 @@
     line: "{{ item.line }}"
     validate: /usr/sbin/sshd -t -f %s
   loop:
-    - {regexp: '^#?PasswordAuthentication', line: 'PasswordAuthentication no'}
-    - {regexp: '^#?PermitRootLogin', line: 'PermitRootLogin no'}
+    - {regexp: "^#?PasswordAuthentication", line: "PasswordAuthentication no"}
+    - {regexp: "^#?PermitRootLogin", line: "PermitRootLogin no"}
   notify: Restart SSH
   tags: docker
 

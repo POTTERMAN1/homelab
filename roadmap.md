@@ -2,7 +2,7 @@
 
 ## Phase 1: GitOps Foundation & Workspace Optimization
 
-*(See CHANGELOG for completed Phase 1 tasks)*
+_(See CHANGELOG for completed Phase 1 tasks)_
 
 ## Phase 2: Service Migration, Maintenance & Monitoring
 

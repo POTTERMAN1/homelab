@@ -7,7 +7,7 @@ Before Ansible can configure the operating systems and deploy Docker containers,
 The provider connects to the Proxmox VE API using token-based authentication. Sensitive credentials (endpoint URL and API token) are stored in `terraform.tfvars` which is gitignored.
 
 ```hcl
---8<-- "terraform/provider.tf" 
+--8<-- "terraform/provider.tf"
 ```
 
 ## Reusable Modules
@@ -28,8 +28,8 @@ Provisions lightweight LXC containers from Debian templates. Same variable-drive
 
 The root `main.tf` calls the modules to provision specific nodes. Currently managed resources:
 
-* **`ansible_hub`** (LXC, ID 105) - the Ansible control node (standalone resource, pending module migration)
-* **`k3s_node_01`** (VM, ID 201) - Kubernetes node provisioned via the `proxmox-vm` module
+- **`ansible_hub`** (LXC, ID 105) - the Ansible control node (standalone resource, pending module migration)
+- **`k3s_node_01`** (VM, ID 201) - Kubernetes node provisioned via the `proxmox-vm` module
 
 ```hcl
 --8<-- "terraform/main.tf"
@@ -41,4 +41,4 @@ VM provisioning relies on a Debian 13 cloud-init template (ID 9000) created on t
 
 ## Known Technical Debt
 
-* The `ansible_hub` LXC container is managed as a standalone resource rather than through the `proxmox-lxc` module. Migrating it via `terraform state mv` was attempted but blocked by attribute drift (password, tags, firewall settings) that would force container recreation. Since this is the active control node running Terraform itself, recreation is high-risk. Documented for future resolution.
+- The `ansible_hub` LXC container is managed as a standalone resource rather than through the `proxmox-lxc` module. Migrating it via `terraform state mv` was attempted but blocked by attribute drift (password, tags, firewall settings) that would force container recreation. Since this is the active control node running Terraform itself, recreation is high-risk. Documented for future resolution.
