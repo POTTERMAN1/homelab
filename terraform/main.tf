@@ -23,7 +23,7 @@ resource "proxmox_virtual_environment_container" "ansible_hub" {
 
     user_account {
       keys     = [var.ssh_public_key]
-      password = "temporary-password"
+      password = var.init_password
     }
   }
 

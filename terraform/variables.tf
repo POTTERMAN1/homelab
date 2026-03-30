@@ -29,3 +29,9 @@ variable "proxmox_api_token" {
   type        = string
   sensitive   = true
 }
+
+variable "init_password" {
+  description = "Temporary Cloud-Init password, overridden by Ansible on first run"
+  type        = string
+  sensitive   = true
+}
