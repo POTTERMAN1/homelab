@@ -1,21 +1,84 @@
-# This is the file that stores data of the services
-# Domain names, subdomains, ports etc. for Caddy automation
+# =============================================================================
+# services.yml — Application Service Definitions
+# =============================================================================
+# Single source of truth for all Ansible-managed services.
+# Drives: Caddyfile templating, Homepage dashboard, Renovate version pins.
+#
+# Rules:
+#   - If a service has a Caddy entry, it belongs here.
+#   - If a service has no Caddy entry (proxy_type: no_caddy), it may still live
+#     here if other roles consume its data (e.g. teamspeak DNS, port config).
+#   - Unmanaged infrastructure endpoints (PVE, PBS, OMV) live in infrastructure.yml.
+#   - All image versions must be pinned — no 'latest' tags.
 
 global_docker_base_path: "/opt"
 global_nas_mount_path: "/mnt/NAS_ZFS"
 global_timezone: "Europe/Warsaw"
 
 app_services:
+
+  # Identity & Access
+
+  authentik:
+    host: "debian-docker"
+    subdomain: "auth"
+    domain: "potterman.party"
+    proxy_type: "standard"
+    internal_port: 9000
+    root_path: "{{ global_docker_base_path }}/authentik"
+    # Sidecar versions pinned here for Renovate compatibility.
+    # TODO: move postgres/redis versions here from authentik_compose.yaml.j2
+
+
+    # Core Infrastructure Services
+
+  forgejo:
+    host: "debian-docker"
+    subdomain: "forgejo"
+    domain: "potterman.party"
+    proxy_type: "standard"
+    image: "codeberg.org/forgejo/forgejo"
+    version: "14"
+    internal_port: 3000
+    ssh_port: 2222
+    root_path: "{{ global_docker_base_path }}/forgejo"
+    runner_image: "code.forgejo.org/forgejo/runner"
+    runner_version: "9.0.3"
+
   pihole:
-    version: "2025.11.1"
+    host: "debian-docker"
     subdomain: "pihole"
     domain: "potterman.party"
+    proxy_type: "standard"
+    image: "pihole/pihole"
+    version: "2025.11.1"
     internal_port: 800
     root_path: "{{ global_docker_base_path }}/pihole"
 
+  homepage:
+    host: "debian-docker"
+    subdomain: "home"
+    domain: "potterman.party"
+    proxy_type: "standard"
+    internal_port: 3005
+    root_path: "{{ global_docker_base_path }}/homepage"
+
+  # Storage & Documents
+
+  seafile:
+    host: "ionos_vps"
+    subdomain: "seafile"
+    domain: "potterman.party"
+    proxy_type: "standard"
+    internal_port: 8060
+    root_path: "{{ global_docker_base_path }}/seafile"
+    webhook_python_version: "3.12-slim"
+
   paperless:
+    host: "debian-docker"
     subdomain: "paperless"
     domain: "potterman.party"
+    proxy_type: "standard"
     image: "ghcr.io/paperless-ngx/paperless-ngx"
     version: "2.16.3"
     internal_port: 8000
@@ -31,77 +94,83 @@ app_services:
     tika_image: "apache/tika"
     tika_version: "3.2.0.0"
 
+  garage:
+    host: "k3s-node1"
+    subdomain: "s3"
+    domain: "potterman.party"
+    proxy_type: "standard"
+    internal_port: 30900
+    # NodePort service on K3s — no root_path, not Docker-managed.
+
+
+    # Finances
+
+
   firefly:
+    host: "debian-docker"
     subdomain: "firefly"
     domain: "potterman.party"
+    proxy_type: "forward_auth"
     internal_port: 8090
     root_path: "{{ global_docker_base_path }}/firefly"
 
-  foundryvtt:
-    foundry_version: "13.351"
-    subdomain: "foundry"
-    domain: "potterman.party"
-    internal_port: 30000
-    root_path: "{{ global_docker_base_path }}/foundryvtt"
-    foundry_user_data_path: "{{ global_nas_mount_path }}/foundryvtt/foundry_user_data"
+  # Media
 
-  authentik:
-    subdmain: "auth"
+  jellyfin:
+    host: "debian-docker"
+    subdomain: "jellyfin"
     domain: "potterman.party"
-    internal_port: 9000
-    root_path: "{{ global_docker_base_path }}/authentik"
+    proxy_type: "standard"
+    image: "jellyfin/jellyfin"
+    version: "10.11.6"
+    internal_port: 8096
+    root_path: "{{ global_docker_base_path }}/jellyfin"
 
-  seafile:
-    subdomain: "seafile"
+  jellyseerr:
+    host: "debian-docker"
+    subdomain: "jellyseer"
     domain: "potterman.party"
-    internal_port: 8060
-    protocols: "h1 h2"
-    root_path: "{{ global_docker_base_path }}/seafile"
-
-  homepage:
-    subdmain: "homepage"
-    domain: "potterman.party"
-    internal_port: 3005
-    root_path: "{{ global_docker_base_path }}/homepage"
-
-  garage:
-    type: "k3"
-    subdomain: "s3"
-    domain: "potterman.party"
-    internal_port: 30900
-
-  teamspeak:
-    root_path: "{{ global_docker_base_path }}/teamspeak"
-    internal_port: 9987
-    internal_port2: 30033
+    proxy_type: "standard"
+    image: "fallenbagel/jellyseerr"
+    version: "2.7.3"
+    internal_port: 5055
+    root_path: "{{ global_docker_base_path }}/jellyseer"
 
   sonarr:
+    host: "debian-docker"
     subdomain: "sonarr"
     domain: "potterman.party"
+    proxy_type: "standard"
     image: "ghcr.io/hotio/sonarr"
     version: "release-4.0.16.2944"
     internal_port: 8989
     root_path: "{{ global_docker_base_path }}/sonarr"
 
   radarr:
+    host: "debian-docker"
     subdomain: "radarr"
     domain: "potterman.party"
+    proxy_type: "standard"
     image: "ghcr.io/hotio/radarr"
     version: "release-6.0.4.10291"
     internal_port: 7878
     root_path: "{{ global_docker_base_path }}/radarr"
 
   prowlarr:
+    host: "debian-docker"
     subdomain: "prowlarr"
     domain: "potterman.party"
+    proxy_type: "standard"
     image: "ghcr.io/hotio/prowlarr"
     version: "release-2.3.0.5236"
     internal_port: 9696
     root_path: "{{ global_docker_base_path }}/prowlarr"
 
   sabnzbd:
+    host: "debian-docker"
     subdomain: "sabnzbd"
     domain: "potterman.party"
+    proxy_type: "standard"
     image: "linuxserver/sabnzbd"
     version: "4.5.5"
     internal_port: 8585
@@ -109,44 +178,43 @@ app_services:
     root_path: "{{ global_docker_base_path }}/sabnzbd"
 
   decypharr:
+    host: "debian-docker"
     subdomain: "decypharr"
     domain: "potterman.party"
+    proxy_type: "standard"
     image: "cy01/blackhole"
     version: "v1.1.6"
     internal_port: 8282
     root_path: "{{ global_docker_base_path }}/decypharr"
 
-  jellyfin:
-    subdomain: "jellyfin"
-    domain: "potterman.party"
-    image: "jellyfin/jellyfin"
-    version: "10.11.6"
-    internal_port: 8096
-    root_path: "{{ global_docker_base_path }}/jellyfin"
+  # Gaming
 
-  jellyseerr:
-    subdomain: "jellyseer"
+  foundryvtt:
+    host: "debian-docker"
+    subdomain: "foundry"
     domain: "potterman.party"
-    image: "fallenbagel/jellyseerr"
-    version: "2.7.3"
-    internal_port: 5055
-    root_path: "{{ global_docker_base_path }}/jellyseer"
+    proxy_type: "standard"
+    foundry_version: "13.351"
+    internal_port: 30000
+    root_path: "{{ global_docker_base_path }}/foundryvtt"
+    foundry_user_data_path: "{{ global_nas_mount_path }}/foundryvtt/foundry_user_data"
 
-  forgejo:
-    subdomain: "forgejo"
-    domain: "potterman.party"
-    image: "codeberg.org/forgejo/forgejo"
-    version: "14"
-    internal_port: 3000
-    ssh_port: 2222
-    root_path: "{{ global_docker_base_path }}/forgejo"
-    runner_image: "code.forgejo.org/forgejo/runner"
-    runner_version: "9.0.3"
+  teamspeak:
+    # No Caddy entry — DNS A-record and port config consumed by teamspeak role.
+    # Public-facing on IONOS VPS, bypasses ZeroTier mesh intentionally.
+    proxy_type: "no_caddy"
+    root_path: "{{ global_docker_base_path }}/teamspeak"
+    internal_port: 9987
+    internal_port2: 30033
+
+  # CI Toolchain — not a service, version pins for potter-ci-lint image builds
 
   ci_lint:
+    # No host, subdomain, or proxy_type — consumed only by the CI image role.
+    # Trivy excluded — supply chain compromise confirmed in 0.69.4-0.69.6.
+    # Re-evaluate before adding back.
     image: "python"
     version: "3.12-slim"
-    trivy_version: "0.58.2"
     gitleaks_version: "8.24.0"
     tflint_version: "0.55.1"
     hadolint_version: "2.12.0"

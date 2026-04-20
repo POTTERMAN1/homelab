@@ -1,0 +1,25 @@
+# Infrastructure endpoints — unmanaged hosts with Caddy entries
+# These are not Ansible-managed services. When a host gets an Ansible role,
+# move its entry to services.yml.
+
+infra_services:
+  proxmox:
+    host: "pve"
+    subdomain: "proxmox"
+    domain: "potterman.party"
+    proxy_type: "tls_skip"
+    internal_port: 8006
+
+  pbs:
+    host: "pve"
+    subdomain: "pbs"
+    domain: "potterman.party"
+    proxy_type: "tls_skip"
+    internal_port: 8007
+
+  nas:
+    host: "omv"
+    subdomain: "nas"
+    domain: "potterman.party"
+    proxy_type: "standard"
+    internal_port: 80
