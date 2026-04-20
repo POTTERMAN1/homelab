@@ -1,18 +1,18 @@
-- name: Download Caddy binary with Cloudflare plugin
+- name: Download Caddy binary with desec plugin
   ansible.builtin.get_url:
-    url: "https://caddyserver.com/api/download?os=linux&arch=amd64&p=github.com%2Fcaddy-dns%2Fcloudflare"
+    url: "https://caddyserver.com/api/download?os=linux&arch=amd64&p=github.com%2Fcaddy-dns%2Fdesec"
     dest: /usr/bin/caddy
     mode: "0755"   # Owner can execute
   notify:
     - Restart Caddy
-  tags: docker
+  tags: caddy
 
 - name: Ensure /etc/caddy directory exists
   ansible.builtin.file:
     path: /etc/caddy
     state: directory
     mode: "0755"
-  tags: docker
+  tags: caddy
 - name: Deploy Caddyfile Template
   ansible.builtin.template:
     src: templates/Caddyfile.j2
@@ -20,42 +20,42 @@
     mode: "0644"   # Owner can read/write but not execute
     validate: caddy validate --adapter caddyfile --config %s
   environment:
-    CLOUDFLARE_API_TOKEN: "{{ vault_cloudflare_api_token }}"
+    DESEC_API_TOKEN: "{{ vault_desec_api_token }}"
   notify:
     - Reload Caddy
-  tags: docker
+  tags: caddy
 
-- name: Deploy Cloudflare API Token .env file
+- name: Deploy desec API Token .env file
   ansible.builtin.copy:
-    content: "CLOUDFLARE_API_TOKEN={{ vault_cloudflare_api_token }}"
-    dest: /etc/caddy/.cloudflare.env
+    content: "DESEC_API_TOKEN={{ vault_desec_api_token }}"
+    dest: /etc/caddy/.desec.env
     mode: "0600"
   notify:
     - Restart Caddy
-  tags: docker
+  tags: caddy
 
 - name: Create Systemd override directory for Caddy
   ansible.builtin.file:
     path: /etc/systemd/system/caddy.service.d/
     state: directory
     mode: "0755"
-  tags: docker
+  tags: caddy
 
 - name: Inject EnvironmentFile directive into Caddy Systemd
   ansible.builtin.copy:
     content: |
       [Service]
-      EnvironmentFile=/etc/caddy/.cloudflare.env
+      EnvironmentFile=/etc/caddy/.desec.env
     dest: /etc/systemd/system/caddy.service.d/override.conf
     mode: "0644"
   notify:
     - Reload Systemd
     - Restart Caddy
-  tags: docker
+  tags: caddy
 
 - name: Ensure Caddy is started and enabled
   ansible.builtin.systemd:
     name: caddy
     state: started
     enabled: true
-  tags: docker
+  tags: caddy
