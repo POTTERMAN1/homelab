@@ -8,6 +8,7 @@
   loop:
     - "{{ app_services.seafile.root_path }}"
     - "{{ app_services.seafile.root_path }}/seafile-data"
+    - "{{ app_services.seafile.root_path }}/webhook"
   tags: seafile
 
 - name: Render Docker Compose
@@ -15,6 +16,23 @@
     src: templates/seafile_docker-compose.yaml.j2
     dest: "{{ app_services.seafile.root_path }}/docker-compose.yml"
     mode: "0644"
+  notify: Recreate Seafile Stack
+  tags: seafile
+
+- name: Render Webhook Dockerfile
+  ansible.builtin.template:
+    src: templates/Dockerfile.webhook.j2
+    dest: "{{ app_services.seafile.root_path }}/webhook/Dockerfile"
+    mode: "0644"
+  notify: Rebuild Seafile Webhook
+  tags: seafile
+
+- name: Render Webhook App
+  ansible.builtin.template:
+    src: templates/webhook_app.py.j2
+    dest: "{{ app_services.seafile.root_path }}/webhook/app.py"
+    mode: "0644"
+  notify: Rebuild Seafile Webhook
   tags: seafile
 
 - name: Spin up Seafile Stack

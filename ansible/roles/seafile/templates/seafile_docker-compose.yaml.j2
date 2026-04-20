@@ -1,3 +1,4 @@
+name: seafile
 services:
   db:
     image: mariadb:10.11
@@ -39,6 +40,15 @@ services:
     depends_on:
       - db
       - memcached
+    networks:
+      - seafile_net
+
+  seafile-webhook:
+    build:
+      context: ./webhook
+      dockerfile: Dockerfile
+    container_name: seafile-webhook
+    restart: unless-stopped
     networks:
       - seafile_net
 
