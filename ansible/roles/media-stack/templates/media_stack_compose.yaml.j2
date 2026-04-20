@@ -69,7 +69,6 @@ services:
       - "{{ app_services.decypharr.root_path }}/app:/app"
       - "{{ global_nas_mount_path }}/media-data/torrents:/media-data/torrents"
     devices:
-      - /dev/dri:/dev/dri
       - /dev/fuse:/dev/fuse:rwm
     cap_add:
       - SYS_ADMIN
@@ -84,12 +83,17 @@ services:
     environment:
       - PUID=1000
       - PGID=1000
+      - LIBVA_DRIVER_NAME=iHD
     ports:
       - "{{ app_services.jellyfin.internal_port }}:8096"
     volumes:
       - "{{ app_services.jellyfin.root_path }}/config:/config"
       - "{{ app_services.jellyfin.root_path }}/cache:/cache"
       - "{{ global_nas_mount_path }}/media-data/media:/media-data/media"
+    devices:
+      - /dev/dri/renderD128:/dev/dri/renderD128
+    group_add:
+      - "render"
 
   jellyseerr:
     image: "{{ app_services.jellyseerr.image }}:{{ app_services.jellyseerr.version }}"
