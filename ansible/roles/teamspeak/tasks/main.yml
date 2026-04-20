@@ -1,12 +1,18 @@
 - name: Create 'DNS Only' A-Record for TeamSpeak
-  community.general.cloudflare_dns:
-    zone: potterman.party
-    record: teamspeak
-    type: A
-    value: "{{ ansible_host }}"
-    proxied: false
-    api_token: "{{ vault_cloudflare_api_token }}"
-    state: present
+  ansible.builtin.uri:
+    url: "https://desec.io/api/v1/domains/potterman.party/rrsets/"
+    method: POST
+    headers:
+      Authorization: "Token {{ vault_desec_api_token }}"
+      Content-Type: "application/json"
+    body_format: json
+    body:
+      - subname: "teamspeak"
+        type: "A"
+        ttl: 3600
+        records:
+          - "{{ ansible_host }}"
+    status_code: [201, 200]
   delegate_to: localhost
   become: false
   tags: teamspeak

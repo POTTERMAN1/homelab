@@ -1,4 +1,4 @@
-cloudflare_api_token: "{{ vault_cloudflare_api_token }}"
+desec_api_token: "{{ vault_desec_api_token }}"
 zerotier_network_id: "{{ vault_zerotier_network_id }}"
 
 seafile_db_password: "{{ vault_seafile_db_password }}"
