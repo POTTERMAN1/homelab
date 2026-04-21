@@ -2,6 +2,11 @@
 
 ## [Unreleased]
 
+- Moved DNS from `Cloudflare` to `Desec`, to migrate from US-based resources where possible. It's a start of a bigger migration.
+- Deployed `pve-wings-vm-01`, host in which Pelican's Wings will be deployed for game server hosting.
+- Deployed `Pelican` on `debian-docker` for game server management.
+- Ensured that `DNS challenge` is working with `Desec DNS`
+
 ## [0.3.2] - 2026-03-21 - Terraform Modules, K3s & Kubernetes Object Storage
 
 ### Added

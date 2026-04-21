@@ -35,6 +35,7 @@
     - media-stack
     - forgejo
     - paperless
+    - pelican
 
 - name: Kubernetes
   hosts: k3s

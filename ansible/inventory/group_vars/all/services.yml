@@ -207,6 +207,14 @@ app_services:
     internal_port: 9987
     internal_port2: 30033
 
+  pelican:
+    image: "ghcr.io/pelican-dev/panel"
+    version: "v1.0.0-beta33"
+    subdomain: "pelican"
+    domain: "potterman.party"
+    internal_port: 80
+    root_path: "{{ global_docker_base_path }}/pelican"
+
   # CI Toolchain — not a service, version pins for potter-ci-lint image builds
 
   ci_lint:

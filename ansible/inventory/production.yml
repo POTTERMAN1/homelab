@@ -1,7 +1,9 @@
 ---
+# When adding new host to the common rule don't forget to run ssh-keyscan for first launch.
+
 all:
   children:
-    # 1. OS-Based Groups
+    # OS-Based Groups
     linux:
       hosts:
         pve:
@@ -10,8 +12,9 @@ all:
         omv:
         cachy-os:
         ionos_vps:
+        pve-wings-vm-01:
 
-    # 2. Functional Groups
+          # Functional Groups
     proxmox:
       hosts:
         pve:
@@ -24,6 +27,10 @@ all:
         debian-docker:
           ansible_host: 192.168.2.102
           zerotier_ip: 192.168.192.143
+          ansible_user: potterman
+        pve-wings-vm-01:
+          ansible_host: 192.168.2.202
+          zerotier_ip: 192.168.192.202
           ansible_user: potterman
         ionos_vps:
 
@@ -53,7 +60,12 @@ all:
           ansible_host: 192.168.2.201
           zerotier_ip: 192.168.192.174
           ansible_user: potterman
-    # Groups based on networks
+
+    game_servers:
+      hosts:
+        pve-wings-vm-01:
+
+          # Groups based on networks
 
     external_network:
       hosts:
@@ -72,3 +84,4 @@ all:
         omv:
         debian-docker:
         k3s-node1:
+        pve-wings-vm-01:

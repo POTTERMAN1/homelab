@@ -16,6 +16,13 @@
     }
 }
 
+# Wildcard cert
+
+*.potterman.party {
+    import desec_tls
+    abort
+}
+
 # Infrastructure
 proxmox.potterman.party {
     import desec_tls
@@ -105,6 +112,11 @@ seafile.potterman.party {
 foundry.potterman.party {
     import desec_tls
     reverse_proxy {{ hostvars['debian-docker']['zerotier_ip'] }}:30000
+}
+
+pelican.potterman.party {
+    import desec_tls
+    reverse_proxy {{ hostvars['debian-docker']['zerotier_ip'] }}:80
 }
 
 # Identity Provider (SSO)

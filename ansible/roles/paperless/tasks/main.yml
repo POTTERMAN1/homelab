@@ -22,6 +22,6 @@
   community.docker.docker_compose_v2:
     project_src: "{{ app_services.paperless.root_path }}"
     state: present
-    pull: policy
+    pull: missing
     wait: true
   tags: paperless

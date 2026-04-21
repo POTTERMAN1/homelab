@@ -1,0 +1,34 @@
+- name: Ensure that Pelican directories exist
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    owner: "82"
+    group: "82"
+    mode: "0755"
+  loop:
+    - "{{ app_services.pelican.root_path }}"
+    - "{{ app_services.pelican.root_path }}/pelican-data"
+    - "{{ app_services.pelican.root_path }}/logs"
+  tags: pelican
+
+- name: Render custom Caddyfile
+  ansible.builtin.template:
+    src: templates/Caddyfile.j2
+    dest: "{{ app_services.pelican.root_path }}/Caddyfile"
+    mode: "0644"
+  tags: pelican
+
+- name: Render Docker Compose
+  ansible.builtin.template:
+    src: templates/docker-compose.yml.j2
+    dest: "{{ app_services.pelican.root_path }}/docker-compose.yml"
+    mode: "0644"
+  tags: pelican
+
+- name: Start Pelican
+  community.docker.docker_compose_v2:
+    project_src: "{{ app_services.pelican.root_path }}"
+    state: present
+    pull: missing
+    wait: true
+  tags: pelican

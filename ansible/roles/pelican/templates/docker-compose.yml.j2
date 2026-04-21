@@ -1,0 +1,17 @@
+name: pelican
+services:
+  panel:
+    image: "{{ app_services.pelican.image }}:{{ app_services.pelican.version }}"
+    restart: always
+    ports:
+      - "{{ app_services.pelican.internal_port }}:80"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    volumes:
+      - "{{ app_services.pelican.root_path }}/pelican-data:/pelican-data"
+      - "{{ app_services.pelican.root_path }}/logs:/var/www/html/storage/logs"
+      - "{{ app_services.pelican.root_path }}/Caddyfile:/etc/caddy/Caddyfile"
+    environment:
+      XDG_DATA_HOME: /pelican-data
+      APP_URL: "http://pelican.potterman.party"
+      ADMIN_EMAIL: "danielsas111@gmail.com"

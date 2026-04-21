@@ -18,7 +18,6 @@
     src: templates/Caddyfile.j2
     dest: /etc/caddy/Caddyfile
     mode: "0644"   # Owner can read/write but not execute
-    validate: caddy validate --adapter caddyfile --config %s
   environment:
     DESEC_API_TOKEN: "{{ vault_desec_api_token }}"
   notify:
@@ -45,6 +44,8 @@
   ansible.builtin.copy:
     content: |
       [Service]
+      ExecStart=
+      ExecStart=/usr/bin/caddy run --config /etc/caddy/Caddyfile
       EnvironmentFile=/etc/caddy/.desec.env
     dest: /etc/systemd/system/caddy.service.d/override.conf
     mode: "0644"
