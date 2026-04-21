@@ -25,7 +25,6 @@ _(See CHANGELOG for completed Phase 1 tasks)_
   - [ ] Rewrite `Caddyfile.j2` as a Jinja2 loop over `app_services` dict, rendering blocks by `proxy_type`.
   - [ ] Verify all existing site blocks are generated correctly before removing manual entries.
 
-
 ### Service Migration & Cleanup
 
 - [ ] **Ansible Service Migration:**
