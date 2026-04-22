@@ -146,3 +146,8 @@ paperless.potterman.party {
 	    import desec_tls
 	    reverse_proxy {{ hostvars['debian-docker']['zerotier_ip'] }}:{{ app_services.paperless.internal_port }}
 	}
+
+wings.potterman.party {
+    import desec_tls
+    reverse_proxy {{ hostvars['pve-wings-vm-01']['zerotier_ip'] }}:8080
+}
