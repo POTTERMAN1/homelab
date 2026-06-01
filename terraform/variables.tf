@@ -10,11 +10,16 @@ variable "pve_node_name" {
   default     = "proxmox"
 }
 
-variable "ssh_public_key" {
+variable "ssh_public_key_cachyos" {
   description = "Public SSH key from CachyOS host"
   type        = string
   default     = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHPtN2ntV0h4uw/Ej4yqkLszk5coARGufSFjU+EdowI2 potterman@potterman"
+}
 
+variable "ssh_public_key_ansible" {
+  description = "Public SSH key from ansible-main host"
+  type        = string
+  default     = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIA/f/cwTIhCxoUeXw/v+mMReH3vrnFCFfRd9B1ksYt76 potterman@ansible-main"
 }
 
 

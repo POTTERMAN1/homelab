@@ -7,6 +7,15 @@ resource "proxmox_virtual_environment_container" "lxc" {
   vm_id        = var.vm_id
   unprivileged = var.unprivileged
 
+  lifecycle {
+    ignore_changes = [
+      initialization[0].user_account,
+      operating_system[0].template_file_id,
+      pool_id,
+    ]
+  }
+
+
   operating_system {
     template_file_id = var.template_file_id
     type             = var.type
@@ -31,7 +40,7 @@ resource "proxmox_virtual_environment_container" "lxc" {
     hostname = var.hostname
     ip_config {
       ipv4 {
-        address = "192.168.2.${var.vm_id}/24"
+        address = var.ipv4_address
         gateway = var.ipv4_gateway
       }
     }
