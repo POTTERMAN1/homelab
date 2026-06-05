@@ -3,6 +3,7 @@
 ---
 
 ## Phase 1: GitOps Foundation & Workspace Optimization
+
 *(Completed — see CHANGELOG)*
 
 ---
@@ -10,11 +11,14 @@
 ## Phase 2: Service Migration, Maintenance & Monitoring
 
 ### DNS & Proxy
+
 - [x] Migrate DNS from Cloudflare → deSEC (EU jurisdiction, non-profit)
 - [x] Vault deSEC API token, update Caddy role
 - [x] Redesign `services.yml` schema — `host:`, `proxy_type:` fields, five proxy patterns
+- [ ] Rewrite `Caddyfile.j2` as Jinja2 loop over `app_services` dict
 
 ### Service Migration
+
 - [x] Migrate Pi-hole, Arr stack, Jellyfin, Jellyseerr, Paperless-ngx, Forgejo to Ansible roles
 - [x] Purge legacy manual Docker Compose stacks from `debian-docker`
 - [x] Jinja2 templates for all Docker service `.env` files
@@ -24,12 +28,14 @@
 - [ ] Homepage expansion — full stack coverage, service groups driven from `app_services` dict
 
 ### Shell Standardisation
+
 - [ ] Replace `fish` with `zsh` on all hosts via Ansible `common` role
 - [ ] Replicate CachyOS zsh config — zsh-autosuggestions, zsh-syntax-highlighting, fzf, starship
 - [ ] Handle Arch vs Debian plugin paths via `ansible_os_family` conditionals
 - [ ] Full keybind set — HOME/END, word navigation, history search
 
 ### Host Maintenance
+
 - [ ] Audit all hosts for manually installed packages not in Ansible baseline
 - [ ] Configure `unattended-upgrades` for weekly security patches across all nodes
 - [ ] Ansible `maintenance` role — Docker prune, journal vacuum, apt autoremove
@@ -41,11 +47,13 @@
 - [ ] ASRock B450 Steel Legend BIOS update — flash P10.60 for stability improvements
 
 ### Game Servers
+
 - [x] Deploy Pterodactyl/Pelican for centralised game server management
 - [x] Dockerise Terraria dedicated server
 - [ ] Deploy modded Minecraft server via Pelican
 
 ### LLM Stack (CachyOS Workstation)
+
 - [ ] llama-server native install — system service, version-pinned binary, checksum verified
 - [ ] Open WebUI native venv at `/opt/open-webui`
 - [ ] Models: `gemma4:e4b` (general), `qwen2.5-coder:14b` (IaC/code), `nomic-embed-text` (embeddings)
@@ -58,6 +66,7 @@
 ## Phase 3: Observability, Security & GitOps
 
 ### Monitoring Stack (K3s)
+
 - [x] Pre-flight: verify NFS mount on `k3s-node1`, confirm OMV export path
 - [ ] K3s Ansible role — install, kubeconfig, Helm, version pin, add to `site.yml`
 - [ ] Deploy NFS StorageClass via `nfs-subdir-external-provisioner` for Loki
@@ -71,17 +80,20 @@
 - [ ] SLOs/error budgets per service — tracked in Grafana
 
 ### Observability Agents (All Non-K3s Hosts)
+
 - [ ] `observability-agent` Ansible role — node_exporter, cAdvisor, Alloy
 - [ ] Deploy to `debian-docker`, `ionos_vps`, `pve`
 - [ ] Alloy River config (`alloy-config.river.j2`) — ship logs to Loki
 - [ ] Docker socket integration on `debian-docker` and `ionos_vps` for container metrics
 
 ### ntfy — Redundant Alerting
+
 - [ ] Deploy ntfy on `debian-docker` and `ionos_vps` (independent instances)
 - [ ] Subscribe phone to both on same topic — redundant delivery
 - [ ] Expose via Caddy at `ntfy.potterman.party`
 
 ### Security Scanning
+
 - [ ] Add Trivy to `potter-ci-lint` CI image — image scanning, blocks on CRITICAL
 - [ ] Trivy scheduled scans via Ansible systemd timer — `trivy fs /` per host, JSON → Loki via Alloy
 - [ ] Trivy per-host CVE dashboard in Grafana
@@ -89,6 +101,7 @@
 - [ ] Infracost / Checkov — cost estimation and Terraform security misconfiguration scanning
 
 ### Renovate & Container Lifecycle
+
 - [ ] Deploy Renovate on Forgejo — `.renovaterc.json`, custom `fileMatch` for `services.yml`
 - [ ] Forgejo Action on schedule
 - [ ] Automated pipeline: Renovate PR → lint → merge → Ansible redeploy
@@ -96,6 +109,7 @@
 - [ ] Pin all tool versions in `potter-ci-lint` Dockerfile
 
 ### GitLab
+
 - [ ] Deploy GitLab CE on `debian-docker` via Ansible role (post `debian-docker` rebuild)
   - [ ] Version-pinned in `services.yml`, exposed at `gitlab.potterman.party`
   - [ ] `gitlab.rb` templated via Jinja2 — external URL, vaulted secrets
@@ -109,12 +123,14 @@
 - [ ] Terraform state backend moves to GitLab (built-in, free) — replaces GitHub
 
 ### ArgoCD
+
 - [ ] Deploy ArgoCD on K3s via Ansible bootstrap (one-time)
 - [ ] Authentik OIDC integration
 - [ ] Migrate K3s workloads from Ansible-pushed to Git-pulled reconciliation
 - [ ] Wrap Garage and future K3s services in Helm/Kustomize for ArgoCD management
 
 ### Glance — Security & News Dashboard
+
 - [ ] Deploy Glance on K3s at `glance.potterman.party`
 - [ ] GitHub Security Advisory RSS feeds per tracked service (build list organically)
 - [ ] CVE feeds, IT security news, financial/game industry news
@@ -124,6 +140,7 @@
 ## Phase 4: Backups, Disaster Recovery & Resilience
 
 ### Backups
+
 - [ ] Restic on all hosts via Ansible — encrypted, deduplicated
 - [ ] Offsite target: GitLab or VPS
 - [ ] pg_dump for Authentik and Firefly — daily, Ansible managed
@@ -133,6 +150,7 @@
 - [ ] Rclone for offsite backup staging
 
 ### Disaster Recovery
+
 - [ ] Ansible backup of critical PVE/PBS `/etc/` configs to NAS
 - [ ] Automate PBS verification
 - [ ] Terraform blueprints — finalize to recreate VM shells on fresh hardware
@@ -140,6 +158,7 @@
 - [ ] Architecture diagram — full request flow, SPOFs, component dependencies (Mermaid)
 
 ### Host Rebuilds (Planned Migration Windows)
+
 - [ ] `debian-docker` rebuild from cloud-init template
   - [ ] Migrate all Docker volumes and data
   - [ ] PBS snapshot before cutover
@@ -151,6 +170,7 @@
 ## Phase 5: Terraform & Infrastructure Expansion
 
 ### Terraform
+
 - [x] `ansible-main` LXC 105 — module-managed
 - [x] `k3s-node1` VM 201 — module-managed
 - [x] `pve-wings-vm-01` VM 202 — module-managed
@@ -160,12 +180,14 @@
 - [ ] Molecule — test Ansible roles in ephemeral Docker containers
 
 ### Multi-Cloud (Learning)
+
 - [ ] **Azure** — Free Tier account, Terraform VM, VNet, NSG, ZeroTier mesh join
 - [ ] **AWS** — Free Tier account, Terraform EC2, VPC, S3 remote state with DynamoDB locking
 - [ ] Practice secret rotation workflows
 - [ ] Evaluate HashiCorp Vault or Mozilla SOPS for dynamic secret injection
 
 ### IONOS VPS
+
 - [ ] Contract renews 04/07/2026 — evaluate and roll over
 - [ ] Ansible-managed only, no Terraform (no API access on VPS Linux M tier)
 - [ ] Stalwart Mail deployment when ready — SPF/DKIM/DMARC, PTR record, replace Cloudflare Email Routing
@@ -194,9 +216,8 @@
 
 ## Backlog — No Timeline
 
-
-
 ### Enterprise Windows & Hybrid Identity
+
 - [ ] Terraform Windows Server 2022/2025 VM on Proxmox
 - [ ] Active Directory Domain Services (`corp.potterman.party`)
 - [ ] Azure AD Connect for hybrid identity sync
@@ -204,15 +225,19 @@
 - [ ] Microsoft 365 automation via Graph API
 
 ### Network Segmentation
+
 - [ ] OPNsense deployment for VLAN segmentation
 - [ ] Separate trust zones for DNS, media, application workloads
 
 ### High Availability
+
 - [ ] Second `debian-docker` VM for Docker-level HA with Caddy load balancing
 - [ ] Database replication patterns
 
 ### Enterprise Identity Federation
+
 - [ ] Federate Authentik with Microsoft Entra ID via SAML/OIDC
 
 ### Shelved — Revisit Later
+
 - [ ] Caddyfile Jinja2 loop automation — `services.yml` schema groundwork done, automation deferred until service volume warrants it
