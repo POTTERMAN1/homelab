@@ -1,26 +1,19 @@
-variable "node_id" {
-  description = "ID for the node and the last octet of its IP address"
-  type        = number
-  default     = 105
-}
+# SSH KEYS ARE COMMENTED OUT FOR NOW
+# This is an issue with my legacy deployments
+# Once a new node is provisoned, they become
+# uncommented again
 
-variable "pve_node_name" {
-  description = "PVE hostname"
-  type        = string
-  default     = "proxmox"
-}
+#variable "ssh_public_key_cachyos" {
+#  description = "Public SSH key from CachyOS host"
+#  type        = string
+#  default     = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHPtN2ntV0h4uw/Ej4yqkLszk5coARGufSFjU+EdowI2 potterman@potterman"
+#}
 
-variable "ssh_public_key_cachyos" {
-  description = "Public SSH key from CachyOS host"
-  type        = string
-  default     = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHPtN2ntV0h4uw/Ej4yqkLszk5coARGufSFjU+EdowI2 potterman@potterman"
-}
-
-variable "ssh_public_key_ansible" {
-  description = "Public SSH key from ansible-main host"
-  type        = string
-  default     = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIA/f/cwTIhCxoUeXw/v+mMReH3vrnFCFfRd9B1ksYt76 potterman@ansible-main"
-}
+#variable "ssh_public_key_ansible" {
+#  description = "Public SSH key from ansible-main host"
+#  type        = string
+#  default     = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIA/f/cwTIhCxoUeXw/v+mMReH3vrnFCFfRd9B1ksYt76 potterman@ansible-main"
+#}
 
 
 variable "proxmox_ve_endpoint" {
