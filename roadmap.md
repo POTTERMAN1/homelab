@@ -1,279 +1,218 @@
 # Project Homelab: Infrastructure & Automation Roadmap
 
-## Phase 1: GitOps Foundation & Workspace Optimization
+---
 
-_(See CHANGELOG for completed Phase 1 tasks)_
+## Phase 1: GitOps Foundation & Workspace Optimization
+*(Completed — see CHANGELOG)*
+
+---
 
 ## Phase 2: Service Migration, Maintenance & Monitoring
 
-### DNS Migration & Proxy Automation
+### DNS & Proxy
+- [x] Migrate DNS from Cloudflare → deSEC (EU jurisdiction, non-profit)
+- [x] Vault deSEC API token, update Caddy role
+- [x] Redesign `services.yml` schema — `host:`, `proxy_type:` fields, five proxy patterns
 
-- [x] **DNS Migration — Cloudflare → Desec DNS:**
-  - [x] Export Cloudflare DNS zone as BIND file.
-  - [x] Lower Cloudflare TTLs to 60s and wait one TTL cycle before cutover.
-  - [x] Create Desec DNS account, import zone.
-  - [x] Vault Desec API token (`vault_desec_dns_token`).
-  - [x] Swap Caddy binary download URL to use `caddy-dns/hetzner` plugin.
-  - [x] Update `Caddyfile.j2` TLS snippet from `cloudflare` → `hetzner`.
-  - [x] Update Ansible caddy role env file and vault references.
-  - [x] Update NS records on Namecheap → Desec nameservers.
-  - [x] Run Ansible caddy role, confirm TLS renews cleanly on Desec DNS-01.
-- [ ] **Caddyfile Automation:**
-  - [ ] Redesign `services.yml` schema — add `host:` and `proxy_type:` fields to all entries.
-  - [x] Fix existing `services.yml` consistency issues: `subdmain` typos (authentik, homepage), missing `internal_port` fields (pihole, paperless).
-  - [ ] Define five proxy patterns: `standard`, `forward_auth`, `tls_skip`, `external`, `nodeport`.
-  - [ ] Rewrite `Caddyfile.j2` as a Jinja2 loop over `app_services` dict, rendering blocks by `proxy_type`.
-  - [ ] Verify all existing site blocks are generated correctly before removing manual entries.
+### Service Migration
+- [x] Migrate Pi-hole, Arr stack, Jellyfin, Jellyseerr, Paperless-ngx, Forgejo to Ansible roles
+- [x] Purge legacy manual Docker Compose stacks from `debian-docker`
+- [x] Jinja2 templates for all Docker service `.env` files
+- [ ] Connect remaining services to Authentik SSO (Forgejo, Jellyfin, etc.)
+- [ ] Firefly III SSO fix — switch `AUTHENTICATION_GUARD` from `remote_user_guard` → `web`, verify Abacus PAT auth, then migrate to native OIDC
+- [ ] FoundryVTT v14 upgrade — audit module/plugin compatibility (Levels module especially), drop new zip into role build context, bump `foundry_version` in `services.yml`
+- [ ] Homepage expansion — full stack coverage, service groups driven from `app_services` dict
 
-### Service Migration & Cleanup
+### Shell Standardisation
+- [ ] Replace `fish` with `zsh` on all hosts via Ansible `common` role
+- [ ] Replicate CachyOS zsh config — zsh-autosuggestions, zsh-syntax-highlighting, fzf, starship
+- [ ] Handle Arch vs Debian plugin paths via `ansible_os_family` conditionals
+- [ ] Full keybind set — HOME/END, word navigation, history search
 
-- [ ] **Ansible Service Migration:**
-  - [x] Migrate **Pi-hole** to Ansible role with Jinja2 compose template and version pin in `services.yml`.
-  - [x] Migrate **Arr Stack** (Sonarr, Radarr, Prowlarr, Sabnzbd, Decypharr) to Ansible roles.
-  - [x] Migrate **Jellyfin** and **Jellyseerr** to Ansible roles.
-  - [x] Deploy new **Paperless-ngx** instance via Ansible role.
-  - [x] Migrate **Forgejo** to Ansible roles.
-  - [x] Purge legacy manual Docker Compose stacks from `debian-docker` after migration.
-  - [ ] Connect all remaining services to **Authentik SSO** (Forgejo, Jellyfin, etc.).
-- [ ] **Game Server Stack:**
-  - [ ] Evaluate and deploy **Pterodactyl/Pelican** for centralized game server management.
-  - [ ] Dockerize **Terraria** dedicated server (custom Dockerfile, volume-mounted world saves).
-  - [ ] Deploy **modded Minecraft** server via Pterodactyl or custom Ansible role.
-  - [ ] Configure Caddy/DNS routing for game server access over ZeroTier.
-- [ ] **Host Debloating & Maintenance:**
-  - [ ] Create debloating Bash script for CachyOS workstation.
-  - [ ] Audit all hosts for manually installed packages not in Ansible baseline (`apt-mark showmanual`).
-  - [ ] Configure **unattended-upgrades** for weekly automatic security patches across all nodes.
-  - [ ] Create Ansible playbook for monthly full update cycle with notification, approval, and PBS snapshot before applying.
-  - [ ] Automate Docker cleanup (`docker system prune`) on `debian-docker` via scheduled task.
-  - [ ] Validate `common` role hardening hasn't drifted on long-running hosts.
-  - [ ] Create Ansible `maintenance` role — wraps Docker prune, journal vacuum, apt autoremove into a tagged playbook for on-demand runs.
-- [ ] **Jinja2 Transition:** Replace any remaining hardcoded `.env` files with `.j2` templates across all Docker services.
-- [ ] **Homepage Expansion:**
-  - [ ] Flesh out `homepage_services.yaml.j2` to cover full stack, driven from `app_services` dict.
-  - [ ] Define service groups: Infrastructure, Identity, Media, Services, Management.
+### Host Maintenance
+- [ ] Audit all hosts for manually installed packages not in Ansible baseline
+- [ ] Configure `unattended-upgrades` for weekly security patches across all nodes
+- [ ] Ansible `maintenance` role — Docker prune, journal vacuum, apt autoremove
+- [ ] Monthly full update cycle — notification, approval gate, PBS snapshot before applying
+- [ ] Validate `common` role hardening hasn't drifted on long-running hosts
+- [ ] Add `iperf3` to `common` role baseline package list
+- [ ] CachyOS debloating script
+- [ ] `cachy-cleanup.sh` — complete `health_report` function (`systemctl --failed`, kernel reboot detection, pending updates, `.pacnew` files, foreign packages via `pacman -Qm`)
+- [ ] ASRock B450 Steel Legend BIOS update — flash P10.60 for stability improvements
 
-### Monitoring, Observability & Alerting
-
-- [ ] **Storage Prerequisites (K3s):**
-  - [ ] Confirm local-path-provisioner is active (from K3s audit).
-  - [ ] Deploy NFS StorageClass via `nfs-subdir-external-provisioner` for Loki persistent storage on NAS.
-  - [ ] Use local-path for Prometheus (performance), NFS for Loki (retention).
-- [ ] **K3s Ansible Role:**
-  - [ ] Create `k3s` Ansible role — install, kubeconfig, Helm installation, version pin.
-  - [ ] Migrate current manually-provisioned K3s node to Ansible management.
-  - [ ] Add to `site.yml` K3s play.
-- [ ] **ntfy — Redundant Alerting:**
-  - [ ] Deploy ntfy on `debian-docker` (Docker Compose, Ansible role).
-  - [ ] Deploy ntfy on `ionos_vps` (independent instance, survives local outage).
-  - [ ] Subscribe phone app to both instances on same topic — redundant delivery.
-  - [ ] Expose both via Caddy (`ntfy.potterman.party`).
-- [ ] **Prometheus & Grafana on K3s (kube-prometheus-stack):**
-  - [ ] Deploy kube-prometheus-stack via Helm (Prometheus Operator, Grafana, Alertmanager, node_exporter DaemonSet).
-  - [ ] Configure Grafana with native Authentik OIDC.
-  - [ ] Set Prometheus retention to 30 days.
-  - [ ] Configure external scrape targets for `debian-docker`, `ionos_vps`, `pve`.
-  - [ ] Pre-built K3s cluster health dashboards from community (import first, build custom later).
-- [ ] **Observability Agent Role (all non-K3s hosts):**
-  - [ ] Create `observability-agent` Ansible role — node_exporter, cAdvisor, Alloy.
-  - [ ] Deploy to `debian-docker`, `ionos_vps`, `pve` (exclude `ansible_master`, `workstations`).
-  - [ ] Configure Alloy with River config (`alloy-config.river.j2`) to ship logs to Loki.
-  - [ ] node_exporter on port 9100, cAdvisor on port 8080.
-- [ ] **Loki on K3s:**
-  - [ ] Deploy Loki with NFS-backed PVC for 90-day log retention.
-  - [ ] Correlated logging: Caddy → ZeroTier → Docker → application.
-- [ ] **Alertmanager:**
-  - [ ] Configure Alertmanager webhook receiver → ntfy (both instances).
-  - [ ] Configure email receiver → Stalwart (deferred until Stalwart deployed).
-  - [ ] Alert rules: disk warnings, service downtime, high resource usage, ZFS pool health.
-- [ ] **Blackbox Exporter:**
-  - [ ] Deploy Blackbox Exporter for HTTP endpoint probing.
-  - [ ] Replaces Uptime Kuma — native Prometheus integration, feeds Alertmanager directly.
-  - [ ] ~~Uptime Kuma~~ — removed from roadmap, superseded by Blackbox Exporter.
-- [ ] **Grafana Dashboards:**
-  - [ ] Host health: CPU, RAM, disk per node.
-  - [ ] Docker container status and resource usage.
-  - [ ] ZFS pool metrics.
-  - [ ] ZeroTier network throughput.
-  - [ ] K3s cluster health.
-  - [ ] Service endpoint availability (Blackbox Exporter).
-
-### Email — Self-Hosted
-
-- [ ] **Stalwart Mail on IONOS VPS:**
-  - [ ] IONOS VPS IP confirmed clean on all major blocklists.
-  - [ ] Deploy Stalwart Mail via Ansible role (single binary, SMTP/IMAP/JMAP).
-  - [ ] Configure SPF, DKIM, DMARC records on Hetzner DNS.
-  - [ ] Set PTR record for VPS IP via IONOS panel.
-  - [ ] Replace Cloudflare Email Routing with Stalwart catch-all.
-  - [ ] Wire Alertmanager email receiver to Stalwart SMTP.
+### Game Servers
+- [x] Deploy Pterodactyl/Pelican for centralised game server management
+- [x] Dockerise Terraria dedicated server
+- [ ] Deploy modded Minecraft server via Pelican
 
 ### LLM Stack (CachyOS Workstation)
+- [ ] llama-server native install — system service, version-pinned binary, checksum verified
+- [ ] Open WebUI native venv at `/opt/open-webui`
+- [ ] Models: `gemma4:e4b` (general), `qwen2.5-coder:14b` (IaC/code), `nomic-embed-text` (embeddings)
+- [ ] llm-sync role — rsync from `ansible-main`, systemd oneshot, dedicated SSH keypair
+- [ ] llm-backup role — rsync to NAS, systemd oneshot
+- [ ] Migrate SearXNG from CachyOS local Docker → `debian-docker`, expose at `search.potterman.party`
 
-- [ ] **Ansible-managed LLM stack (CachyOS):**
-  - [ ] llama-server native install — system service, version-pinned binary, checksum verified.
-  - [ ] Open WebUI native venv install at `/opt/open-webui`, data at `~/.local/share/open-webui`.
-  - [ ] Models: `gemma4:e4b` (general), `qwen2.5-coder:14b` (IaC/code), `nomic-embed-text` (embeddings).
-  - [ ] llm-sync role: rsync from `ansible-main` → `~/llm-knowledge/`, systemd oneshot, dedicated SSH keypair.
-  - [ ] llm-backup role: rsync to NAS, systemd oneshot.
-  - [ ] Zellij layout for stack control (ollama, open-webui, sync logs, GPU watch).
-- [ ] **SearXNG migration:** Move SearXNG from CachyOS local Docker to `debian-docker` as always-on service, expose via Caddy at `search.potterman.party`.
-- [ ] **Dockerize Ollama stack (future consideration):** Evaluate after native install is stable — not current priority.
+---
 
-### Ansible & CI/CD
+## Phase 3: Observability, Security & GitOps
 
-- [x] **Vault Setup:** Initialize vault for sensitive service credentials.
-- [x] **Caddy Deployment:** Deployed Caddy with DNS-01 challenge for wildcard certificates.
-- [x] Convert Docker Compose stacks to Ansible `community.docker` modules.
-- [x] Remove redundant Komodo from the stack.
-- [x] Add `staging` branch/logic and dedicated staging runner.
-- [x] Forgejo Actions CI/CD: lint pipeline on push to `staging`.
-- [x] Shellcheck in CI pipeline.
-- [x] Gitleaks in CI pipeline.
-- [ ] **GitLab CE deployment on `debian-docker`:**
-  - [ ] Deploy `gitlab/gitlab-ce` omnibus container via Ansible role, Compose-managed.
-  - [ ] Pin version in `services.yml`, expose via Caddy at `gitlab.potterman.party`.
-  - [ ] Template `gitlab.rb` via Jinja2 — external URL, reverse proxy NGINX config, vaulted secrets.
-  - [ ] Deploy GitLab Runner as separate container, Docker executor, socket-mounted.
-  - [ ] Register runner to CE instance via vaulted registration token.
-  - [ ] Configure per-repo push mirrors from Forgejo → GitLab CE.
-  - [ ] Wire GitLab CE to Authentik SSO via OIDC.
-- [ ] Integrate **Trivy** into CI pipeline — blocked, supply chain compromise in 0.69.4–0.69.6, re-evaluate before adding.
-- [ ] Infracost / Policy Check: Cost estimation and security group validation before Terraform applies.
-- [ ] **Logic & Orchestration:** `depends_on` and `healthcheck` via Ansible wait-loops where applicable.
+### Monitoring Stack (K3s)
+- [x] Pre-flight: verify NFS mount on `k3s-node1`, confirm OMV export path
+- [ ] K3s Ansible role — install, kubeconfig, Helm, version pin, add to `site.yml`
+- [ ] Deploy NFS StorageClass via `nfs-subdir-external-provisioner` for Loki
+- [ ] kube-prometheus-stack — Prometheus Operator, Grafana, Alertmanager, node_exporter DaemonSet
+- [ ] Grafana with Authentik native OIDC
+- [ ] Loki — NFS-backed PVC, 90-day retention
+- [ ] OpenTelemetry + Grafana Tempo — distributed tracing, completes observability triad
+- [ ] Blackbox Exporter — HTTP endpoint probing, replaces Uptime Kuma
+- [ ] Alertmanager — webhook → ntfy, email → Stalwart (deferred), alert rules for disk/service/ZFS/ZeroTier
+- [ ] DORA metrics dashboard in Grafana
+- [ ] SLOs/error budgets per service — tracked in Grafana
 
-### GitLab CI/CD Parity (gitlab.com)
+### Observability Agents (All Non-K3s Hosts)
+- [ ] `observability-agent` Ansible role — node_exporter, cAdvisor, Alloy
+- [ ] Deploy to `debian-docker`, `ionos_vps`, `pve`
+- [ ] Alloy River config (`alloy-config.river.j2`) — ship logs to Loki
+- [ ] Docker socket integration on `debian-docker` and `ionos_vps` for container metrics
 
-- [ ] Mirror selected homelab repos from GitLab CE → gitlab.com for external visibility.
-- [ ] Write `.gitlab-ci.yml` equivalents of existing Forgejo lint pipeline — yamllint, ansible-lint, shellcheck, gitleaks.
-- [ ] Register self-hosted runner on gitlab.com project to avoid shared runner minute limits.
-- [ ] Practice GitLab-specific CI/CD features: environments, protected branches, merge request approvals, deployment jobs.
-- [ ] Document differences between Forgejo Actions and GitLab CI/CD syntax in MkDocs — this is portfolio-relevant.
+### ntfy — Redundant Alerting
+- [ ] Deploy ntfy on `debian-docker` and `ionos_vps` (independent instances)
+- [ ] Subscribe phone to both on same topic — redundant delivery
+- [ ] Expose via Caddy at `ntfy.potterman.party`
 
-### Container Lifecycle & Version Management
+### Security Scanning
+- [ ] Add Trivy to `potter-ci-lint` CI image — image scanning, blocks on CRITICAL
+- [ ] Trivy scheduled scans via Ansible systemd timer — `trivy fs /` per host, JSON → Loki via Alloy
+- [ ] Trivy per-host CVE dashboard in Grafana
+- [ ] Cosign image signing — after Trivy is stable
+- [ ] Infracost / Checkov — cost estimation and Terraform security misconfiguration scanning
 
-- [ ] Deploy **Renovate** on Forgejo to scan `services.yml` for version pins and auto-generate PRs.
-- [ ] Implement SemVer pinning for all Ansible Docker roles.
-- [ ] Automated deployment pipeline: Renovate PR → lint → merge → Ansible redeploy of affected service.
-- [ ] Refactor Authentik role: move hardcoded PostgreSQL and Redis versions from `authentik_compose.yaml.j2` to `services.yml` for Renovate compatibility.
-- [ ] **`potter-ci-lint` image maintenance:**
-  - [ ] Re-evaluate Trivy inclusion once supply chain compromise is resolved.
-  - [ ] Pin all tool versions in the Dockerfile — no `latest` tags, no unversioned pip installs.
-  - [ ] Publish image to GitLab CE container registry as secondary registry alongside Forgejo.
+### Renovate & Container Lifecycle
+- [ ] Deploy Renovate on Forgejo — `.renovaterc.json`, custom `fileMatch` for `services.yml`
+- [ ] Forgejo Action on schedule
+- [ ] Automated pipeline: Renovate PR → lint → merge → Ansible redeploy
+- [ ] Move hardcoded PostgreSQL and Redis versions in `authentik_compose.yaml.j2` to `services.yml`
+- [ ] Pin all tool versions in `potter-ci-lint` Dockerfile
+
+### GitLab
+- [ ] Deploy GitLab CE on `debian-docker` via Ansible role (post `debian-docker` rebuild)
+  - [ ] Version-pinned in `services.yml`, exposed at `gitlab.potterman.party`
+  - [ ] `gitlab.rb` templated via Jinja2 — external URL, vaulted secrets
+  - [ ] GitLab Runner as separate container, Docker executor
+  - [ ] Push mirrors from Forgejo → GitLab CE
+  - [ ] Wire GitLab CE to Authentik SSO via OIDC
+- [ ] Mirror selected repos to gitlab.com for external visibility
+- [ ] Write `.gitlab-ci.yml` equivalents of Forgejo lint pipeline
+- [ ] Register self-hosted runner on gitlab.com to avoid shared runner limits
+- [ ] Document Forgejo Actions vs GitLab CI/CD syntax differences in MkDocs
+- [ ] Terraform state backend moves to GitLab (built-in, free) — replaces GitHub
+
+### ArgoCD
+- [ ] Deploy ArgoCD on K3s via Ansible bootstrap (one-time)
+- [ ] Authentik OIDC integration
+- [ ] Migrate K3s workloads from Ansible-pushed to Git-pulled reconciliation
+- [ ] Wrap Garage and future K3s services in Helm/Kustomize for ArgoCD management
+
+### Glance — Security & News Dashboard
+- [ ] Deploy Glance on K3s at `glance.potterman.party`
+- [ ] GitHub Security Advisory RSS feeds per tracked service (build list organically)
+- [ ] CVE feeds, IT security news, financial/game industry news
+
+---
+
+## Phase 4: Backups, Disaster Recovery & Resilience
+
+### Backups
+- [ ] Restic on all hosts via Ansible — encrypted, deduplicated
+- [ ] Offsite target: GitLab or VPS
+- [ ] pg_dump for Authentik and Firefly — daily, Ansible managed
+- [ ] Seafile data backup from `ionos_vps` — currently most exposed
+- [ ] Seafile → Garage S3 backend for NAS overflow
+- [ ] Hybrid backup: VPS Seafile mirrors to local OMV NAS
+- [ ] Rclone for offsite backup staging
+
+### Disaster Recovery
+- [ ] Ansible backup of critical PVE/PBS `/etc/` configs to NAS
+- [ ] Automate PBS verification
+- [ ] Terraform blueprints — finalize to recreate VM shells on fresh hardware
+- [ ] Disaster recovery runbook in MkDocs — total-melt scenario
+- [ ] Architecture diagram — full request flow, SPOFs, component dependencies (Mermaid)
+
+### Host Rebuilds (Planned Migration Windows)
+- [ ] `debian-docker` rebuild from cloud-init template
+  - [ ] Migrate all Docker volumes and data
+  - [ ] PBS snapshot before cutover
+  - [ ] Terraform-manage post-rebuild
+- [ ] `OMV-NAS` — evaluate replacement (TBD) during rebuild window, then Terraform-manage
+
+---
+
+## Phase 5: Terraform & Infrastructure Expansion
 
 ### Terraform
+- [x] `ansible-main` LXC 105 — module-managed
+- [x] `k3s-node1` VM 201 — module-managed
+- [x] `pve-wings-vm-01` VM 202 — module-managed
+- [ ] `debian-docker` VM 100 — post rebuild
+- [ ] `OMV-NAS` VM 101 — post rebuild/replacement
+- [ ] Fix `ipv4_address` interpolation bug in both VM and LXC modules
+- [ ] Molecule — test Ansible roles in ephemeral Docker containers
 
-- [x] Initialize Terraform on `ansible-main`.
-- [x] Created reusable `modules/proxmox-vm` and `modules/proxmox-lxc`.
-- [x] Built Debian 13 cloud-init VM template on Proxmox.
-- [x] Upgraded `bpg/proxmox` provider to `0.98`.
-- [ ] Move remaining PVE hosts to Terraform (ansible-main migration blocked by state drift — documented tech debt).
-- [ ] Refactor Terraform modules for reuse across cloud providers.
+### Multi-Cloud (Learning)
+- [ ] **Azure** — Free Tier account, Terraform VM, VNet, NSG, ZeroTier mesh join
+- [ ] **AWS** — Free Tier account, Terraform EC2, VPC, S3 remote state with DynamoDB locking
+- [ ] Practice secret rotation workflows
+- [ ] Evaluate HashiCorp Vault or Mozilla SOPS for dynamic secret injection
 
-### Kubernetes
+### IONOS VPS
+- [ ] Contract renews 04/07/2026 — evaluate and roll over
+- [ ] Ansible-managed only, no Terraform (no API access on VPS Linux M tier)
+- [ ] Stalwart Mail deployment when ready — SPF/DKIM/DMARC, PTR record, replace Cloudflare Email Routing
+- [ ] Fluxer — deploy when self-hosting opens
 
-- [x] Provisioned K3s node via Terraform module.
-- [x] Deployed **Garage** (S3-compatible object storage) with hand-written manifests.
-- [ ] **Helm:** Convert Garage manifests to Helm chart as a learning exercise.
-- [ ] **GitOps:** Evaluate ArgoCD or FluxCD for automatic manifest sync from Git.
-- [ ] Migrate stateless services to K3s when observability stack proves cluster stability.
+---
 
-### Data & Storage
+## Phase 6: Advanced Kubernetes & Platform Engineering
 
-- [ ] **Seafile S3 Backend:** Connect Seafile to Garage S3 endpoint for NAS overflow storage.
-- [ ] **Hybrid Backup:** Configure VPS Seafile to mirror data to local OMV NAS.
-- [ ] Setup **Rclone** for offsite backup staging.
-- [ ] Daily `rsync` for heavy volume data to OMV NAS.
+- [ ] Helm — convert Garage manifests to Helm chart as learning exercise
+- [ ] Migrate stateless services to K3s after observability proves cluster stability
+- [ ] K8s NetworkPolicies for pod-level isolation
+- [ ] Second K3s node for HA and scheduling practice
+- [ ] Database replication patterns (PostgreSQL, MariaDB)
 
-### Identity & SSO
+---
 
-- [x] Deploy **Authentik**.
-- [x] Connect Firefly III to Authentik SSO.
-- [x] Connect Seafile to Authentik SSO via OIDC.
-- [ ] Connect remaining services (Forgejo, Jellyfin, etc.) to SSO.
-- [ ] Create email forwarding and user registration flow in Authentik — manually approved per-service.
+## Phase 7: Documentation
 
-### GitHub & Documentation
+- [ ] Onboarding documentation — infrastructure description, Git methodology, network topology
+- [ ] Runbooks — proactive troubleshooting decision trees per critical service
+- [ ] Capacity planning — resource usage trends and growth projections
+- [ ] Evaluate Zensical once stable — migrate from MkDocs if warranted
 
-- [x] Mirror homelab repository on GitHub.
-- [x] Deploy GitHub Pages for MkDocs documentation.
-- [x] Set up GitHub runner to update docs on push.
+---
 
-## Phase 3: Cloud Expansion & Advanced IaC
+## Backlog — No Timeline
 
-### AWS (Learning via Homelab)
 
-- [ ] Set up AWS Free Tier account.
-- [ ] Terraform EC2 instance with VPC, subnet, and security group.
-- [ ] Connect AWS instance to ZeroTier mesh.
-- [ ] Deploy a service via Ansible on the AWS instance.
-- [ ] Practice Terraform remote state on S3 with DynamoDB locking.
 
-### Azure
+### Enterprise Windows & Hybrid Identity
+- [ ] Terraform Windows Server 2022/2025 VM on Proxmox
+- [ ] Active Directory Domain Services (`corp.potterman.party`)
+- [ ] Azure AD Connect for hybrid identity sync
+- [ ] PowerShell endpoint bootstrapping via Winget
+- [ ] Microsoft 365 automation via Graph API
 
-- [ ] Set up Azure Free Tier account and Resource Group.
-- [ ] Terraform Azure VM with VNet, subnet, and NSG.
-- [ ] Migrate Terraform state to Azure Blob Storage Container.
-- [ ] Connect Azure VM to ZeroTier mesh.
+### Network Segmentation
+- [ ] OPNsense deployment for VLAN segmentation
+- [ ] Separate trust zones for DNS, media, application workloads
 
-### Secrets Management Evolution
-
-- [ ] Evaluate **HashiCorp Vault** or **Mozilla SOPS** for dynamic secret injection.
-- [ ] Practice secret rotation workflows.
-
-### Continuous Testing (IaC)
-
-- [ ] Implement **Checkov** or **Tfsec** to scan Terraform for security misconfigurations.
-- [ ] Evaluate **Molecule** to test Ansible roles in ephemeral Docker containers.
-
-## Phase 4: Proxmox & PBS "Absolute Zero" Recovery
-
-- [ ] **Host Backup:** Ansible backup of critical PVE/PBS `/etc/` configs to NAS.
-- [ ] Automate Proxmox Backup Server (PBS) verification.
-- [ ] Implement off-site backups for critical application volumes (Seafile data, Authentik DB).
-- [ ] **Terraform Blueprints:** Finalize code to recreate VM shells on fresh hardware.
-- [ ] **Disaster Recovery Runbook:** Document exact steps in MkDocs for a total-melt recovery.
-- [ ] **Architecture Diagram:** Comprehensive Mermaid diagram — full request flow, SPOFs, component dependencies.
-
-## Phase 5: Media Production & Simracing
-
-- [ ] **Post-Race Sync:** Ansible-automated `rsync` of VR recordings from CachyOS to OMV.
-- [ ] **NAS Tuning:** Optimize NFS/SMB for 4K Linux editing performance.
-
-## Phase 6: Documentation
-
-- [ ] **Onboarding Documentation:** Infrastructure description, Git methodology, network topology, onboarding process.
-- [ ] **Runbooks:** Proactive troubleshooting decision trees for each critical service.
-- [ ] **Capacity Planning:** Documented resource usage trends and growth projections.
-- [ ] **Documentation Generator Migration (Zensical):** Evaluate once stable, migrate if warranted.
-
-## Backlog — Future Projects (No Timeline)
-
-### Enterprise Windows Server & Azure Hybrid Cloud
-
-- [ ] Terraform-provisioned Windows Server 2022/2025 VM on Proxmox.
-- [ ] Active Directory Domain Services (`corp.potterman.party`).
-- [ ] Azure AD Connect for hybrid identity sync.
-- [ ] PowerShell endpoint bootstrapping scripts.
-- [ ] Microsoft 365 automation via Graph API.
-
-### Network Segmentation & Advanced Networking
-
-- [ ] OPNsense deployment for VLAN segmentation.
-- [ ] Separate trust zones for DNS, media, and application workloads.
-- [ ] K8s NetworkPolicies for pod-level isolation.
-
-### High Availability Experimentation
-
-- [ ] Second `debian-docker` VM for Docker-level HA with Caddy load balancing.
-- [ ] Second K3s node for Kubernetes-native HA and scheduling practice.
-- [ ] Database replication patterns (PostgreSQL, MariaDB).
+### High Availability
+- [ ] Second `debian-docker` VM for Docker-level HA with Caddy load balancing
+- [ ] Database replication patterns
 
 ### Enterprise Identity Federation
+- [ ] Federate Authentik with Microsoft Entra ID via SAML/OIDC
 
-- [ ] Federate Authentik with Microsoft Entra ID via SAML/OIDC.
-
-### Security News Dashboard
-
-- [ ] Evaluate Glance, integrate with Homepage.
-- [ ] Focus: package supply chain alerts, CVE feeds, IT security news for homelab, work, and Windows environments.
+### Shelved — Revisit Later
+- [ ] Caddyfile Jinja2 loop automation — `services.yml` schema groundwork done, automation deferred until service volume warrants it

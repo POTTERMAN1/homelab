@@ -1,6 +1,6 @@
 services:
   postgresql:
-    image: docker.io/library/postgres:16-alpine
+    image: "{{ app_services.authentik.postrgresql_image }}:{{ app_services.authentik.postrgresql_version }}"
     restart: unless-stopped
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -d $${POSTGRES_DB} -U $${POSTGRES_USER}"]
@@ -18,7 +18,7 @@ services:
       - .env
 
   redis:
-    image: docker.io/library/redis:alpine
+    image: "{{ app_services.authentik.redis_image }}:{{ app_services.authentik.redis_version }}"
     command: --save 60 1 --loglevel warning
     restart: unless-stopped
     healthcheck:
@@ -31,7 +31,7 @@ services:
       - redis:/data
 
   server:
-    image: ghcr.io/goauthentik/server:2025.12.4
+    image: "{{ app_services.authentik.image }}:{{ app_services.authentik.version }}"
     restart: unless-stopped
     command: server
     environment:
@@ -54,7 +54,7 @@ services:
       - redis
 
   worker:
-    image: ghcr.io/goauthentik/server:2025.12.4
+    image: "{{ app_services.authentik.image }}:{{ app_services.authentik.version }}"
     restart: unless-stopped
     command: worker
     environment:

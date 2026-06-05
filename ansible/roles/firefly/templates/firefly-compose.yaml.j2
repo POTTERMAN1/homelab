@@ -1,6 +1,6 @@
 services:
   app:
-    image: fireflyiii/core:version-6.5.4
+    image: "{{ app_services.firefly.image }}:{{ app_services.firefly.version }}"
     hostname: app
     container_name: firefly_iii_core
     restart: always
@@ -14,7 +14,7 @@ services:
     depends_on:
       - db
   db:
-    image: mariadb:11.8
+    image: "{{ app_services.firefly.mariadb_image }}:{{ app_services.firefly.mariadb_version }}"
     hostname: db
     container_name: firefly_iii_db
     restart: always
@@ -24,7 +24,7 @@ services:
     volumes:
       - "{{ app_services.firefly.root_path }}/mysql:/var/lib/mysql"
   cron:
-    image: alpine:3.23.3
+    image: "{{ app_services.firefly.cron_image }}:{{ app_services.firefly.cron_version }}"
     restart: always
     container_name: firefly_iii_cron
     env_file: .env

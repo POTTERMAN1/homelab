@@ -1,7 +1,7 @@
 name: seafile
 services:
   db:
-    image: mariadb:10.11
+    image: "{{ app_services.seafile.mariadb_image }}:{{ app_services.seafile.mariadb_version }}"
     container_name: seafile-mysql
     restart: unless-stopped
     environment:
@@ -14,7 +14,7 @@ services:
       - seafile_net
 
   memcached:
-    image: memcached:1.6
+    image: "{{ app_services.seafile.memcached_image }}:{{ app_services.seafile.memcached_version}}"
     container_name: seafile-memcached
     restart: unless-stopped
     entrypoint: memcached -m 256
@@ -22,7 +22,7 @@ services:
       - seafile_net
 
   seafile:
-    image: seafileltd/seafile-mc:latest
+    image: "{{ app_services.seafile.image }}:{{ app_services.seafile.version }}"
     container_name: seafile
     restart: unless-stopped
     ports:

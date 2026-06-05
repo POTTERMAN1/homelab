@@ -1,7 +1,7 @@
 services:
   homepage:
     container_name: homepage
-    image: ghcr.io/gethomepage/homepage:latest
+    image: "{{ app_services.homepage.image }}:{{ app_services.homepage.version }}"
     restart: unless-stopped
     ports:
       - "3005:3000"

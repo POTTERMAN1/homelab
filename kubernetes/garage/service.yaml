@@ -1,18 +1,16 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: garage
-  namespace: garage
+  name: nginx-service
+  namespace: ngnix-app
 spec:
-  type: NodePort
+  type: LoadBalancer
   selector:
-    app: garage
+    app: nginx-app
   ports:
-    - name: s3-api
-      port: 3900
-      targetPort: 3900
-      nodePort: 30900
-    - name: admin
-      port: 3903
-      targetPort: 3903
-      nodePort: 30903
+    - name: http
+      port: 90
+      targetPort: 80
+    - name: https
+      port: 444
+      targetPort: 443

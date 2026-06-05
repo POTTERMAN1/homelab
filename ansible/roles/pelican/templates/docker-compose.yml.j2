@@ -13,5 +13,6 @@ services:
       - "{{ app_services.pelican.root_path }}/Caddyfile:/etc/caddy/Caddyfile"
     environment:
       XDG_DATA_HOME: /pelican-data
-      APP_URL: "http://pelican.potterman.party"
+      APP_URL: "https://pelican.potterman.party"
       ADMIN_EMAIL: "danielsas111@gmail.com"
+      BEHIND_PROXY: "true"

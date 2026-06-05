@@ -16,7 +16,6 @@ global_nas_mount_path: "/mnt/NAS_ZFS"
 global_timezone: "Europe/Warsaw"
 
 app_services:
-
   # Identity & Access
 
   authentik:
@@ -26,9 +25,13 @@ app_services:
     proxy_type: "standard"
     internal_port: 9000
     root_path: "{{ global_docker_base_path }}/authentik"
+    image: "ghcr.io/goauthentik/server"
+    version: "2025.12.4"
     # Sidecar versions pinned here for Renovate compatibility.
-    # TODO: move postgres/redis versions here from authentik_compose.yaml.j2
-
+    postgresql_image: "docker.io/library/postgres"
+    postgresql_version: "16-alpine"
+    redis_image: "docker.io/library/redis"
+    redis_version: "7-alpine"
 
     # Core Infrastructure Services
 
@@ -62,6 +65,8 @@ app_services:
     proxy_type: "standard"
     internal_port: 3005
     root_path: "{{ global_docker_base_path }}/homepage"
+    image: "ghcr.io/gethomepage/homepage"
+    version: "1.13.1"
 
   # Storage & Documents
 
@@ -73,6 +78,12 @@ app_services:
     internal_port: 8060
     root_path: "{{ global_docker_base_path }}/seafile"
     webhook_python_version: "3.12-slim"
+    mariadb_image: "mariadb"
+    mariadb_version: "10.11"
+    memcached_image: "memcached"
+    memcached_version: "1.6"
+    image: "seafileltd/seafile-mc"
+    version: "13.0.22"
 
   paperless:
     host: "debian-docker"
@@ -102,9 +113,7 @@ app_services:
     internal_port: 30900
     # NodePort service on K3s — no root_path, not Docker-managed.
 
-
     # Finances
-
 
   firefly:
     host: "debian-docker"
@@ -113,6 +122,12 @@ app_services:
     proxy_type: "forward_auth"
     internal_port: 8090
     root_path: "{{ global_docker_base_path }}/firefly"
+    image: "fireflyiii/core"
+    version: "version-6.5.4"
+    mariadb_image: "mariadb"
+    mariadb_version: "11.8"
+    cron_image: "alpine"
+    cron_version: "3.23.3"
 
   # Media
 
@@ -218,9 +233,6 @@ app_services:
   # CI Toolchain — not a service, version pins for potter-ci-lint image builds
 
   ci_lint:
-    # No host, subdomain, or proxy_type — consumed only by the CI image role.
-    # Trivy excluded — supply chain compromise confirmed in 0.69.4-0.69.6.
-    # Re-evaluate before adding back.
     image: "python"
     version: "3.12-slim"
     gitleaks_version: "8.24.0"
