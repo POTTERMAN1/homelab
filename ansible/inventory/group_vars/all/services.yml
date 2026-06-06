@@ -27,7 +27,7 @@ app_services:
     root_path: "{{ global_docker_base_path }}/authentik"
     image: "ghcr.io/goauthentik/server"
     # renovate: datasource=docker depName=ghcr.io/goauthentik/server versioning=loose
-    version: "2025.12.4"
+    version: "2026.5.2"
     # Sidecar versions pinned here for Renovate compatibility.
     postgresql_image: "docker.io/library/postgres"
     # renovate: datasource=docker depName=docker.io/library/postgres versioning=semver
