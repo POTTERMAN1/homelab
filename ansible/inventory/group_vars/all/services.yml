@@ -269,7 +269,7 @@ app_services:
     # renovate: datasource=github-releases depName=terraform-linters/tflint
     tflint_version: "0.55.1"
     # renovate: datasource=github-releases depName=hadolint/hadolint
-    hadolint_version: "2.12.0"
+    hadolint_version: "2.14.0"
     # renovate: datasource=github-releases depName=yannh/kubeconform
     kubeconform_version: "0.6.7"
     # renovate: datasource=github-releases depName=igorshubovych/markdownlint-cli
