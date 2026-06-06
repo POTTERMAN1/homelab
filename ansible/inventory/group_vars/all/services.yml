@@ -157,7 +157,7 @@ app_services:
     proxy_type: "standard"
     image: "jellyfin/jellyfin"
     # renovate: datasource=docker depName=jellyfin/jellyfin versioning=semver
-    version: "10.11.6"
+    version: "10.11.10"
     internal_port: 8096
     root_path: "{{ global_docker_base_path }}/jellyfin"
 
