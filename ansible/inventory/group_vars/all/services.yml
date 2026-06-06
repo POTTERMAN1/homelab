@@ -103,7 +103,7 @@ app_services:
     proxy_type: "standard"
     image: "ghcr.io/paperless-ngx/paperless-ngx"
     # renovate: datasource=docker depName=ghcr.io/paperless-ngx/paperless-ngx
-    version: "2.16.3"
+    version: "2.20.15"
     internal_port: 8000
     root_path: "{{ global_docker_base_path }}/paperless"
     consume_path: "{{ global_nas_mount_path }}/paperless/consume"
