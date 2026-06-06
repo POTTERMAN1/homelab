@@ -26,11 +26,14 @@ app_services:
     internal_port: 9000
     root_path: "{{ global_docker_base_path }}/authentik"
     image: "ghcr.io/goauthentik/server"
+    # renovate: datasource=docker depName=ghcr.io/goauthentik/server
     version: "2025.12.4"
     # Sidecar versions pinned here for Renovate compatibility.
     postgresql_image: "docker.io/library/postgres"
+    # renovate: datasource=docker depName=docker.io/library/postgres
     postgresql_version: "16-alpine"
     redis_image: "docker.io/library/redis"
+    # renovate: datasource=docker depName=docker.io/library/redis
     redis_version: "7-alpine"
 
     # Core Infrastructure Services
@@ -41,11 +44,13 @@ app_services:
     domain: "potterman.party"
     proxy_type: "standard"
     image: "codeberg.org/forgejo/forgejo"
+    # renovate: datasource=docker depName=codeberg.org/forgejo/forgejo
     version: "14"
     internal_port: 3000
     ssh_port: 2222
     root_path: "{{ global_docker_base_path }}/forgejo"
     runner_image: "code.forgejo.org/forgejo/runner"
+    # renovate: datasource=docker depName=code.forgejo.org/forgejo/runner
     runner_version: "9.0.3"
 
   pihole:
@@ -54,6 +59,7 @@ app_services:
     domain: "potterman.party"
     proxy_type: "standard"
     image: "pihole/pihole"
+    # renovate: datasource=docker depName=pihole/pihole
     version: "2025.11.1"
     internal_port: 800
     root_path: "{{ global_docker_base_path }}/pihole"
@@ -66,6 +72,7 @@ app_services:
     internal_port: 3005
     root_path: "{{ global_docker_base_path }}/homepage"
     image: "ghcr.io/gethomepage/homepage"
+    # renovate: datasource=docker depName=ghcr.io/gethomepage/homepage
     version: "1.13.1"
 
   # Storage & Documents
@@ -77,12 +84,16 @@ app_services:
     proxy_type: "standard"
     internal_port: 8060
     root_path: "{{ global_docker_base_path }}/seafile"
+    # renovate: datasource=docker depName=python
     webhook_python_version: "3.12-slim"
     mariadb_image: "mariadb"
+    # renovate: datasource=docker depName=mariadb
     mariadb_version: "10.11"
     memcached_image: "memcached"
+    # renovate: datasource=docker depName=memcached
     memcached_version: "1.6"
     image: "seafileltd/seafile-mc"
+    # renovate: datasource=docker depName=seafileltd/seafile-mc
     version: "13.0.22"
 
   paperless:
@@ -91,18 +102,23 @@ app_services:
     domain: "potterman.party"
     proxy_type: "standard"
     image: "ghcr.io/paperless-ngx/paperless-ngx"
+    # renovate: datasource=docker depName=ghcr.io/paperless-ngx/paperless-ngx
     version: "2.16.3"
     internal_port: 8000
     root_path: "{{ global_docker_base_path }}/paperless"
     consume_path: "{{ global_nas_mount_path }}/paperless/consume"
     backup_path: "{{ global_nas_mount_path }}/paperless/backup"
     redis_image: "redis"
+    # renovate: datasource=docker depName=redis
     redis_version: "7-alpine"
     postgres_image: "postgres"
+    # renovate: datasource=docker depName=postgres
     postgres_version: "16-alpine"
     gotenberg_image: "gotenberg/gotenberg"
+    # renovate: datasource=docker depName=gotenberg/gotenberg
     gotenberg_version: "8"
     tika_image: "apache/tika"
+    # renovate: datasource=docker depName=apache/tika
     tika_version: "3.2.0.0"
 
   garage:
@@ -123,10 +139,13 @@ app_services:
     internal_port: 8090
     root_path: "{{ global_docker_base_path }}/firefly"
     image: "fireflyiii/core"
+    # renovate: datasource=docker depName=fireflyiii/core versioning=regex:^version-(?<major>\d+)\.(?<minor>\d+)\.(?<patch>\d+)$
     version: "version-6.5.4"
     mariadb_image: "mariadb"
+    # renovate: datasource=docker depName=mariadb
     mariadb_version: "11.8"
     cron_image: "alpine"
+    # renovate: datasource=docker depName=alpine
     cron_version: "3.23.3"
 
   # Media
@@ -137,6 +156,7 @@ app_services:
     domain: "potterman.party"
     proxy_type: "standard"
     image: "jellyfin/jellyfin"
+    # renovate: datasource=docker depName=jellyfin/jellyfin
     version: "10.11.6"
     internal_port: 8096
     root_path: "{{ global_docker_base_path }}/jellyfin"
@@ -147,6 +167,7 @@ app_services:
     domain: "potterman.party"
     proxy_type: "standard"
     image: "fallenbagel/jellyseerr"
+    # renovate: datasource=docker depName=fallenbagel/jellyseerr
     version: "2.7.3"
     internal_port: 5055
     root_path: "{{ global_docker_base_path }}/jellyseer"
@@ -156,8 +177,9 @@ app_services:
     subdomain: "sonarr"
     domain: "potterman.party"
     proxy_type: "standard"
-    image: "ghcr.io/hotio/sonarr"
-    version: "release-4.0.16.2944"
+    image: "linuxserver/sonarr"
+    # renovate: datasource=docker depName=linuxserver/sonarr
+    version: "4.0.16"
     internal_port: 8989
     root_path: "{{ global_docker_base_path }}/sonarr"
 
@@ -167,7 +189,8 @@ app_services:
     domain: "potterman.party"
     proxy_type: "standard"
     image: "ghcr.io/hotio/radarr"
-    version: "release-6.0.4.10291"
+    # renovate: datasource=docker depName=linuxserver/radarr
+    version: "6.0.4"
     internal_port: 7878
     root_path: "{{ global_docker_base_path }}/radarr"
 
@@ -176,8 +199,9 @@ app_services:
     subdomain: "prowlarr"
     domain: "potterman.party"
     proxy_type: "standard"
-    image: "ghcr.io/hotio/prowlarr"
-    version: "release-2.3.0.5236"
+    image: "linuxserver/prowlarr"
+    # renovate: datasource=docker depName=linuxserver/prowlarr
+    version: "2.3.0"
     internal_port: 9696
     root_path: "{{ global_docker_base_path }}/prowlarr"
 
@@ -187,6 +211,7 @@ app_services:
     domain: "potterman.party"
     proxy_type: "standard"
     image: "linuxserver/sabnzbd"
+    # renovate: datasource=docker depName=linuxserver/sabnzbd
     version: "4.5.5"
     internal_port: 8585
     container_port: 8080
@@ -198,6 +223,7 @@ app_services:
     domain: "potterman.party"
     proxy_type: "standard"
     image: "cy01/blackhole"
+    # renovate: datasource=docker depName=cy01/blackhole
     version: "v1.1.6"
     internal_port: 8282
     root_path: "{{ global_docker_base_path }}/decypharr"
@@ -209,6 +235,7 @@ app_services:
     subdomain: "foundry"
     domain: "potterman.party"
     proxy_type: "standard"
+    # renovate: datasource=github-releases depName=foundryvtt/foundryvtt-docker
     foundry_version: "13.351"
     internal_port: 30000
     root_path: "{{ global_docker_base_path }}/foundryvtt"
@@ -224,6 +251,7 @@ app_services:
 
   pelican:
     image: "ghcr.io/pelican-dev/panel"
+    # renovate: datasource=docker depName=ghcr.io/pelican-dev/panel
     version: "v1.0.0-beta33"
     subdomain: "pelican"
     domain: "potterman.party"
@@ -234,9 +262,15 @@ app_services:
 
   ci_lint:
     image: "python"
+    # renovate: datasource=docker depName=python
     version: "3.12-slim"
+    # renovate: datasource=github-releases depName=gitleaks/gitleaks
     gitleaks_version: "8.24.0"
+    # renovate: datasource=github-releases depName=terraform-linters/tflint
     tflint_version: "0.55.1"
+    # renovate: datasource=github-releases depName=hadolint/hadolint
     hadolint_version: "2.12.0"
+    # renovate: datasource=github-releases depName=yannh/kubeconform
     kubeconform_version: "0.6.7"
+    # renovate: datasource=github-releases depName=igorshubovych/markdownlint-cli
     markdownlint_version: "0.44.0"

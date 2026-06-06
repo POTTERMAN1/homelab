@@ -1,0 +1,18 @@
+{
+    "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+    "extends": [
+        "config:recommended"
+    ],
+    "customManagers": [
+        {
+            "customType": "regex",
+            "managerFilePatterns": [
+                "ansible/inventory/group_vars/all/services\\.yml"
+            ],
+            "matchStrings": [
+                "# renovate: datasource=(?<datasource>[a-zA-Z-]+) depName=(?<depName>[^\\s]+?)( versioning=(?<versioning>[^\\s]+))?\\n\\s+\\w+:\\s+\"(?<currentValue>[^\"]+)\""
+            ],
+            "versioningTemplate": "{{#if versioning}}{{{versioning}}}{{else}}docker{{/if}}"
+        }
+    ]
+}

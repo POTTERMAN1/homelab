@@ -84,6 +84,7 @@
     src: "{{ nas_mount_ip }}:/NAS_ZFS"
     fstype: nfs
     opts: "rw,hard,nfsvers=4.2,nconnect=8,rsize=1048576,wsize=1048576,_netdev,nofail"
-    state: present
-  when: inventory_hostname != 'omv'
+    state: mounted
+  when: inventory_hostname not in ['omv', 'ionos_vps']
   tags: common
+  notify: Remount NAS

@@ -2,3 +2,8 @@
   ansible.builtin.service:
     name: ssh
     state: restarted
+
+- name: Remount NAS
+  ansible.posix.mount:
+    path: /mnt/NAS_ZFS
+    state: remounted
