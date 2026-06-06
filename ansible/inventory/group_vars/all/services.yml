@@ -179,7 +179,7 @@ app_services:
     proxy_type: "standard"
     image: "linuxserver/sonarr"
     # renovate: datasource=docker depName=linuxserver/sonarr versioning=semver
-    version: "4.0.16"
+    version: "4.0.17"
     internal_port: 8989
     root_path: "{{ global_docker_base_path }}/sonarr"
 
