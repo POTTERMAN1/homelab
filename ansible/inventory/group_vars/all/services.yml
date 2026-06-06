@@ -45,7 +45,7 @@ app_services:
     proxy_type: "standard"
     image: "codeberg.org/forgejo/forgejo"
     # renovate: datasource=docker depName=codeberg.org/forgejo/forgejo
-    version: "14"
+    version: "15"
     internal_port: 3000
     ssh_port: 2222
     root_path: "{{ global_docker_base_path }}/forgejo"
