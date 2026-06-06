@@ -201,7 +201,7 @@ app_services:
     proxy_type: "standard"
     image: "linuxserver/prowlarr"
     # renovate: datasource=docker depName=linuxserver/prowlarr versioning=semver
-    version: "2.3.0"
+    version: "2.3.5"
     internal_port: 9696
     root_path: "{{ global_docker_base_path }}/prowlarr"
 
