@@ -83,6 +83,7 @@
     path: /mnt/NAS_ZFS
     src: "{{ nas_mount_ip }}:/export/NAS_ZFS"
     fstype: nfs
-    opts: "defaults,_netdev,nofail"
+    opts: "rw,hard,nfsvers=4.2,nconnect=8,rsize=1048576,wsize=1048576,_netdev,nofail"
     state: present
+  when: inventory_hostname != 'omv'
   tags: docker
