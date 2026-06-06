@@ -273,4 +273,4 @@ app_services:
     # renovate: datasource=github-releases depName=yannh/kubeconform
     kubeconform_version: "0.6.7"
     # renovate: datasource=github-releases depName=igorshubovych/markdownlint-cli
-    markdownlint_version: "0.44.0"
+    markdownlint_version: "0.48.0"
