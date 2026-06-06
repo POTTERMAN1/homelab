@@ -4,7 +4,7 @@
     groups: sudo
     shell: /usr/bin/fish
     append: true
-  tags: docker
+  tags: common
 
 - name: Ensure SSH keys are authorized
   ansible.posix.authorized_key:
@@ -14,7 +14,7 @@
   loop:
     - "~/.ssh/id_ed25519.pub"   # ansible-main
     - "~/.ssh/cachy_os_key.pub"   # cachy-os
-  tags: docker
+  tags: common
 
 - name: Zero-Password Sudo for potterman
   ansible.builtin.copy:
@@ -22,7 +22,7 @@
     dest: /etc/sudoers.d/potterman
     mode: "0440"
     validate: /usr/sbin/visudo -csf %s
-  tags: docker
+  tags: common
 
 - name: Harden SSH Configuration
   ansible.builtin.lineinfile:
@@ -34,7 +34,7 @@
     - {regexp: "^#?PasswordAuthentication", line: "PasswordAuthentication no"}
     - {regexp: "^#?PermitRootLogin", line: "PermitRootLogin no"}
   notify: Restart SSH
-  tags: docker
+  tags: common
 
 - name: Install baseline utilities
   ansible.builtin.package:
@@ -47,7 +47,7 @@
       - neovim
       - nfs-common
     state: present
-  tags: docker
+  tags: common
 
 - name: Join ZeroTier Mesh
   ansible.builtin.shell: |
@@ -61,12 +61,12 @@
     creates: /var/lib/zerotier-one/networks.d/{{ vault_zerotier_network_id }}.conf
   register: common_zt_join
   changed_when: "'200 join ok' in common_zt_join.stdout"
-  tags: docker
+  tags: common
 
 - name: Prompt for manual network approval
   ansible.builtin.debug:
     msg: Approve new device in ZeroTier Network
-  tags: docker
+  tags: common
 
 - name: Wait for NAS to be reachable via ZeroTier
   ansible.builtin.wait_for:
@@ -76,14 +76,14 @@
     delay: 5
     timeout: 300
   when: common_zt_join is changed or ansible_facts['nodename'] in groups['external_network']
-  tags: docker
+  tags: common
 
 - name: Ensure NAS is mounted
   ansible.posix.mount:
     path: /mnt/NAS_ZFS
-    src: "{{ nas_mount_ip }}:/export/NAS_ZFS"
+    src: "{{ nas_mount_ip }}:/NAS_ZFS"
     fstype: nfs
     opts: "rw,hard,nfsvers=4.2,nconnect=8,rsize=1048576,wsize=1048576,_netdev,nofail"
     state: present
   when: inventory_hostname != 'omv'
-  tags: docker
+  tags: common
