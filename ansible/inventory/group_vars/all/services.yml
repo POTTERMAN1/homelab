@@ -26,7 +26,7 @@ app_services:
     internal_port: 9000
     root_path: "{{ global_docker_base_path }}/authentik"
     image: "ghcr.io/goauthentik/server"
-    # renovate: datasource=docker depName=ghcr.io/goauthentik/server
+    # renovate: datasource=docker depName=ghcr.io/goauthentik/server versioning=loose
     version: "2025.12.4"
     # Sidecar versions pinned here for Renovate compatibility.
     postgresql_image: "docker.io/library/postgres"
@@ -59,7 +59,7 @@ app_services:
     domain: "potterman.party"
     proxy_type: "standard"
     image: "pihole/pihole"
-    # renovate: datasource=docker depName=pihole/pihole
+    # renovate: datasource=docker depName=pihole/pihole versioning=loose
     version: "2025.11.1"
     internal_port: 800
     root_path: "{{ global_docker_base_path }}/pihole"
@@ -72,7 +72,7 @@ app_services:
     internal_port: 3005
     root_path: "{{ global_docker_base_path }}/homepage"
     image: "ghcr.io/gethomepage/homepage"
-    # renovate: datasource=docker depName=ghcr.io/gethomepage/homepage
+    # renovate: datasource=docker depName=ghcr.io/gethomepage/homepage versioning=semver
     version: "1.13.1"
 
   # Storage & Documents
@@ -156,7 +156,7 @@ app_services:
     domain: "potterman.party"
     proxy_type: "standard"
     image: "jellyfin/jellyfin"
-    # renovate: datasource=docker depName=jellyfin/jellyfin
+    # renovate: datasource=docker depName=jellyfin/jellyfin versioning=semver
     version: "10.11.6"
     internal_port: 8096
     root_path: "{{ global_docker_base_path }}/jellyfin"
@@ -167,7 +167,7 @@ app_services:
     domain: "potterman.party"
     proxy_type: "standard"
     image: "fallenbagel/jellyseerr"
-    # renovate: datasource=docker depName=fallenbagel/jellyseerr
+    # renovate: datasource=docker depName=fallenbagel/jellyseerr versioning=semver
     version: "2.7.3"
     internal_port: 5055
     root_path: "{{ global_docker_base_path }}/jellyseer"
@@ -178,7 +178,7 @@ app_services:
     domain: "potterman.party"
     proxy_type: "standard"
     image: "linuxserver/sonarr"
-    # renovate: datasource=docker depName=linuxserver/sonarr
+    # renovate: datasource=docker depName=linuxserver/sonarr versioning=semver
     version: "4.0.16"
     internal_port: 8989
     root_path: "{{ global_docker_base_path }}/sonarr"
@@ -189,7 +189,7 @@ app_services:
     domain: "potterman.party"
     proxy_type: "standard"
     image: "ghcr.io/hotio/radarr"
-    # renovate: datasource=docker depName=linuxserver/radarr
+    # renovate: datasource=docker depName=linuxserver/radarr versioning=semver
     version: "6.0.4"
     internal_port: 7878
     root_path: "{{ global_docker_base_path }}/radarr"
@@ -200,7 +200,7 @@ app_services:
     domain: "potterman.party"
     proxy_type: "standard"
     image: "linuxserver/prowlarr"
-    # renovate: datasource=docker depName=linuxserver/prowlarr
+    # renovate: datasource=docker depName=linuxserver/prowlarr versioning=semver
     version: "2.3.0"
     internal_port: 9696
     root_path: "{{ global_docker_base_path }}/prowlarr"
@@ -211,7 +211,7 @@ app_services:
     domain: "potterman.party"
     proxy_type: "standard"
     image: "linuxserver/sabnzbd"
-    # renovate: datasource=docker depName=linuxserver/sabnzbd
+    # renovate: datasource=docker depName=linuxserver/sabnzbd versioning=semver
     version: "4.5.5"
     internal_port: 8585
     container_port: 8080
@@ -273,4 +273,4 @@ app_services:
     # renovate: datasource=github-releases depName=yannh/kubeconform
     kubeconform_version: "0.6.7"
     # renovate: datasource=github-releases depName=igorshubovych/markdownlint-cli
-    markdownlint_version: "0.44.0"
+    markdownlint_version: "0.48.0"
