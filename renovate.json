@@ -14,5 +14,6 @@
             ],
             "versioningTemplate": "{{#if versioning}}{{{versioning}}}{{else}}docker{{/if}}"
         }
-    ]
+    ],
+    "prHourlyLimit": 0
 }
