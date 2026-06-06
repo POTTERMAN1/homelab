@@ -34,7 +34,7 @@ app_services:
     postgresql_version: "16-alpine"
     redis_image: "docker.io/library/redis"
     # renovate: datasource=docker depName=docker.io/library/redis
-    redis_version: "7-alpine"
+    redis_version: "8-alpine"
 
     # Core Infrastructure Services
 
