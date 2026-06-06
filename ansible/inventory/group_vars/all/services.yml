@@ -26,7 +26,7 @@ app_services:
     internal_port: 9000
     root_path: "{{ global_docker_base_path }}/authentik"
     image: "ghcr.io/goauthentik/server"
-    # renovate: datasource=docker depName=ghcr.io/goauthentik/server
+    # renovate: datasource=docker depName=ghcr.io/goauthentik/server versioning=loose
     version: "2025.12.4"
     # Sidecar versions pinned here for Renovate compatibility.
     postgresql_image: "docker.io/library/postgres"
@@ -59,7 +59,7 @@ app_services:
     domain: "potterman.party"
     proxy_type: "standard"
     image: "pihole/pihole"
-    # renovate: datasource=docker depName=pihole/pihole
+    # renovate: datasource=docker depName=pihole/pihole versioning=loose
     version: "2025.11.1"
     internal_port: 800
     root_path: "{{ global_docker_base_path }}/pihole"
