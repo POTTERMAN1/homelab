@@ -1,6 +1,6 @@
 services:
   postgresql:
-    image: "{{ app_services.authentik.postrgresql_image }}:{{ app_services.authentik.postrgresql_version }}"
+    image: "{{ app_services.authentik.postgresql_image }}:{{ app_services.authentik.postgresql_version }}"
     restart: unless-stopped
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -d $${POSTGRES_DB} -U $${POSTGRES_USER}"]
