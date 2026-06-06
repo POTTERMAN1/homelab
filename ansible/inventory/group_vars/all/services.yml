@@ -113,7 +113,7 @@ app_services:
     redis_version: "7-alpine"
     postgres_image: "postgres"
     # renovate: datasource=docker depName=postgres
-    postgres_version: "16-alpine"
+    postgres_version: "18-alpine"
     gotenberg_image: "gotenberg/gotenberg"
     # renovate: datasource=docker depName=gotenberg/gotenberg
     gotenberg_version: "8"
