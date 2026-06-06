@@ -212,7 +212,7 @@ app_services:
     proxy_type: "standard"
     image: "linuxserver/sabnzbd"
     # renovate: datasource=docker depName=linuxserver/sabnzbd versioning=semver
-    version: "4.5.5"
+    version: "5.0.3"
     internal_port: 8585
     container_port: 8080
     root_path: "{{ global_docker_base_path }}/sabnzbd"
