@@ -73,7 +73,7 @@ app_services:
     root_path: "{{ global_docker_base_path }}/homepage"
     image: "ghcr.io/gethomepage/homepage"
     # renovate: datasource=docker depName=ghcr.io/gethomepage/homepage versioning=semver
-    version: "1.13.1"
+    version: "v1.13.1"
 
   # Storage & Documents
 
