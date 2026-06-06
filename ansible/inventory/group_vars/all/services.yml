@@ -156,7 +156,7 @@ app_services:
     domain: "potterman.party"
     proxy_type: "standard"
     image: "jellyfin/jellyfin"
-    # renovate: datasource=docker depName=jellyfin/jellyfin
+    # renovate: datasource=docker depName=jellyfin/jellyfin versioning=semver
     version: "10.11.6"
     internal_port: 8096
     root_path: "{{ global_docker_base_path }}/jellyfin"
