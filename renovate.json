@@ -15,5 +15,6 @@
             "versioningTemplate": "{{#if versioning}}{{{versioning}}}{{else}}docker{{/if}}"
         }
     ],
-    "prHourlyLimit": 0
+    "prHourlyLimit": 0,
+    "branchConcurrentLimit": 30
 }
