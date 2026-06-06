@@ -51,7 +51,7 @@ app_services:
     root_path: "{{ global_docker_base_path }}/forgejo"
     runner_image: "code.forgejo.org/forgejo/runner"
     # renovate: datasource=docker depName=code.forgejo.org/forgejo/runner
-    runner_version: "9.0.3"
+    runner_version: "9.1.1"
 
   pihole:
     host: "debian-docker"
