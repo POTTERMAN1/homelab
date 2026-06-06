@@ -21,7 +21,6 @@
   become: true
   roles:
     - hoodik
-    - teamspeak
 
 - name: Internal Services
   hosts: debian-docker

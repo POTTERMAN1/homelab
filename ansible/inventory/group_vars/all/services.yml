@@ -232,14 +232,6 @@ app_services:
     root_path: "{{ global_docker_base_path }}/foundryvtt"
     foundry_user_data_path: "{{ global_nas_mount_path }}/foundryvtt/foundry_user_data"
 
-  teamspeak:
-    # No Caddy entry — DNS A-record and port config consumed by teamspeak role.
-    # Public-facing on IONOS VPS, bypasses ZeroTier mesh intentionally.
-    proxy_type: "no_caddy"
-    root_path: "{{ global_docker_base_path }}/teamspeak"
-    internal_port: 9987
-    internal_port2: 30033
-
   pelican:
     image: "ghcr.io/pelican-dev/panel"
     # renovate: datasource=docker depName=ghcr.io/pelican-dev/panel
