@@ -88,7 +88,7 @@ app_services:
     webhook_python_version: "3.14-slim"
     mariadb_image: "mariadb"
     # renovate: datasource=docker depName=mariadb
-    mariadb_version: "10.11"
+    mariadb_version: "12.3"
     memcached_image: "memcached"
     # renovate: datasource=docker depName=memcached
     memcached_version: "1.6"
@@ -143,7 +143,7 @@ app_services:
     version: "version-6.6.3"
     mariadb_image: "mariadb"
     # renovate: datasource=docker depName=mariadb
-    mariadb_version: "11.8"
+    mariadb_version: "12.3"
     cron_image: "alpine"
     # renovate: datasource=docker depName=alpine
     cron_version: "3.23.4"
