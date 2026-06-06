@@ -190,7 +190,7 @@ app_services:
     proxy_type: "standard"
     image: "ghcr.io/hotio/radarr"
     # renovate: datasource=docker depName=linuxserver/radarr versioning=semver
-    version: "6.0.4"
+    version: "6.1.1"
     internal_port: 7878
     root_path: "{{ global_docker_base_path }}/radarr"
 
