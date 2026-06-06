@@ -12,7 +12,7 @@ Current Roles include:
 - `docker`: Engine installation, Compose plugin, Python SDK, and user group management.
 - `caddy`: Centralized reverse proxy with Cloudflare DNS-01 wildcard certificates.
 - `authentik`: Centralized Identity Provider (IdP) for Single Sign-On.
-- `seafile`: Self-hosted cloud storage with automated OIDC injection connecting it to Authentik.
+- `hoodik`: Self-hosted cloud storage with automated OIDC injection connecting it to Authentik.
 - `homepage`: Central dashboard for monitoring infrastructure.
 - `firefly`: Budget tracking application deployed behind Authentik SSO via Caddy `forward_auth`.
 - `foundryvtt`: Custom-built Docker image (Node.js 22-slim) with version-pinned builds, healthcheck, and NAS-mounted user data.

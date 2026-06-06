@@ -13,7 +13,7 @@ The homelab runs a lightweight **K3s** Kubernetes cluster for cloud-native workl
 
 ### Garage — S3-Compatible Object Storage
 
-Garage replaces the now-archived MinIO project as the self-hosted S3 endpoint. It provides overflow storage for Seafile and a general-purpose object store for the homelab.
+Garage replaces the now-archived MinIO project as the self-hosted S3 endpoint. It provides overflow storage for hoodik and a general-purpose object store for the homelab.
 
 **Kubernetes Resources:**
 

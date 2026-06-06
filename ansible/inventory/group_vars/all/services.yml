@@ -77,24 +77,15 @@ app_services:
 
   # Storage & Documents
 
-  seafile:
+  hoodik:
     host: "ionos_vps"
-    subdomain: "seafile"
+    subdomain: "hoodik"
     domain: "potterman.party"
     proxy_type: "standard"
     internal_port: 8060
-    root_path: "{{ global_docker_base_path }}/seafile"
-    # renovate: datasource=docker depName=python
-    webhook_python_version: "3.14-slim"
-    mariadb_image: "mariadb"
-    # renovate: datasource=docker depName=mariadb
-    mariadb_version: "12.3"
-    memcached_image: "memcached"
-    # renovate: datasource=docker depName=memcached
-    memcached_version: "1.6"
-    image: "seafileltd/seafile-mc"
-    # renovate: datasource=docker depName=seafileltd/seafile-mc
-    version: "13.0.22"
+    root_path: "{{ global_docker_base_path }}/hoodik"
+    # renovate: datasource=docker depName=hudik/hoodik
+    version: "v1.15.4"
 
   paperless:
     host: "debian-docker"
@@ -188,7 +179,7 @@ app_services:
     subdomain: "radarr"
     domain: "potterman.party"
     proxy_type: "standard"
-    image: "ghcr.io/hotio/radarr"
+    image: "linuxserver/radarr"
     # renovate: datasource=docker depName=linuxserver/radarr versioning=semver
     version: "6.1.1"
     internal_port: 7878

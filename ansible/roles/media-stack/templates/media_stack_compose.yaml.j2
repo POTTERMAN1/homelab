@@ -93,7 +93,7 @@ services:
     devices:
       - /dev/dri/renderD128:/dev/dri/renderD128
     group_add:
-      - "render"
+      - "992"
 
   jellyseerr:
     image: "{{ app_services.jellyseerr.image }}:{{ app_services.jellyseerr.version }}"

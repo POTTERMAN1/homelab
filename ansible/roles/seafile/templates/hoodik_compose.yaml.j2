@@ -1,0 +1,15 @@
+services:
+  hoodik:
+    image: "hudik/hoodik:{{ app_services.hoodik.version }}"
+    container_name: hoodik
+    restart: unless-stopped
+    ports:
+      - "8060:5443"
+    volumes:
+      - "{{ app_services.hoodik.root_path }}/data:/data"
+    environment:
+      - DATA_DIR=/data
+      - APP_URL=https://hoodik.potterman.party
+      - JWT_SECRET={{ vault_seafile_secret_key }}
+      - HTTP_ADDRESS=0.0.0.0
+      - SSL_DISABLED=true

@@ -7,7 +7,7 @@ services:
       - redis-data:/data
 
   paperless-postgres:
-    image: "{{ app_services.paperless.postgres_image }}:{{ app_services.paperless.postgres_version }}"
+    image: "{{ app_services.paperless.postgresql_image }}:{{ app_services.paperless.postgresql_version }}"
     container_name: paperless-postgres
     restart: unless-stopped
     environment:

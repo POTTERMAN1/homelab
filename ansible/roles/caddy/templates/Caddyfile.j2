@@ -103,8 +103,8 @@ home.potterman.party {
     reverse_proxy {{ hostvars['debian-docker']['zerotier_ip'] }}:3005
 }
 
-# Seafile | VPS
-seafile.potterman.party {
+# hoodik | VPS
+hoodik.potterman.party {
     import desec_tls
     reverse_proxy {{ hostvars['ionos_vps']['zerotier_ip'] }}:8060
 }

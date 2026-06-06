@@ -1,20 +1,5 @@
-- name: Restart Seafile
+- name: Recreate Hoodik Stack
   community.docker.docker_compose_v2:
-    project_src: "{{ app_services.seafile.root_path }}"
-    state: restarted
-    services:
-      - seafile
-
-- name: Rebuild Seafile Webhook
-  community.docker.docker_compose_v2:
-    project_src: "{{ app_services.seafile.root_path }}"
-    state: present
-    build: always
-    services:
-      - seafile-webhook
-
-- name: Recreate Seafile Stack
-  community.docker.docker_compose_v2:
-    project_src: "{{ app_services.seafile.root_path }}"
+    project_src: "{{ app_services.hoodik.root_path }}"
     state: present
     recreate: always

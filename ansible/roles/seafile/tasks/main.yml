@@ -1,120 +1,24 @@
-- name: Ensure Local Directories Exist
+- name: Ensure Hoodik directory exists
   ansible.builtin.file:
-    path: "{{ item }}"
+    path: "{{ app_services.hoodik.root_path }}"
     state: directory
-    owner: "root"
-    group: "root"
-    mode: "0755"
-  loop:
-    - "{{ app_services.seafile.root_path }}"
-    - "{{ app_services.seafile.root_path }}/seafile-data"
-    - "{{ app_services.seafile.root_path }}/webhook"
-  tags: seafile
+    owner: root
+    group: root
+    mode: '0755'
+  tags: hoodik
 
 - name: Render Docker Compose
   ansible.builtin.template:
-    src: templates/seafile_docker-compose.yaml.j2
-    dest: "{{ app_services.seafile.root_path }}/docker-compose.yml"
+    src: templates/hoodik_compose.yaml.j2
+    dest: "{{ app_services.hoodik.root_path }}/docker-compose.yml"
     mode: "0644"
-  notify: Recreate Seafile Stack
-  tags: seafile
+  notify: Recreate Hoodik Stack
+  tags: hoodik
 
-- name: Render Webhook Dockerfile
-  ansible.builtin.template:
-    src: templates/Dockerfile.webhook.j2
-    dest: "{{ app_services.seafile.root_path }}/webhook/Dockerfile"
-    mode: "0644"
-  notify: Rebuild Seafile Webhook
-  tags: seafile
-
-- name: Render Webhook App
-  ansible.builtin.template:
-    src: templates/webhook_app.py.j2
-    dest: "{{ app_services.seafile.root_path }}/webhook/app.py"
-    mode: "0644"
-  notify: Rebuild Seafile Webhook
-  tags: seafile
-
-- name: Spin up Seafile Stack
+- name: Start Hoodik Stack
   community.docker.docker_compose_v2:
-    project_src: "{{ app_services.seafile.root_path }}"
+    project_src: "{{ app_services.hoodik.root_path }}"
     state: present
     pull: always
     wait: true
-  tags: seafile
-- name: Find the seahub config directory natively
-  ansible.builtin.find:
-    paths: "{{ app_services.seafile.root_path }}/seafile-data"
-    file_type: directory
-    patterns: "conf"
-    recurse: true
-  register: seafile_found_dirs
-  until: seafile_found_dirs.matched > 0
-  retries: 20
-  delay: 5
-  changed_when: false
-  tags: seafile
-
-- name: Set seahub configuration path
-  ansible.builtin.set_fact:
-    seafile_seahub_conf_dir: "{{ item.path }}"
-  loop: "{{ seafile_found_dirs.files }}"
-  # Targets the specific config folder inside the shared volume
-  when: "'seafile/conf' in item.path"
-  changed_when: false
-  tags: seafile
-
-- name: Wait for seahub_settings.py to be generated
-  ansible.builtin.wait_for:
-    path: "{{ seafile_seahub_conf_dir }}/seahub_settings.py"
-    state: present
-    timeout: 120
-  tags: seafile
-
-- name: Ensure SERVICE_URL is HTTPS
-  ansible.builtin.lineinfile:
-    path: "{{ seafile_seahub_conf_dir }}/seahub_settings.py"
-    regexp: '^SERVICE_URL\s*='
-    line: "SERVICE_URL = 'https://seafile.potterman.party'"
-  notify: Restart Seafile
-  tags: seafile
-
-- name: Ensure FILE_SERVER_ROOT is HTTPS
-  ansible.builtin.lineinfile:
-    path: "{{ seafile_seahub_conf_dir }}/seahub_settings.py"
-    regexp: '^FILE_SERVER_ROOT\s*='
-    line: "FILE_SERVER_ROOT = 'https://seafile.potterman.party/seafhttp'"
-  notify: Restart Seafile
-  tags: seafile
-
-- name: Inject SSO Configuration into Seahub Settings
-  ansible.builtin.blockinfile:
-    path: "{{ seafile_seahub_conf_dir }}/seahub_settings.py"
-    block: |
-      ENABLE_OAUTH = True
-      OAUTH_ENABLE_INSECURE_TRANSPORT = True
-      OAUTH_VERIFY_EMAIL = False
-      OAUTH_CLIENT_ID = '{{ vault_seafile_client_id }}'
-      OAUTH_CLIENT_SECRET = '{{ vault_seafile_client_secret }}'
-      OAUTH_REDIRECT_URL = 'https://seafile.potterman.party/oauth/callback/'
-      OAUTH_PROVIDER = 'authentik'
-      OAUTH_PROVIDER_DOMAIN = 'auth.potterman.party'
-      OAUTH_AUTHORIZATION_URL = 'https://auth.potterman.party/application/o/authorize/'
-      OAUTH_TOKEN_URL = 'https://auth.potterman.party/application/o/token/'
-      OAUTH_USER_INFO_URL = 'https://auth.potterman.party/application/o/userinfo/'
-      OAUTH_SCOPE = ['openid', 'profile', 'email']
-
-      OAUTH_ATTRIBUTE_MAP = {
-          "email": (True, "contact_email"),
-          "name": (False, "name"),
-          "sub": (False, "uid"),
-      }
-      LOGIN_URL = 'https://seafile.potterman.party/oauth/login/'
-
-      OAUTH_CREATE_UNKNOWN_USER = True
-      OAUTH_ACTIVATE_USER_AFTER_CREATION = True
-      CSRF_TRUSTED_ORIGINS = ['https://seafile.potterman.party']
-      CLIENT_SSO_VIA_LOCAL_BROWSER = True
-    marker: "# {mark} ANSIBLE MANAGED BLOCK - SSO CONFIG"
-  notify: Restart Seafile
-  tags: seafile
+  tags: hoodik

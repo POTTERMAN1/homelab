@@ -10,27 +10,32 @@
     - "{{ app_services.authentik.root_path }}/media"
     - "{{ app_services.authentik.root_path }}/certs"
     - "{{ app_services.authentik.root_path }}/custom-templates"
+  tags: authentik
 
 - name: Render .env File
   ansible.builtin.template:
     src: templates/authentik_env.j2
     dest: "{{ app_services.authentik.root_path }}/.env"
     mode: '0600'
+  tags: authentik
 
 - name: Render Docker Compose
   ansible.builtin.template:
     src: templates/authentik_compose.yaml.j2
     dest: "{{ app_services.authentik.root_path }}/docker-compose.yml"
     mode: '0600'
+  tags: authentik
 
 - name: Start Authentik Stack
   community.docker.docker_compose_v2:
     project_src: "{{ app_services.authentik.root_path }}"
     state: present
     pull: always
+  tags: authentik
 
 - name: Wait for Authentik Server (Port 9000)
   ansible.builtin.wait_for:
     port: 9000
     delay: 15
     timeout: 120
+  tags: authentik
